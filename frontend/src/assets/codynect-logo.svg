@@ -1,0 +1,12 @@
+<svg viewBox="0 0 300 50" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .text {
+      font-family: monospace;
+      font-size: 28px;
+      fill: #00d8ff;
+    }
+  </style>
+  <g>
+    <text x="0" y="35" class="text">&lt;Codynect/&gt;</text>
+  </g>
+</svg>
