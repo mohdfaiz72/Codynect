@@ -1,48 +1,99 @@
 import User from "../models/user.model.js";
 
-// Update Profile Image
 export const updateProfileImage = async (req, res) => {
   try {
-    const { userId } = req; // Assuming middleware sets req.userId from token
-    const { profileImage } = req.body;
+    const { userId } = req; // from verifyJWT middleware
 
-    if (!profileImage)
-      return res.status(400).json({ error: "No profile image provided." });
+    // Logic for removing the current profile image
+    if (req.body.remove === "true") {
+      const user = await User.findByIdAndUpdate(
+        userId,
+        { profileImage: "" }, // Set to an empty string or a default image URL
+        { new: true }
+      ).select("-password"); // Exclude password hash from the response
+
+      if (!user) {
+        return res.status(404).json({ error: "User not found." });
+      }
+
+      return res
+        .status(200)
+        .json({ message: "Profile image removed successfully.", user });
+    }
+
+    // Check if a file was uploaded by multer
+    if (!req.file) {
+      return res.status(400).json({ error: "No image file was provided." });
+    }
+
+    const imageUrl = req.file.path;
 
     const user = await User.findByIdAndUpdate(
       userId,
-      { profileImage },
+      { profileImage: imageUrl },
       { new: true }
-    );
+    ).select("-password");
 
-    res.json({ message: "Profile image updated", user });
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Profile image updated successfully.", user });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Update profile image error:", err);
+    res.status(500).json({ error: "An unexpected server error occurred." });
   }
 };
 
-// Update Cover Image
 export const updateCoverImage = async (req, res) => {
   try {
     const { userId } = req;
-    const { coverImage } = req.body;
 
-    if (!coverImage)
-      return res.status(400).json({ error: "No cover image provided." });
+    // Handle removal request
+    if (req.body.remove === "true") {
+      const user = await User.findByIdAndUpdate(
+        userId,
+        { coverImage: "" }, // or set to a default cover image URL
+        { new: true }
+      ).select("-password");
+
+      if (!user) {
+        return res.status(404).json({ error: "User not found." });
+      }
+
+      return res
+        .status(200)
+        .json({ message: "Cover image removed successfully.", user });
+    }
+
+    // Check if file is uploaded
+    if (!req.file) {
+      return res.status(400).json({ error: "No cover image file provided." });
+    }
+
+    const imageUrl = req.file.path;
 
     const user = await User.findByIdAndUpdate(
       userId,
-      { coverImage },
+      { coverImage: imageUrl },
       { new: true }
-    );
+    ).select("-password");
 
-    res.json({ message: "Cover image updated", user });
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Cover image updated successfully.", user });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Update cover image error:", err);
+    res.status(500).json({ error: "An unexpected server error occurred." });
   }
 };
 
-// Update Name, Headline, and Address
 export const updateUserDetails = async (req, res) => {
   try {
     const { userId } = req;
@@ -55,7 +106,7 @@ export const updateUserDetails = async (req, res) => {
       userId,
       { name, headline, address },
       { new: true }
-    );
+    ).select("-password");
 
     res.json({ message: "User details updated", user });
   } catch (err) {
@@ -97,8 +148,6 @@ export const updateUserEducation = async (req, res) => {
     const { userId } = req;
     const { education } = req.body;
 
-    // 3. Validate the input
-    // Check if 'education' is provided and is an array.
     if (!Array.isArray(education)) {
       return res.status(400).json({
         message: "Invalid input. The 'education' field must be an array.",
@@ -129,21 +178,18 @@ export const updateUserExperience = async (req, res) => {
     const { userId } = req;
     const { experience } = req.body;
 
-    // 1. Validate the input
     if (!Array.isArray(experience)) {
       return res.status(400).json({
         message: "Invalid input. The 'experience' field must be an array.",
       });
     }
 
-    // 2. Update user experience
     const user = await User.findByIdAndUpdate(
       userId,
       { experience },
       { new: true }
     );
 
-    // 3. Send success response
     res.status(200).json({
       message: "User experience details updated successfully.",
       user,

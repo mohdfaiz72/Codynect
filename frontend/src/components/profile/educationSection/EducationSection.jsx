@@ -15,7 +15,7 @@ const EducationSection = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const user = useSelector((store) => store.user.user);
-  const isEditablePage = location.pathname === "/profile/educations-section";
+  const isEditablePage = location.pathname === "/profile/education-section";
 
   const dispatch = useDispatch();
 
@@ -31,7 +31,7 @@ const EducationSection = () => {
 
     try {
       const res = await axios.patch(
-        `${BASE_URL}/user/update-educations`,
+        `${BASE_URL}/user/update-education`,
         { education: updatedEducation },
         { withCredentials: true }
       );
@@ -51,7 +51,7 @@ const EducationSection = () => {
 
     try {
       const res = await axios.patch(
-        `${BASE_URL}/user/update-educations`,
+        `${BASE_URL}/user/update-education`,
         { education: updatedEducation },
         { withCredentials: true }
       );
@@ -75,7 +75,7 @@ const EducationSection = () => {
           <div className="flex items-center gap-4">
             {user.education.length > 0 && !isEditablePage && (
               <button
-                onClick={() => navigate("/profile/educations-section")}
+                onClick={() => navigate("/profile/education-section")}
                 className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
                 title="Go to Edit Page"
               >

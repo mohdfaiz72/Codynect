@@ -22,7 +22,7 @@ export const verifyJWT = async (req, res, next) => {
     }
 
     req.user = user;
-    req.userId = decoded.userId; // Optional: if you prefer using userId in other handlers
+    req.userId = decoded.userId;
 
     next();
   } catch (err) {

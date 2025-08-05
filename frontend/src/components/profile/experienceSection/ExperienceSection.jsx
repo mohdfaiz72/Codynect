@@ -17,7 +17,7 @@ const ExperienceSection = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((store) => store.user.user);
-  const isEditablePage = location.pathname === "/profile/experiences-section";
+  const isEditablePage = location.pathname === "/profile/experience-section";
 
   const handleSaveExperience = async (formData) => {
     let updatedExperience;
@@ -31,7 +31,7 @@ const ExperienceSection = () => {
 
     try {
       const res = await axios.patch(
-        `${BASE_URL}/user/update-experiences`,
+        `${BASE_URL}/user/update-experience`,
         { experience: updatedExperience },
         { withCredentials: true }
       );
@@ -51,7 +51,7 @@ const ExperienceSection = () => {
 
     try {
       const res = await axios.patch(
-        `${BASE_URL}/user/update-experiences`,
+        `${BASE_URL}/user/update-experience`,
         { experience: updatedExperience },
         { withCredentials: true }
       );
@@ -75,7 +75,7 @@ const ExperienceSection = () => {
           <div className="flex items-center gap-4">
             {user.experience.length > 0 && !isEditablePage && (
               <button
-                onClick={() => navigate("/profile/experiences-section")}
+                onClick={() => navigate("/profile/experience-section")}
                 className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
                 title="Go to Edit Page"
               >
@@ -161,7 +161,6 @@ const ExperienceSection = () => {
 
       {showModal && (
         <EditExperience
-          user={user}
           experienceToEdit={experienceToEdit}
           onClose={() => setShowModal(false)}
           onSave={handleSaveExperience}
