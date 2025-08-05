@@ -50,7 +50,7 @@ const ProfileHeader = () => {
           src={user.profileImage || dummyUser.profileImage}
           alt={user.name}
           onClick={() => setShowEditPhotoModal(true)}
-          className="w-32 h-32 sm:w-36 sm:h-36 rounded-full border-4 border-amber-700 bg-slate-900 object-cover cursor-pointer hover:brightness-110 transition absolute left-8"
+          className="w-32 h-32 sm:w-36 sm:h-36 rounded-full border-3 border-amber-700 bg-slate-900 object-cover cursor-pointer hover:border-purple-600 transition absolute left-8"
           style={{ top: "-100px" }}
         />
 
@@ -78,23 +78,14 @@ const ProfileHeader = () => {
       </div>
 
       {/* Modals */}
-      {/* {showEditCoverModal && (
-        <EditCoverImage
-          user={user}
-          onClose={() => setShowEditCoverModal(false)}
-        />
+      {showEditCoverModal && (
+        <EditCoverImage onClose={() => setShowEditCoverModal(false)} />
       )}
       {showEditPhotoModal && (
-        <EditProfilePhoto
-          user={user}
-          onClose={() => setShowEditPhotoModal(false)}
-        />
-      )} */}
+        <EditProfilePhoto onClose={() => setShowEditPhotoModal(false)} />
+      )}
       {showEditProfileModal && (
-        <EditProfile
-          user={user}
-          onClose={() => setShowEditProfileModal(false)}
-        />
+        <EditProfile onClose={() => setShowEditProfileModal(false)} />
       )}
     </div>
   );

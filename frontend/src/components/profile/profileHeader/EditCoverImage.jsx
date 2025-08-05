@@ -1,113 +1,172 @@
 import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import DeleteConfirmation from "../../../common/DeleteConfirmation";
+import { addUser } from "../../../store/userSlice";
 import axios from "axios";
 import { BASE_URL } from "../../../utils/constants";
+import { dummyUser } from "../../../utils/dummyUser";
 
 const EditCoverImage = ({ onClose }) => {
-  const [coverImage, setCoverImage] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(null);
+  const user = useSelector((store) => store.user.user);
+  const dispatch = useDispatch();
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [preview, setPreview] = useState(
+    user.coverImage || dummyUser.coverImage
+  );
+
   useEffect(() => {
-    // Prevent background scrolling
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = "auto";
     };
   }, []);
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      setCoverImage(file);
-      setPreviewUrl(URL.createObjectURL(file));
+    if (file && file.type.startsWith("image/")) {
+      setSelectedImage(file);
+      setPreview(URL.createObjectURL(file));
     }
   };
 
-  const handleRemove = () => {
-    setCoverImage(null);
-    setPreviewUrl(null);
+  const handleRemoveImage = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("remove", true);
+
+      const res = await axios.patch(
+        `${BASE_URL}/user/update-cover-image`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true,
+        }
+      );
+
+      if (res.status === 200) {
+        dispatch(addUser(res.data.user));
+        alert("Cover image removed!");
+        setSelectedImage(null);
+        setPreview(dummyUser.coverImage);
+        onClose();
+      } else {
+        alert("Failed to remove cover image.");
+      }
+    } catch (error) {
+      console.error("Remove error:", error);
+      alert("Something went wrong while removing the image.");
+    }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSaveImage = async (e) => {
     e.preventDefault();
-    if (!coverImage) return alert("Please select an image to upload.");
+
+    if (!selectedImage) {
+      alert("Please select an image to upload.");
+      return;
+    }
 
     try {
       const formData = new FormData();
-      formData.append("coverImage", coverImage);
+      formData.append("file", selectedImage);
 
-      await axios.put(`${BASE_URL}/profile/cover`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const res = await axios.patch(
+        `${BASE_URL}/user/update-cover-image`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true,
+        }
+      );
 
-      alert("Cover image updated!");
-      onClose();
+      if (res.status === 200) {
+        dispatch(addUser(res.data.user));
+        alert("Cover image updated!");
+        onClose();
+      } else {
+        alert("Failed to update cover image.");
+      }
     } catch (error) {
-      console.error("Upload error:", error.message);
-      alert("Failed to upload cover image.");
+      console.error("Upload error:", error);
+      alert("Something went wrong while uploading.");
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex items-center justify-center px-4">
-      <div className="bg-slate-950 p-6 rounded-xl border border-amber-700 shadow-xl w-full max-w-2xl transition-all">
-        <h2 className="text-2xl font-bold text-amber-300 mb-4">
-          Edit Cover Image
-        </h2>
-        <hr className="text-amber-700 mb-4" />
+    <>
+      <div className="fixed inset-0 z-30 bg-black/30 backdrop-blur-sm flex items-center justify-center px-4">
+        <div className="bg-slate-950 p-6 rounded-xl border border-amber-700 shadow-xl w-full max-w-2xl transition-all">
+          <h2 className="text-2xl font-bold text-amber-300 mb-4">
+            Edit Cover Image
+          </h2>
+          <hr className="mb-4 border-amber-700" />
 
-        {/* Preview */}
-        {previewUrl ? (
-          <img
-            src={previewUrl}
-            alt="Preview"
-            className="w-full h-48 sm:h-56 md:h-64 object-cover rounded-md border border-slate-700 mb-4"
-          />
-        ) : (
-          <div className="w-full h-48 sm:h-56 md:h-64 bg-slate-800 flex items-center justify-center text-slate-500 rounded-md mb-4 border border-slate-700">
-            No cover image selected
-          </div>
-        )}
+          <form onSubmit={handleSaveImage}>
+            {/* Preview */}
+            <div className="flex justify-center mb-4">
+              <img
+                src={preview}
+                alt="Cover Preview"
+                className="w-full h-56 md:h-64 rounded-md object-cover border border-amber-700"
+              />
+            </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="block w-full text-sm text-slate-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-700 file:text-slate-900 hover:file:bg-amber-800"
-          />
+            {/* File Input */}
+            <div className="flex justify-center mb-4">
+              <label className="cursor-pointer bg-amber-600 hover:bg-amber-700 text-slate-900 font-semibold py-2 px-4 rounded-full transition">
+                Upload Cover
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </label>
+            </div>
 
-          <div className="flex justify-between gap-3">
-            {/* Remove Button */}
-            <button
-              type="button"
-              onClick={handleRemove}
-              className="px-4 py-2 rounded-full text-sm font-semibold border border-red-500 text-red-400 hover:bg-red-900 transition duration-200 hover:scale-105"
-            >
-              Remove
-            </button>
-
-            <div className="flex gap-2 ml-auto">
-              {/* Cancel */}
+            {/* Buttons */}
+            <div className="flex justify-between gap-3 mt-6">
               <button
                 type="button"
-                onClick={onClose}
-                className="px-4 py-2 rounded-full text-sm font-semibold border border-amber-600 text-amber-300 hover:bg-slate-800 transition duration-200 hover:scale-105"
+                onClick={() => setShowDeleteModal(true)}
+                className="px-4 py-2 rounded-full text-sm font-semibold hover:scale-105 transition duration-200 border border-red-500 text-red-400 hover:bg-red-900"
               >
-                Cancel
+                Delete
               </button>
 
-              {/* Save */}
-              <button
-                type="submit"
-                className="px-4 py-2 rounded-full font-semibold text-slate-900 text-sm bg-gradient-to-br from-amber-700 via-amber-600 to-yellow-500 hover:from-amber-800 hover:to-amber-700 shadow-md hover:scale-105 transition duration-200"
-              >
-                Save Changes
-              </button>
+              <div className="flex gap-2 ml-auto">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-4 py-2 rounded-full text-sm font-semibold border border-amber-600 text-amber-300 hover:bg-slate-800 transition duration-200 hover:scale-105"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-full font-semibold text-slate-900 text-sm bg-gradient-to-br from-amber-700 via-amber-600 to-yellow-500 hover:from-amber-800 hover:to-amber-700 shadow-md hover:scale-105 transition duration-200"
+                >
+                  Save
+                </button>
+              </div>
             </div>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
-    </div>
+      {showDeleteModal && (
+        <DeleteConfirmation
+          onClose={() => setShowDeleteModal(false)}
+          onConfirm={handleRemoveImage}
+          itemName="Cover Image"
+        />
+      )}
+    </>
   );
 };
 

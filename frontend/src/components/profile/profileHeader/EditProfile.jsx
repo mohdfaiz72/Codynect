@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { Country, State, City } from "country-state-city";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { addUser } from "../../../store/userSlice";
 import { BASE_URL } from "../../../utils/constants";
 
-const EditProfile = ({ onClose, user }) => {
+const EditProfile = ({ onClose }) => {
+  const user = useSelector((store) => store.user.user);
   const [formData, setFormData] = useState({
     name: user?.name || "",
     headline: user?.headline || "",
