@@ -23,6 +23,11 @@
   font-size: 14px !important;
 }
 
+.react-datepicker,
+.react-datepicker-popper {
+  z-index: 20 !important;
+}
+
 /* ----------------------------- */
 /* 📌 Header Section */
 /* ----------------------------- */
@@ -30,8 +35,8 @@
   background: linear-gradient(
     to bottom right,
     #2e1065,
-    /* purple-950 */ #0f172a,
-    /* slate-900 */ #111827 /* gray-900 */
+    #0f172a,
+    #111827
   ) !important;
   border-bottom: 1px solid #a16207 !important;
 }
@@ -158,7 +163,7 @@
   background-color: transparent !important;
   text-decoration: line-through;
   opacity: 0.6;
-  cursor: not-allowed;
+  cursor: not-allowed !important;
 }
 
 /* ----------------------------- */

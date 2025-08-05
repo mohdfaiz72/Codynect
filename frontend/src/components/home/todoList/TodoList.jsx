@@ -1,57 +1,51 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { format } from "date-fns";
+import DropdownMenu from "./DropdownMenu";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "../../../datepicker.css";
-import { createPortal } from "react-dom";
-import { MoreVertical, Check, Trash2, Pencil } from "lucide-react";
+import { MoreVertical } from "lucide-react";
+import axios from "axios";
+import { BASE_URL } from "../../../utils/constants";
+import {
+  addTodo,
+  deleteTodo,
+  updateTodo,
+  setTodos,
+} from "../../../store/todoSlice";
 
-const DropdownMenu = ({ position, onEdit, onDelete, onDone, showDone }) => {
-  const menu = (
-    <div
-      style={{
-        position: "absolute",
-        top: position.top,
-        left: position.left,
-        zIndex: 9999,
-      }}
-      className="w-28 bg-gradient-to-br from-purple-950 via-slate-900 to-gray-900 text-sm text-white rounded-xl shadow-lg border border-amber-700 p-2"
-    >
-      <button
-        className="w-full flex items-center px-2 py-1 text-sm text-white hover:text-amber-300 hover:bg-slate-800 rounded-full transition shadow hover:scale-105 duration-200"
-        onClick={onEdit}
-      >
-        <Pencil size={14} className="mr-2 text-amber-400" /> Edit
-      </button>
-      <button
-        className="w-full flex items-center px-2 py-1 text-sm text-red-400 hover:text-red-300 hover:bg-red-900 rounded-full transition shadow hover:scale-105 duration-200"
-        onClick={onDelete}
-      >
-        <Trash2 size={14} className="mr-2 text-red-400" /> Remove
-      </button>
-      {showDone && (
-        <button
-          className="w-full flex items-center px-2 py-1 text-sm text-slate-200 hover:bg-purple-800 rounded-full transition shadow hover:scale-105 duration-200"
-          onClick={onDone}
-        >
-          <Check size={14} className="mr-2 text-green-400" /> Done
-        </button>
-      )}
-    </div>
-  );
-
-  return createPortal(menu, document.body);
-};
 const TodoList = () => {
   const [task, setTask] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
-  const [todos, setTodos] = useState([]);
   const [editingIndex, setEditingIndex] = useState(null);
   const [menuOpenIndex, setMenuOpenIndex] = useState(null);
   const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
+  const dispatch = useDispatch();
 
-  const addTask = () => {
+  const { todos, isLoaded } = useSelector((store) => store.todo);
+
+  const fetchTask = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/todo/`, {
+        withCredentials: true,
+      });
+      dispatch(setTodos(res.data.todos));
+    } catch (err) {
+      console.error(
+        "Failed to fetch tasks: " + (err.response?.data?.message || err.message)
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (!isLoaded) {
+      fetchTask();
+    }
+  }, []);
+
+  const addTask = async () => {
     if (task.trim() !== "" && selectedDate && selectedTime) {
       const combinedDateTime = new Date(
         selectedDate.getFullYear(),
@@ -65,42 +59,69 @@ const TodoList = () => {
       const formattedTime = format(combinedDateTime, "hh:mm aa");
 
       const newTask = {
-        text: task.trim(),
+        task: task.trim(),
         date: formattedDate,
         time: formattedTime,
-        completed: false,
+        isCompleted: false,
       };
 
       if (editingIndex !== null) {
-        const updated = [...todos];
-        updated[editingIndex] = newTask;
-        setTodos(updated);
-        setEditingIndex(null);
+        const id = editingIndex;
+        try {
+          const res = await axios.patch(`${BASE_URL}/todo/:id`, newTask, {
+            withCredentials: true,
+          });
+          dispatch(updateTodo(res.data.todo));
+          setEditingIndex(null);
+        } catch (err) {
+          console.error(
+            "Failed to update: " + (err.response?.data?.message || err.message)
+          );
+        }
       } else {
-        setTodos([...todos, newTask]);
+        try {
+          const res = await axios.post(`${BASE_URL}/todo/`, newTask, {
+            withCredentials: true,
+          });
+          dispatch(addTodo(res.data.todo));
+        } catch (err) {
+          console.error(
+            "Failed to save: " + (err.response?.data?.message || err.message)
+          );
+        }
       }
-
       setTask("");
       setSelectedDate(null);
       setSelectedTime(null);
     }
   };
-  const toggleComplete = (index) => {
-    const updated = [...todos];
-    updated[index].completed = true;
-    setTodos(updated);
+
+  const CompleteTask = (id) => {
+    const todo = todos.find((todo) => todo._id === id);
+    if (!todo) return alert("Todo not found");
+    const updatedTodo = { ...todo, isCompleted: true };
+    dispatch(updateTodo(updatedTodo));
     setTimeout(() => {
-      setTodos((prev) => prev.filter((_, i) => i !== index));
+      deleteTask(id);
     }, 600);
   };
 
-  const deleteTask = (index) => {
-    setTodos(todos.filter((_, i) => i !== index));
+  const deleteTask = async (id) => {
+    try {
+      await axios.delete(`${BASE_URL}/todo/${id}`, {
+        withCredentials: true,
+      });
+      dispatch(deleteTodo(id));
+    } catch (err) {
+      console.error(
+        "Failed to delete: " + (err.response?.data?.message || err.message)
+      );
+    }
   };
 
-  const editTask = (index) => {
-    const todo = todos[index];
-    setTask(todo.text);
+  const editTask = (id) => {
+    const todo = todos.find((todo) => todo._id === id);
+    setTask(todo.task);
     setSelectedDate(new Date(todo.date));
     const [hours, minutes, ampm] = todo.time
       .replace(/ /g, "")
@@ -114,8 +135,24 @@ const TodoList = () => {
     );
     time.setMinutes(parseInt(minutes));
     setSelectedTime(time);
-    setEditingIndex(index);
+    setEditingIndex(id);
   };
+
+  function convertTo24Hour(time12h) {
+    const [time, modifier] = time12h.split(" "); // e.g. ["09:30", "AM"]
+    let [hours, minutes] = time.split(":");
+
+    if (hours === "12") {
+      hours = "00";
+    }
+    if (modifier.toUpperCase() === "PM") {
+      hours = parseInt(hours, 10) + 12;
+    }
+
+    // pad hours if needed
+    hours = hours.toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
+  }
 
   return (
     <div className="bg-gradient-to-br from-purple-950 via-slate-900 to-gray-900 p-4 rounded-lg border border-amber-700">
@@ -138,6 +175,7 @@ const TodoList = () => {
             <DatePicker
               selected={selectedDate}
               onChange={(date) => setSelectedDate(date)}
+              showDateSelect
               popperPlacement="bottom-start"
               dateFormat="dd MMM yyyy"
               placeholderText="Select Date"
@@ -171,30 +209,35 @@ const TodoList = () => {
 
       <button
         onClick={addTask}
-        className="w-1/2 flex items-center justify-center mx-auto py-1.5 rounded-full font-semibold text-sm bg-amber-600 hover:bg-amber-500 shadow-md hover:scale-105 transition duration-200"
+        className="w-1/2 flex items-center justify-center mx-auto py-1.5 rounded-full font-semibold text-sm bg-gradient-to-br from-amber-700 via-amber-600 to-yellow-500 shadow-md hover:scale-105 transition duration-200"
       >
         {editingIndex !== null ? <>Save Task</> : <>Add Task</>}
       </button>
 
-      <ul className="space-y-3 mt-4 text-sm text-slate-200 max-h-52 overflow-y-auto pr-1 scrollbar-hide">
+      <ul className="space-y-3 mt-4 text-sm text-slate-200 overflow-y-auto pr-1 scrollbar-hide">
         {todos.length === 0 ? (
           <p className="text-slate-500 italic">No tasks yet.</p>
         ) : (
-          todos
-            .sort(
-              (a, b) =>
-                new Date(`${a.date} ${a.time}`) -
-                new Date(`${b.date} ${b.time}`)
-            )
-            .map((todo, idx) => {
+          [...todos]
+            .sort((a, b) => {
+              const aTime24 = convertTo24Hour(a.time);
+              const bTime24 = convertTo24Hour(b.time);
+
+              const aDate = new Date(`${a.date}T${aTime24}`);
+              const bDate = new Date(`${b.date}T${bTime24}`);
+
+              return aDate - bDate;
+            })
+
+            .map((todo) => {
               const deadline = new Date(`${todo.date} ${todo.time}`);
-              const isOverdue = !todo.completed && deadline < new Date();
+              const isOverdue = !todo.isCompleted && deadline < new Date();
 
               return (
                 <li
-                  key={idx}
+                  key={todo._id}
                   className={`relative p-3 rounded-md border border-amber-700 bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900 shadow-md hover:border-purple-600 transition duration-200 group ${
-                    todo.completed ? "opacity-50" : ""
+                    todo.isCompleted ? "opacity-50" : ""
                   }`}
                 >
                   {/* Dropdown & buttons */}
@@ -203,10 +246,12 @@ const TodoList = () => {
                       onClick={(e) => {
                         const rect = e.currentTarget.getBoundingClientRect();
                         setDropdownPos({
-                          top: rect.bottom + window.scrollY + 4,
-                          left: rect.right + window.scrollX - 130,
+                          top: rect.bottom + window.scrollY - 4,
+                          left: rect.right + window.scrollX - 120,
                         });
-                        setMenuOpenIndex(menuOpenIndex === idx ? null : idx);
+                        setMenuOpenIndex(
+                          menuOpenIndex === todo._id ? null : todo._id
+                        );
                       }}
                     >
                       <MoreVertical
@@ -216,22 +261,22 @@ const TodoList = () => {
                     </button>
                   </div>
 
-                  {menuOpenIndex === idx && (
+                  {menuOpenIndex === todo._id && (
                     <DropdownMenu
                       position={dropdownPos}
                       onEdit={() => {
-                        editTask(idx);
+                        editTask(todo._id);
                         setMenuOpenIndex(null);
                       }}
                       onDelete={() => {
-                        deleteTask(idx);
+                        deleteTask(todo._id);
                         setMenuOpenIndex(null);
                       }}
                       onDone={() => {
-                        toggleComplete(idx);
+                        CompleteTask(todo._id);
                         setMenuOpenIndex(null);
                       }}
-                      showDone={!todo.completed}
+                      showDone={!todo.isCompleted}
                     />
                   )}
 
@@ -239,14 +284,14 @@ const TodoList = () => {
                   <div className="flex-1">
                     <p
                       className={`font-medium text-sm ${
-                        todo.completed
+                        todo.isCompleted
                           ? "line-through text-slate-400"
                           : isOverdue
                           ? "text-red-500"
                           : "text-white"
                       }`}
                     >
-                      🎯 {todo.text}
+                      🎯 {todo.task}
                     </p>
                     <p
                       className={`text-xs mt-1 ${

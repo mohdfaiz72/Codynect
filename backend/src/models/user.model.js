@@ -80,16 +80,6 @@ const certificationSchema = new mongoose.Schema(
   { _id: false }
 );
 
-// Todo Schema
-const todoSchema = new mongoose.Schema(
-  {
-    text: { type: String, required: true },
-    date: { type: String, required: true },
-    time: { type: String, required: true },
-  },
-  { _id: false }
-);
-
 // Main User Schema
 const userSchema = new mongoose.Schema(
   {
@@ -113,7 +103,6 @@ const userSchema = new mongoose.Schema(
     projects: { type: [projectSchema], default: [] },
     codingProfiles: { type: [codingProfileSchema], default: [] },
     certifications: { type: [certificationSchema], default: [] },
-    todos: { type: [todoSchema], default: [] },
   },
   { timestamps: true }
 );
