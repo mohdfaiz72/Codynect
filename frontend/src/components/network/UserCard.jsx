@@ -64,7 +64,7 @@ const UserCard = ({ user, onConnect }) => {
   };
 
   return (
-    <div className="relative rounded-xl h-70 flex flex-col justify-between overflow-hidden mb-3 bg-gradient-to-br from-purple-950 via-slate-900 to-gray-900 border border-amber-700 shadow-md">
+    <div className="relative rounded-xl h-75 flex flex-col justify-between overflow-hidden mb-3 bg-gradient-to-br from-purple-950 via-slate-900 to-gray-900 border border-amber-700 shadow-md">
       {/* Cover Image */}
       <div
         className="h-20 w-full bg-cover bg-center"
@@ -81,7 +81,7 @@ const UserCard = ({ user, onConnect }) => {
       />
 
       {/* Profile Section */}
-      <div className="flex flex-col items-center pt-16 text-center px-4">
+      <div className="flex flex-col items-center pt-14 text-center px-4">
         {/* Clickable Name */}
         <h3 className="text-amber-300 font-semibold text-sm hover:underline">
           <Link to={`/view-profile/${user._id}`}>{user.name}</Link>

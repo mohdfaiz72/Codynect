@@ -31,7 +31,7 @@ const ProfileHeader = () => {
   )?.name;
 
   return (
-    <div className="relative min-h-[65vh] mb-4 rounded-lg overflow-hidden border border-amber-700 bg-gradient-to-br from-purple-950 via-slate-900 to-gray-900">
+    <div className="relative min-h-[75vh] mb-4 rounded-lg overflow-hidden border border-amber-700 bg-gradient-to-br from-purple-950 via-slate-900 to-gray-900">
       {/* Cover Image */}
       <div className="relative w-full h-48 sm:h-56">
         <img

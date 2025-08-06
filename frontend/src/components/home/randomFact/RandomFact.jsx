@@ -1,27 +1,35 @@
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 import { RotateCcw } from "lucide-react";
 import { BASE_URL } from "../../../utils/constants";
+import { setFact } from "../../../store/factSlice";
 
 const RandomFact = () => {
-  const [fact, setFact] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const fact = useSelector((store) => store.fact.fact);
+  const [loading, setLoading] = useState(false);
 
   const fetchFact = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${BASE_URL}/ai/random-fact`);
-      const data = await res.json();
-      setFact(data);
+      const res = await axios.get(`${BASE_URL}/ai/random-fact`, {
+        withCredentials: true,
+      });
+      dispatch(setFact(res.data));
     } catch (err) {
-      console.error("Failed to fetch fact:", err);
-      setFact(null);
+      dispatch(setFact(null));
+      console.error(
+        "Failed to generate fact: " +
+          (err.response?.data?.message || err.message)
+      );
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchFact();
+    if (!fact) fetchFact();
   }, []);
 
   return (

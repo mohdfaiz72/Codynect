@@ -8,18 +8,23 @@ import {
   startOfWeek,
   subWeeks,
 } from "date-fns";
+import { useDispatch, useSelector } from "react-redux";
+import { setEvents } from "../../../store/eventsSlice";
 import { BASE_URL } from "../../../utils/constants";
 
 const ExploreEvents = () => {
   const [weekStart, setWeekStart] = useState(
-    startOfWeek(new Date(), { weekStartsOn: 0 }) // Week starts on Sunday
+    startOfWeek(new Date(), { weekStartsOn: 0 })
   );
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [eventsByDate, setEventsByDate] = useState({});
+  const dispatch = useDispatch();
+  const eventsByDate = useSelector((store) => store.events.events);
 
   const fetchContests = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/external/contests`);
+      const res = await axios.get(`${BASE_URL}/external/contests`, {
+        withCredentials: true,
+      });
       const data = res.data;
 
       const newEvents = {};
@@ -37,8 +42,7 @@ const ExploreEvents = () => {
           resource: contest.resource,
         });
       }
-
-      setEventsByDate(newEvents);
+      dispatch(setEvents(newEvents));
     } catch (err) {
       console.error("Failed to fetch contests:", err);
     }
@@ -46,6 +50,10 @@ const ExploreEvents = () => {
 
   useEffect(() => {
     fetchContests();
+    const intervalId = setInterval(() => {
+      fetchContests();
+    }, 3 * 60 * 60 * 1000);
+    return () => clearInterval(intervalId);
   }, []);
 
   const weekDates = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));

@@ -1,28 +1,35 @@
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { RotateCcw } from "lucide-react";
 import { BASE_URL } from "../../../utils/constants";
+import { setNews } from "../../../store/newsSlice";
+import axios from "axios";
 
 const TrendingNews = () => {
-  const [news, setNews] = useState([]);
+  const dispatch = useDispatch();
+  const news = useSelector((store) => store.news.news);
   const [loading, setLoading] = useState(false);
 
   const fetchNews = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${BASE_URL}/external/tech-news`);
-      if (!res.ok) throw new Error("Failed to fetch news");
-      const data = await res.json();
-      setNews(data.articles || []);
+      const res = await axios.get(`${BASE_URL}/external/tech-news`, {
+        withCredentials: true,
+      });
+      dispatch(setNews(res.data.articles));
     } catch (err) {
-      console.error("Error fetching tech news:", err);
-      setNews([]);
+      console.error(
+        "Failed to generate fact: " +
+          (err.response?.data?.message || err.message)
+      );
+      dispatch(setNews(null));
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchNews();
+    if (!news) fetchNews();
   }, []);
 
   return (
@@ -44,7 +51,7 @@ const TrendingNews = () => {
       </div>
       {loading ? (
         <p className="text-slate-400 text-sm">Loading news...</p>
-      ) : news.length ? (
+      ) : news ? (
         <div className="space-y-4">
           {news.map((item, index) => (
             <a
