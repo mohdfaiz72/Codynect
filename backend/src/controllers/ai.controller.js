@@ -34,19 +34,25 @@ Respond ONLY in this strict JSON format:
 };
 
 // --------- Enhance About Controller ---------
-export const enhanceAbout = async (req, res) => {
+export const getEnhanceAbout = async (req, res) => {
   const { about } = req.body;
 
   if (!about || about.trim() === "") {
     return res.status(400).json({ error: "About content is required." });
   }
 
-  const prompt = `Improve and rewrite the following 'About Me' section to make it sound professional, engaging, and developer-oriented:\n\n"${about}"`;
+  const prompt = `Rewrite the following 'About Me' section into a final, polished paragraph that is professional, engaging, and tailored for a developer profile. Do not provide suggestions—just return the final enhanced paragraph.\n\n"${about}"`;
 
   try {
     const message = await callGemini(prompt);
+
+    if (!message || typeof message !== "string") {
+      return res.status(500).json({ error: "No valid response from AI." });
+    }
+
     return res.json({ enhanced: message });
-  } catch {
+  } catch (error) {
+    console.error("Enhancement failed:", error);
     return res.status(500).json({ error: "Failed to enhance content." });
   }
 };

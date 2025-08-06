@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 // import externalRoutes from "./routes/external.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
+import todoRoutes from "./routes/todo.routes.js";
 
 // import postRoutes from "./routes/post.routes.js";
 // import commentRoutes from "./routes/comment.routes.js";
@@ -29,6 +30,7 @@ app.use(cookieParser());
 // app.use("/api/v1/external", externalRoutes);
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/todo", todoRoutes);
 
 // app.use("/api/v1/posts", postRoutes);
 // app.use("/api/v1/comments", commentRoutes);

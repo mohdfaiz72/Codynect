@@ -13,34 +13,28 @@ import {
   updateUserCertifications,
   updateUserLanguages,
   updateUserCodingProfiles,
-  updateUserTodos,
 } from "../controllers/user.controller.js";
 import { upload } from "../utils/cloudinary.js";
 
 const router = express.Router();
 
+router.use(verifyJWT);
+
 router.patch(
   "/update-profile-image",
-  verifyJWT,
   upload.single("file"),
   updateProfileImage
 );
-router.patch(
-  "/update-cover-image",
-  verifyJWT,
-  upload.single("file"),
-  updateCoverImage
-);
-router.get("/get-details", verifyJWT, getUserDetails);
-router.patch("/update-details", verifyJWT, updateUserDetails);
-router.patch("/update-about", verifyJWT, updateUserAbout);
-router.patch("/update-education", verifyJWT, updateUserEducation);
-router.patch("/update-experience", verifyJWT, updateUserExperience);
-router.patch("/update-skills", verifyJWT, updateUserSkills);
-router.patch("/update-projects", verifyJWT, updateUserProjects);
-router.patch("/update-certifications", verifyJWT, updateUserCertifications);
-router.patch("/update-languages", verifyJWT, updateUserLanguages);
-router.patch("/update-coding-profiles", verifyJWT, updateUserCodingProfiles);
-router.patch("/update-todos", verifyJWT, updateUserTodos);
+router.patch("/update-cover-image", upload.single("file"), updateCoverImage);
+router.get("/get-details", getUserDetails);
+router.patch("/update-details", updateUserDetails);
+router.patch("/update-about", updateUserAbout);
+router.patch("/update-education", updateUserEducation);
+router.patch("/update-experience", updateUserExperience);
+router.patch("/update-skills", updateUserSkills);
+router.patch("/update-projects", updateUserProjects);
+router.patch("/update-certifications", updateUserCertifications);
+router.patch("/update-languages", updateUserLanguages);
+router.patch("/update-coding-profiles", updateUserCodingProfiles);
 
 export default router;
