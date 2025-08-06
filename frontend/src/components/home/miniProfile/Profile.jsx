@@ -18,11 +18,13 @@ const Profile = () => {
     (c) => c.name.toLowerCase() === user.address?.city?.toLowerCase()
   )?.name;
   return (
-    <div className="rounded-lg h-fit overflow-hidden mb-3 bg-gradient-to-br from-purple-950 via-slate-900 to-gray-900 border border-amber-700 shadow-md">
+    <div className="rounded-lg h-80 overflow-hidden mb-3 bg-gradient-to-br from-purple-950 via-slate-900 to-gray-900 border border-amber-700 shadow-md">
       {/* Cover Image */}
       <div
         className="h-24 w-full bg-cover bg-center"
-        style={{ backgroundImage: `url(${dummyUser.coverImage})` }}
+        style={{
+          backgroundImage: `url(${user.coverImage || dummyUser.coverImage})`,
+        }}
       ></div>
 
       {/* Profile Section */}

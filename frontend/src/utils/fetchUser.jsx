@@ -4,7 +4,6 @@ import { addUser, removeUser, setLoading, setError } from "../store/userSlice";
 
 const fetchUser = () => async (dispatch) => {
   dispatch(setLoading(true));
-
   try {
     const res = await axios.get(`${BASE_URL}/user/get-details`, {
       withCredentials: true,

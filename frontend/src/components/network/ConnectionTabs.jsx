@@ -1,5 +1,3 @@
-import React from "react";
-
 const tabs = ["Suggestions", "Connections", "Requests", "Invites"];
 
 const ConnectionTabs = ({ selectedTab, setSelectedTab }) => {

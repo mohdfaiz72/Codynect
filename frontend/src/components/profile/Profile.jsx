@@ -11,7 +11,9 @@ import SkillsSection from "./skillsSection/SkillsSection";
 
 const Profile = () => {
   const location = useLocation();
-  const isBaseProfile = location.pathname === "/profile";
+  const isBaseProfile =
+    location.pathname === "/profile" ||
+    location.pathname.startsWith("/view-profile/");
 
   return (
     <div className="max-w-4xl mx-auto px-3 py-4 text-slate-200">

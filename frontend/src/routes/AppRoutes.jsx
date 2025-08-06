@@ -7,7 +7,7 @@ import Login from "../components/Login";
 import Home from "../components/home/Home";
 import CreatePost from "../components/CreatePost";
 import ChatPage from "../components/messaging/ChatPage";
-import People from "../components/people/People";
+import Network from "../components/network/Network";
 import Profile from "../components/profile/Profile";
 import EducationSection from "../components/profile/educationSection/EducationSection";
 import ExperienceSection from "../components/profile/experienceSection/ExperienceSection";
@@ -19,17 +19,18 @@ import SkillsSection from "../components/profile/skillsSection/SkillsSection";
 import Loader from "../common/Loader";
 import fetchUser from "../utils/fetchUser";
 import AboutSection from "../components/profile/aboutSection/AboutSection";
+import ViewProfile from "../components/network/ViewProfile";
 
 function AppRoutes() {
   const dispatch = useDispatch();
-  const { user, loading } = useSelector((state) => state.user);
+  const { loading } = useSelector((state) => state.user);
 
   useEffect(() => {
     dispatch(fetchUser());
   }, [dispatch]);
 
   if (loading) {
-    return <Loader message="Initializing Codynect-App..." />;
+    return <Loader message="Initializing Codynect..." />;
   }
 
   return (
@@ -44,14 +45,15 @@ function AppRoutes() {
             <Route path="/" element={<Home />} />
             <Route path="/create" element={<CreatePost />} />
             <Route path="/messages" element={<ChatPage />} />
-            <Route path="/network" element={<People />} />
+            <Route path="/network" element={<Network />} />
+            <Route path="/view-profile/:id" element={<ViewProfile />} />
 
             {/* Nested Profile Routes */}
             <Route path="/profile" element={<Profile />}>
               <Route path="about-section" element={<AboutSection />} />
-              <Route path="educations-section" element={<EducationSection />} />
+              <Route path="education-section" element={<EducationSection />} />
               <Route
-                path="experiences-section"
+                path="experience-section"
                 element={<ExperienceSection />}
               />
               <Route path="projects-section" element={<ProjectSection />} />

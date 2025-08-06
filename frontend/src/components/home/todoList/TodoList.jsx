@@ -19,8 +19,8 @@ const TodoList = () => {
   const [task, setTask] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
-  const [editingIndex, setEditingIndex] = useState(null);
-  const [menuOpenIndex, setMenuOpenIndex] = useState(null);
+  const [editingId, setEditingId] = useState(null);
+  const [menuOpenId, setMenuOpenId] = useState(null);
   const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
   const dispatch = useDispatch();
 
@@ -45,7 +45,7 @@ const TodoList = () => {
     }
   }, []);
 
-  const addTask = async () => {
+  const handleSubmitTask = (id) => {
     if (task.trim() !== "" && selectedDate && selectedTime) {
       const combinedDateTime = new Date(
         selectedDate.getFullYear(),
@@ -65,34 +65,41 @@ const TodoList = () => {
         isCompleted: false,
       };
 
-      if (editingIndex !== null) {
-        const id = editingIndex;
-        try {
-          const res = await axios.patch(`${BASE_URL}/todo/:id`, newTask, {
-            withCredentials: true,
-          });
-          dispatch(updateTodo(res.data.todo));
-          setEditingIndex(null);
-        } catch (err) {
-          console.error(
-            "Failed to update: " + (err.response?.data?.message || err.message)
-          );
-        }
+      if (id !== null) {
+        updateTask(id, newTask);
       } else {
-        try {
-          const res = await axios.post(`${BASE_URL}/todo/`, newTask, {
-            withCredentials: true,
-          });
-          dispatch(addTodo(res.data.todo));
-        } catch (err) {
-          console.error(
-            "Failed to save: " + (err.response?.data?.message || err.message)
-          );
-        }
+        addTask(newTask);
       }
       setTask("");
       setSelectedDate(null);
       setSelectedTime(null);
+    }
+  };
+
+  const addTask = async (newTask) => {
+    try {
+      const res = await axios.post(`${BASE_URL}/todo/`, newTask, {
+        withCredentials: true,
+      });
+      dispatch(addTodo(res.data.todo));
+    } catch (err) {
+      console.error(
+        "Failed to save: " + (err.response?.data?.message || err.message)
+      );
+    }
+  };
+
+  const updateTask = async (id, newTask) => {
+    try {
+      const res = await axios.patch(`${BASE_URL}/todo/${id}`, newTask, {
+        withCredentials: true,
+      });
+      dispatch(updateTodo(res.data.todo));
+      setEditingId(null);
+    } catch (err) {
+      console.error(
+        "Failed to update: " + (err.response?.data?.message || err.message)
+      );
     }
   };
 
@@ -135,7 +142,7 @@ const TodoList = () => {
     );
     time.setMinutes(parseInt(minutes));
     setSelectedTime(time);
-    setEditingIndex(id);
+    setEditingId(id);
   };
 
   function convertTo24Hour(time12h) {
@@ -151,6 +158,7 @@ const TodoList = () => {
 
     // pad hours if needed
     hours = hours.toString().padStart(2, "0");
+    minutes = minutes.toString().padStart(2, "0");
     return `${hours}:${minutes}`;
   }
 
@@ -208,10 +216,10 @@ const TodoList = () => {
       </div>
 
       <button
-        onClick={addTask}
+        onClick={() => handleSubmitTask(editingId)}
         className="w-1/2 flex items-center justify-center mx-auto py-1.5 rounded-full font-semibold text-sm bg-gradient-to-br from-amber-700 via-amber-600 to-yellow-500 shadow-md hover:scale-105 transition duration-200"
       >
-        {editingIndex !== null ? <>Save Task</> : <>Add Task</>}
+        {editingId !== null ? <>Save Task</> : <>Add Task</>}
       </button>
 
       <ul className="space-y-3 mt-4 text-sm text-slate-200 overflow-y-auto pr-1 scrollbar-hide">
@@ -249,8 +257,8 @@ const TodoList = () => {
                           top: rect.bottom + window.scrollY - 4,
                           left: rect.right + window.scrollX - 120,
                         });
-                        setMenuOpenIndex(
-                          menuOpenIndex === todo._id ? null : todo._id
+                        setMenuOpenId(
+                          menuOpenId === todo._id ? null : todo._id
                         );
                       }}
                     >
@@ -261,20 +269,20 @@ const TodoList = () => {
                     </button>
                   </div>
 
-                  {menuOpenIndex === todo._id && (
+                  {menuOpenId === todo._id && (
                     <DropdownMenu
                       position={dropdownPos}
                       onEdit={() => {
                         editTask(todo._id);
-                        setMenuOpenIndex(null);
+                        setMenuOpenId(null);
                       }}
                       onDelete={() => {
                         deleteTask(todo._id);
-                        setMenuOpenIndex(null);
+                        setMenuOpenId(null);
                       }}
                       onDone={() => {
                         CompleteTask(todo._id);
-                        setMenuOpenIndex(null);
+                        setMenuOpenId(null);
                       }}
                       showDone={!todo.isCompleted}
                     />

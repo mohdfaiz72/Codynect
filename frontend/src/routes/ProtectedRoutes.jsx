@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
 import Loader from "../common/Loader";
-import Header from "../components/Header";
+import Header from "../components/header/Header";
+import ProfileRemover from "../utils/ProfileRemover";
 
 const ProtectedRoutes = () => {
   const { user, loading } = useSelector((store) => store.user);
@@ -24,6 +25,7 @@ const ProtectedRoutes = () => {
 
   return (
     <>
+      <ProfileRemover />
       <Header />
       <Outlet />
     </>

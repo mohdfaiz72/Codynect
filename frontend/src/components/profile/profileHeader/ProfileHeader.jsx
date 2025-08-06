@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { Edit, Camera } from "lucide-react";
 import { Country, State, City } from "country-state-city";
@@ -12,7 +12,11 @@ const ProfileHeader = () => {
   const [showEditCoverModal, setShowEditCoverModal] = useState(false);
   const [showEditPhotoModal, setShowEditPhotoModal] = useState(false);
   const [showEditProfileModal, setShowEditProfileModal] = useState(false);
-  const user = useSelector((store) => store.user.user);
+
+  const isOwnProfile = useSelector((store) => store.profile.isOwnProfile);
+  const user = isOwnProfile
+    ? useSelector((store) => store.user.user)
+    : useSelector((store) => store.profile.profile);
 
   const countryName = Country.getCountryByCode(user.address?.country)?.name;
   const stateName = State.getStateByCodeAndCountry(
@@ -34,13 +38,15 @@ const ProfileHeader = () => {
           src={user.coverImage || dummyUser.coverImage}
           alt="Cover"
           className="w-full h-full object-cover"
-        />
-        <Camera
-          onClick={() => setShowEditCoverModal(true)}
-          className="absolute top-3 right-3 text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform cursor-pointer"
-          size={24}
-          title="Edit Cover Image"
-        />
+        />{" "}
+        {isOwnProfile && (
+          <Camera
+            onClick={() => setShowEditCoverModal(true)}
+            className="absolute top-3 right-3 text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform cursor-pointer"
+            size={24}
+            title="Edit Cover Image"
+          />
+        )}
       </div>
 
       {/* Profile image & info */}
@@ -49,19 +55,21 @@ const ProfileHeader = () => {
         <img
           src={user.profileImage || dummyUser.profileImage}
           alt={user.name}
-          onClick={() => setShowEditPhotoModal(true)}
+          onClick={isOwnProfile ? () => setShowEditPhotoModal(true) : undefined}
           className="w-32 h-32 sm:w-36 sm:h-36 rounded-full border-3 border-amber-700 bg-slate-900 object-cover cursor-pointer hover:border-purple-600 transition absolute left-8"
           style={{ top: "-100px" }}
         />
 
         {/* Edit Profile Button */}
-        <div className="flex justify-end px-4 mt-2">
-          <Edit
-            onClick={() => setShowEditProfileModal(true)}
-            size={24}
-            className="absolute top-3 right-3 text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform cursor-pointer"
-          />
-        </div>
+        {isOwnProfile && (
+          <div className="flex justify-end px-4 mt-2">
+            <Edit
+              onClick={() => setShowEditProfileModal(true)}
+              size={24}
+              className="absolute top-3 right-3 text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform cursor-pointer"
+            />
+          </div>
+        )}
 
         {/* Padding to push content below image */}
         <div className="mt-8 sm:mt-10 text-left w-full">

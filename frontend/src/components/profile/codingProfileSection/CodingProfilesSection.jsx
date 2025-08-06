@@ -9,7 +9,10 @@ import { addUser } from "../../../store/userSlice";
 import { BASE_URL } from "../../../utils/constants";
 
 const CodingProfilesSection = () => {
-  const user = useSelector((store) => store.user.user);
+  const isOwnProfile = useSelector((store) => store.profile.isOwnProfile);
+  const user = isOwnProfile
+    ? useSelector((store) => store.user.user)
+    : useSelector((store) => store.profile.profile);
   const [showEditModal, setShowEditModal] = useState(false);
   const [codingProfileToUpdate, setCodingProfileToUpdate] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -73,36 +76,38 @@ const CodingProfilesSection = () => {
           <h2 className="text-amber-400 text-lg font-semibold">
             Coding Profiles
           </h2>
-          <div className="flex items-center gap-4">
-            {user.codingProfiles.length > 0 && !isEditablePage && (
+          {isOwnProfile && (
+            <div className="flex items-center gap-4">
+              {user.codingProfiles.length > 0 && !isEditablePage && (
+                <button
+                  onClick={() => navigate("/profile/coding-profiles-section")}
+                  className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
+                  title="Go to Edit Page"
+                >
+                  <Pencil size={22} />
+                </button>
+              )}
+              {isEditablePage && (
+                <button
+                  onClick={() => navigate("/profile")}
+                  className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
+                  title="Back to Profile"
+                >
+                  <ArrowLeft size={22} />
+                </button>
+              )}
               <button
-                onClick={() => navigate("/profile/coding-profiles-section")}
+                onClick={() => {
+                  setCodingProfileToUpdate(null);
+                  setShowEditModal(true);
+                }}
                 className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
-                title="Go to Edit Page"
+                title="Add Coding Profile"
               >
-                <Pencil size={22} />
+                <Plus size={22} />
               </button>
-            )}
-            {isEditablePage && (
-              <button
-                onClick={() => navigate("/profile")}
-                className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
-                title="Back to Profile"
-              >
-                <ArrowLeft size={22} />
-              </button>
-            )}
-            <button
-              onClick={() => {
-                setCodingProfileToUpdate(null);
-                setShowEditModal(true);
-              }}
-              className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
-              title="Add Coding Profile"
-            >
-              <Plus size={22} />
-            </button>
-          </div>
+            </div>
+          )}
         </div>
 
         {user.codingProfiles.length === 0 ? (

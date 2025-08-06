@@ -15,7 +15,10 @@ const LanguageSection = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const user = useSelector((store) => store.user.user);
+  const isOwnProfile = useSelector((store) => store.profile.isOwnProfile);
+  const user = isOwnProfile
+    ? useSelector((store) => store.user.user)
+    : useSelector((store) => store.profile.profile);
   const isEditablePage = location.pathname === "/profile/languages-section";
 
   const handleSaveLanguage = async (formData) => {
@@ -69,36 +72,38 @@ const LanguageSection = () => {
       <div className="bg-gradient-to-br from-purple-950 via-slate-900 to-gray-900 border border-amber-700 rounded-lg p-4 mb-4">
         <div className="flex justify-between items-center mb-2">
           <h2 className="text-amber-400 text-lg font-semibold">Languages</h2>
-          <div className="flex items-center gap-4">
-            {user.languages.length > 0 && !isEditablePage && (
+          {isOwnProfile && (
+            <div className="flex items-center gap-4">
+              {user.languages.length > 0 && !isEditablePage && (
+                <button
+                  onClick={() => navigate("/profile/languages-section")}
+                  className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
+                  title="Go to Edit Page"
+                >
+                  <Pencil size={22} />
+                </button>
+              )}
+              {isEditablePage && (
+                <button
+                  onClick={() => navigate("/profile")}
+                  className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
+                  title="Back to Profile"
+                >
+                  <ArrowLeft size={22} />
+                </button>
+              )}
               <button
-                onClick={() => navigate("/profile/languages-section")}
+                onClick={() => {
+                  setLanguageToUpdate(null);
+                  setShowEditModal(true);
+                }}
                 className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
-                title="Go to Edit Page"
+                title="Add Language"
               >
-                <Pencil size={22} />
+                <Plus size={22} />
               </button>
-            )}
-            {isEditablePage && (
-              <button
-                onClick={() => navigate("/profile")}
-                className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
-                title="Back to Profile"
-              >
-                <ArrowLeft size={22} />
-              </button>
-            )}
-            <button
-              onClick={() => {
-                setLanguageToUpdate(null);
-                setShowEditModal(true);
-              }}
-              className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
-              title="Add Language"
-            >
-              <Plus size={22} />
-            </button>
-          </div>
+            </div>
+          )}
         </div>
 
         {user.languages.length > 0 ? (

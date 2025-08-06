@@ -15,7 +15,11 @@ const AboutSection = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const user = useSelector((store) => store.user.user);
+  const isOwnProfile = useSelector((store) => store.profile.isOwnProfile);
+  const user = isOwnProfile
+    ? useSelector((store) => store.user.user)
+    : useSelector((store) => store.profile.profile);
+
   const isEditablePage = location.pathname === "/profile/about-section";
 
   const handleSaveAbout = async (updatedText) => {
@@ -57,43 +61,44 @@ const AboutSection = () => {
         {/* Header */}
         <div className="flex justify-between items-center mb-2">
           <h2 className="text-amber-400 text-lg font-semibold">About</h2>
-
-          {!isEditablePage ? (
-            <button
-              onClick={() =>
-                user.about
-                  ? navigate("/profile/about-section")
-                  : setShowEditModal(true)
-              }
-              className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
-            >
-              {user.about ? <Pencil size={22} /> : <Plus size={22} />}
-            </button>
-          ) : (
-            <div className="flex items-center gap-4">
+          {isOwnProfile ? (
+            !isEditablePage ? (
               <button
-                onClick={() => navigate("/profile")}
+                onClick={() =>
+                  user.about
+                    ? navigate("/profile/about-section")
+                    : setShowEditModal(true)
+                }
                 className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
-                title="Back to Profile"
               >
-                <ArrowLeft size={22} />
+                {user.about ? <Pencil size={22} /> : <Plus size={22} />}
               </button>
-              <button
-                onClick={() => setShowDeleteModal(true)}
-                className="text-red-400 hover:text-red-300 hover:scale-110 transition-transform"
-                title="Delete this profile"
-              >
-                <Trash2 size={18} />
-              </button>
-              <button
-                onClick={() => setShowEditModal(true)}
-                className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
-                title="Edit this profile"
-              >
-                <Pencil size={18} />
-              </button>
-            </div>
-          )}
+            ) : (
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => navigate("/profile")}
+                  className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
+                  title="Back to Profile"
+                >
+                  <ArrowLeft size={22} />
+                </button>
+                <button
+                  onClick={() => setShowDeleteModal(true)}
+                  className="text-red-400 hover:text-red-300 hover:scale-110 transition-transform"
+                  title="Delete this profile"
+                >
+                  <Trash2 size={18} />
+                </button>
+                <button
+                  onClick={() => setShowEditModal(true)}
+                  className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
+                  title="Edit this profile"
+                >
+                  <Pencil size={18} />
+                </button>
+              </div>
+            )
+          ) : null}
         </div>
 
         {/* About Text or Empty State */}

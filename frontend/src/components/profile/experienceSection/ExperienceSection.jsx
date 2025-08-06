@@ -16,7 +16,10 @@ const ExperienceSection = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const user = useSelector((store) => store.user.user);
+  const isOwnProfile = useSelector((store) => store.profile.isOwnProfile);
+  const user = isOwnProfile
+    ? useSelector((store) => store.user.user)
+    : useSelector((store) => store.profile.profile);
   const isEditablePage = location.pathname === "/profile/experience-section";
 
   const handleSaveExperience = async (formData) => {
@@ -72,37 +75,39 @@ const ExperienceSection = () => {
       <div className="bg-gradient-to-br from-purple-950 via-slate-900 to-gray-900 border border-amber-700 rounded-lg p-4 mb-4">
         <div className="flex justify-between items-center mb-2">
           <h2 className="text-amber-400 text-lg font-semibold">Experience</h2>
-          <div className="flex items-center gap-4">
-            {user.experience.length > 0 && !isEditablePage && (
-              <button
-                onClick={() => navigate("/profile/experience-section")}
-                className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
-                title="Go to Edit Page"
-              >
-                <Pencil size={22} />
-              </button>
-            )}
-            {isEditablePage && (
-              <button
-                onClick={() => navigate("/profile")}
-                className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
-                title="Back to Profile"
-              >
-                <ArrowLeft size={22} className="mr-2" />
-              </button>
-            )}
+          {isOwnProfile && (
+            <div className="flex items-center gap-4">
+              {user.experience.length > 0 && !isEditablePage && (
+                <button
+                  onClick={() => navigate("/profile/experience-section")}
+                  className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
+                  title="Go to Edit Page"
+                >
+                  <Pencil size={22} />
+                </button>
+              )}
+              {isEditablePage && (
+                <button
+                  onClick={() => navigate("/profile")}
+                  className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
+                  title="Back to Profile"
+                >
+                  <ArrowLeft size={22} className="mr-2" />
+                </button>
+              )}
 
-            <button
-              onClick={() => {
-                setExperienceToEdit(null);
-                setShowModal(true);
-              }}
-              className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
-              title="Add Experience"
-            >
-              <Plus size={22} />
-            </button>
-          </div>
+              <button
+                onClick={() => {
+                  setExperienceToEdit(null);
+                  setShowModal(true);
+                }}
+                className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
+                title="Add Experience"
+              >
+                <Plus size={22} />
+              </button>
+            </div>
+          )}
         </div>
 
         {user.experience.length > 0 ? (

@@ -14,7 +14,10 @@ const CertificationSection = () => {
   const [certToUpdate, setCertToUpdate] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const user = useSelector((store) => store.user.user);
+  const isOwnProfile = useSelector((store) => store.profile.isOwnProfile);
+  const user = isOwnProfile
+    ? useSelector((store) => store.user.user)
+    : useSelector((store) => store.profile.profile);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -77,36 +80,38 @@ const CertificationSection = () => {
           <h2 className="text-amber-400 text-lg font-semibold">
             Certifications
           </h2>
-          <div className="flex items-center gap-4">
-            {user.certifications.length > 0 && !isEditablePage && (
+          {isOwnProfile && (
+            <div className="flex items-center gap-4">
+              {user.certifications.length > 0 && !isEditablePage && (
+                <button
+                  onClick={() => navigate("/profile/certifications-section")}
+                  className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
+                  title="Go to Edit Page"
+                >
+                  <Pencil size={22} />
+                </button>
+              )}
+              {isEditablePage && (
+                <button
+                  onClick={() => navigate("/profile")}
+                  className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
+                  title="Back to Profile"
+                >
+                  <ArrowLeft size={22} />
+                </button>
+              )}
               <button
-                onClick={() => navigate("/profile/certifications-section")}
+                onClick={() => {
+                  setCertToUpdate(null);
+                  setShowEditModal(true);
+                }}
                 className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
-                title="Go to Edit Page"
+                title="Add Certification"
               >
-                <Pencil size={22} />
+                <Plus size={22} />
               </button>
-            )}
-            {isEditablePage && (
-              <button
-                onClick={() => navigate("/profile")}
-                className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
-                title="Back to Profile"
-              >
-                <ArrowLeft size={22} />
-              </button>
-            )}
-            <button
-              onClick={() => {
-                setCertToUpdate(null);
-                setShowEditModal(true);
-              }}
-              className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
-              title="Add Certification"
-            >
-              <Plus size={22} />
-            </button>
-          </div>
+            </div>
+          )}
         </div>
 
         {user.certifications.length > 0 ? (

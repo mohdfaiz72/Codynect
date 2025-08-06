@@ -1,20 +1,30 @@
-import { useState } from "react";
-import Users from "../../utils/network";
+import { useState, useEffect } from "react";
 import ConnectionTabs from "./ConnectionTabs";
 import UserCard from "./UserCard";
+import axios from "axios";
+import { BASE_URL } from "../../utils/constants";
 
-const People = () => {
+const Network = () => {
   const [selectedTab, setSelectedTab] = useState("Suggestions");
+  const [users, setUsers] = useState([]);
 
-  const getStatus = (u) => {
-    if (u.isConnected) return "connected";
-    if (u.requested && !u.invite) return "sent";
-    if (u.invite && !u.requested) return "received";
-    return "new";
-  };
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await axios.get(`${BASE_URL}/network/get-users`, {
+          withCredentials: true,
+        });
+        setUsers(res.data);
+      } catch (err) {
+        console.error("Failed to load users", err);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   const filterUsers = () => {
-    return Users.map((u) => ({ ...u, status: getStatus(u) })).filter((u) => {
+    return users.filter((u) => {
       switch (selectedTab) {
         case "Connections":
           return u.status === "connected";
@@ -29,24 +39,19 @@ const People = () => {
     });
   };
 
-  const handleConnect = (user, action = "connect") => {
-    console.log(`${action.toUpperCase()} -`, user.name);
-    // Optionally update Users array or local state here
-  };
-
   return (
     <div className="w-full p-4">
       <ConnectionTabs
         selectedTab={selectedTab}
         setSelectedTab={setSelectedTab}
       />
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
         {filterUsers().map((user) => (
-          <UserCard key={user.id} user={user} onConnect={handleConnect} />
+          <UserCard key={user._id} user={user} />
         ))}
       </div>
     </div>
   );
 };
 
-export default People;
+export default Network;
