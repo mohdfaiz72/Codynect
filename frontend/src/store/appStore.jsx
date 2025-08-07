@@ -5,6 +5,8 @@ import factReducer from "./factSlice";
 import newsReducer from "./newsSlice";
 import eventsReducer from "./eventsSlice";
 import profileReducer from "./profileSlice";
+import networkReducer from "./networkSlice";
+import conversationReducer from "./conversationSlice";
 import notificationReducer from "./notificationSlice";
 
 const appStore = configureStore({
@@ -15,6 +17,8 @@ const appStore = configureStore({
     news: newsReducer,
     events: eventsReducer,
     profile: profileReducer,
+    network: networkReducer,
+    conversation: conversationReducer,
     notification: notificationReducer,
   },
 });

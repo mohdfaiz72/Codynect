@@ -1,18 +1,29 @@
 import { dummyUser } from "../../utils/dummyUser";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setSelectedChat } from "../../store/conversationSlice";
 
-// Assuming onConnect is passed as a prop from the parent Network component
-const UserCard = ({ user, onConnect }) => {
+const UserCard = ({ user, onConnect, isPending }) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const handleMessage = () => {
+    dispatch(setSelectedChat(user._id));
+    navigate(`/messages`);
+  };
   const renderButtons = () => {
     const baseBtn =
-      "flex-1 px-3 py-1.5 m-4 rounded-full text-sm font-medium transition duration-200 shadow-sm hover:scale-105";
+      "flex-1 px-3 py-1.5 rounded-full text-sm font-medium transition duration-200 shadow-sm hover:scale-105";
     switch (user.status) {
       case "new":
         return (
-          <div className="flex">
+          <div className="flex m-4">
             <button
-              onClick={() => onConnect(user)}
-              className={`${baseBtn} bg-gradient-to-br from-amber-700 via-amber-600 to-yellow-500 text-slate-900 hover:from-amber-800 hover:to-amber-700`}
+              onClick={() => onConnect(user._id, "connect")}
+              className={`${baseBtn}  hover:from-amber-800 hover:to-amber-700 ${
+                isPending
+                  ? "opacity-50 cursor-not-allowed shadow-inner border border-amber-700 bg-transparent text-slate-400"
+                  : "bg-gradient-to-br from-amber-700 via-amber-600 to-yellow-500 text-slate-900"
+              }`}
             >
               Connect
             </button>
@@ -20,10 +31,14 @@ const UserCard = ({ user, onConnect }) => {
         );
       case "sent":
         return (
-          <div className="flex">
+          <div className="flex m-4">
             <button
-              onClick={() => onConnect(user, "withdraw")}
-              className={`${baseBtn} border border-red-500 text-red-400 hover:bg-red-900`}
+              onClick={() => onConnect(user._id, "withdraw")}
+              className={`${baseBtn} border border-red-500 text-red-400 ${
+                isPending
+                  ? "opacity-50 cursor-not-allowed shadow-inner"
+                  : "hover:bg-red-900"
+              }`}
             >
               Withdraw
             </button>
@@ -31,28 +46,47 @@ const UserCard = ({ user, onConnect }) => {
         );
       case "received":
         return (
-          <div className="space-y-2">
-            <div className="flex gap-2">
-              <button
-                onClick={() => onConnect(user, "reject")}
-                className={`${baseBtn} border border-red-500 text-red-400 hover:bg-red-900`}
-              >
-                Reject
-              </button>
-              <button
-                onClick={() => onConnect(user, "accept")}
-                className={`${baseBtn} bg-gradient-to-br from-amber-700 via-amber-600 to-yellow-500 text-slate-900 hover:from-amber-800 hover:to-amber-700`}
-              >
-                Accept
-              </button>
-            </div>
+          <div className="flex m-4">
+            <button
+              onClick={() => onConnect(user._id, "reject")}
+              className={`${baseBtn} border border-red-500 text-red-400 mr-2 ${
+                isPending
+                  ? "opacity-50 cursor-not-allowed shadow-inner"
+                  : "hover:bg-red-900"
+              }`}
+            >
+              Reject
+            </button>
+            <button
+              onClick={() => onConnect(user._id, "accept")}
+              className={`${baseBtn}  hover:from-amber-800 hover:to-amber-700 ml-2 ${
+                isPending
+                  ? "opacity-50 cursor-not-allowed shadow-inner border border-amber-700 bg-transparent text-slate-400"
+                  : "bg-gradient-to-br from-amber-700 via-amber-600 to-yellow-500 text-slate-900"
+              }`}
+            >
+              Accept
+            </button>
           </div>
         );
       case "connected":
         return (
-          <div className="flex mt-4">
+          <div className="flex m-4">
             <button
-              className={`${baseBtn} bg-purple-800/70 text-slate-200 hover:bg-purple-800`}
+              onClick={() => onConnect(user._id, "disconnect")}
+              className={`${baseBtn} border border-red-500 text-red-400 mr-2 ${
+                isPending
+                  ? "opacity-50 cursor-not-allowed shadow-inner"
+                  : "hover:bg-red-900"
+              }`}
+            >
+              Disconnect
+            </button>
+            <button
+              onClick={handleMessage}
+              className={`${baseBtn} bg-purple-800/70 text-slate-200 hover:bg-purple-800 ml-2 ${
+                isPending ? "opacity-50 cursor-not-allowed shadow-inner" : ""
+              }`}
             >
               Message
             </button>
@@ -83,7 +117,7 @@ const UserCard = ({ user, onConnect }) => {
       {/* Profile Section */}
       <div className="flex flex-col items-center pt-14 text-center px-4">
         {/* Clickable Name */}
-        <h3 className="text-amber-300 font-semibold text-sm hover:underline">
+        <h3 className="text-amber-300 font-semibold text-lg hover:underline">
           <Link to={`/view-profile/${user._id}`}>{user.name}</Link>
         </h3>
 
