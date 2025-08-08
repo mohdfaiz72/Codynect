@@ -1,7 +1,7 @@
 import { useState } from "react";
 import EditProject from "./EditProject";
 import { useSelector, useDispatch } from "react-redux";
-import { Pencil, Plus, ArrowLeft, Trash2 } from "lucide-react";
+import { Pencil, Plus, ArrowLeft, Trash2, Github } from "lucide-react";
 import DeleteConfirmation from "../../../common/DeleteConfirmation";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
@@ -170,9 +170,21 @@ const ProjectSection = () => {
                       href={proj.github}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-amber-400 hover:underline"
+                      className="text-amber-400 hover:underline inline-flex items-center gap-1"
                     >
-                      🔗 GitHub
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        className="w-4 h-4"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.207 11.385.6.113.793-.26.793-.577v-2.234c-3.338.726-4.033-1.612-4.033-1.612-.546-1.386-1.333-1.756-1.333-1.756-1.09-.745.082-.729.082-.729 1.205.085 1.84 1.237 1.84 1.237 1.07 1.834 2.81 1.304 3.495.997.107-.775.418-1.305.76-1.605-2.665-.305-5.467-1.333-5.467-5.93 0-1.31.467-2.382 1.235-3.222-.124-.303-.535-1.523.117-3.176 0 0 1.008-.322 3.3 1.23a11.49 11.49 0 0 1 3.003-.404c1.02.004 2.045.137 3.003.404 2.29-1.552 3.296-1.23 3.296-1.23.654 1.653.243 2.873.12 3.176.77.84 1.233 1.912 1.233 3.222 0 4.61-2.807 5.624-5.48 5.922.43.37.823 1.096.823 2.21v3.285c0 .32.192.694.8.576C20.565 21.796 24 17.297 24 12c0-6.63-5.37-12-12-12z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      GitHub
                     </a>
                   )}
                   {proj.demo && (

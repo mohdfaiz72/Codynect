@@ -1,5 +1,5 @@
 const MessageBubble = ({ message }) => {
-  const isMe = message.sender === "me";
+  const isMe = message.receiver === "them";
 
   return (
     <div className={`flex ${isMe ? "justify-end" : "justify-start"} my-1`}>

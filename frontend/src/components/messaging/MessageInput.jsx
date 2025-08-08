@@ -1,12 +1,30 @@
 import { useState } from "react";
 import { Send } from "lucide-react";
+import { useSelector } from "react-redux";
+import { BASE_URL } from "../../utils/constants";
+import axios from "axios";
 
-const MessageInput = () => {
+const MessageInput = ({ onMessageSent }) => {
   const [message, setMessage] = useState("");
+  const { selectedChat } = useSelector((store) => store.conversation);
 
-  const handleSend = () => {
-    if (message.trim()) {
-      console.log("Send:", message);
+  const handleSend = async () => {
+    const trimmedMessage = message.trim();
+    if (trimmedMessage) {
+      try {
+        const res = await axios.post(
+          `${BASE_URL}/message/send/${selectedChat}`,
+          { text: trimmedMessage },
+          {
+            withCredentials: true,
+          }
+        );
+        if (res.data) {
+          onMessageSent((prev) => [...prev, res.data]);
+        }
+      } catch (error) {
+        console.error("Failed to send message:", error);
+      }
       setMessage("");
     }
   };

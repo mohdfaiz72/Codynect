@@ -29,7 +29,7 @@
 - **📰 Dynamic Content Feed**  
   Integrated external APIs to enhance user engagement:
 
-  - 🧩 **Tech Facts** from the Gmini API
+  - 🧩 **Tech Facts** from the Gemini API
   - 📅 **Explore Events**: Upcoming developer-focused tech events
   - 📈 **Trending News**: Latest updates from the tech industry
 
@@ -61,9 +61,9 @@
 
 ### 🔗 External Integrations
 
-- **Gmini API** – Displaying daily tech facts
-- **Clist API** – Displaying upcoming tech events
-- **Newsdata API** – Fetching trending tech news
+- **Gemini API (Google AI Studio)** – Generating daily tech facts
+- **Clist.by API** – Displaying upcoming tech events
+- **Newsdata.io API** – Fetching trending tech news
 
 ---
 
