@@ -1,31 +1,68 @@
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { createSocketConnection } from "../../utils/socket";
 import { Send } from "lucide-react";
 import { useSelector } from "react-redux";
-import { BASE_URL } from "../../utils/constants";
-import axios from "axios";
+
+const getChatId = (userId1, userId2) => {
+  if (!userId1 || !userId2) return null;
+  return [userId1, userId2].sort().join("--");
+};
 
 const MessageInput = ({ onMessageSent }) => {
   const [message, setMessage] = useState("");
-  const { selectedChat } = useSelector((store) => store.conversation);
+  const socketRef = useRef(null);
 
-  const handleSend = async () => {
-    const trimmedMessage = message.trim();
-    if (trimmedMessage) {
-      try {
-        const res = await axios.post(
-          `${BASE_URL}/message/send/${selectedChat}`,
-          { text: trimmedMessage },
-          {
-            withCredentials: true,
-          }
-        );
-        if (res.data) {
-          onMessageSent((prev) => [...prev, res.data]);
+  const { selectedChat } = useSelector((store) => store.conversation);
+  const { user } = useSelector((store) => store.user);
+
+  const handleReceiveMessage = useCallback(
+    (data) => {
+      onMessageSent((prev) => {
+        if (prev.some((msg) => msg._id === data._id)) {
+          return prev;
         }
-      } catch (error) {
-        console.error("Failed to send message:", error);
+        return [...prev, data];
+      });
+    },
+    [onMessageSent]
+  );
+
+  useEffect(() => {
+    if (!user?._id || !selectedChat) return;
+
+    const chatId = getChatId(user._id, selectedChat);
+    if (!chatId) return;
+
+    socketRef.current = createSocketConnection();
+    socketRef.current.emit("join-chat", chatId);
+
+    socketRef.current.on("receive-message", handleReceiveMessage);
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.off("receive-message", handleReceiveMessage);
       }
+    };
+  }, [selectedChat, user?._id, handleReceiveMessage]);
+
+  const handleSendMessage = () => {
+    const trimmedMessage = message.trim();
+    const chatId = getChatId(user._id, selectedChat);
+    if (trimmedMessage && selectedChat && chatId) {
+      const payload = {
+        text: trimmedMessage,
+        receiverId: selectedChat,
+        chatId: chatId,
+      };
+      socketRef.current.emit("send-message", payload);
       setMessage("");
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSendMessage();
     }
   };
 
@@ -37,6 +74,7 @@ const MessageInput = ({ onMessageSent }) => {
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder="Type a message..."
           className="w-full bg-transparent outline-none text-slate-200 placeholder-amber-400 text-sm"
         />
@@ -44,7 +82,7 @@ const MessageInput = ({ onMessageSent }) => {
 
       {/* Send Button Outside */}
       <button
-        onClick={handleSend}
+        onClick={handleSendMessage}
         className="hover:text-amber-200 hover:scale-110 transition-transform cursor-pointer text-amber-400"
       >
         <Send />
