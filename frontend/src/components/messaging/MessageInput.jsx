@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect, useCallback } from "react";
-import { createSocketConnection } from "../../utils/socket";
+import { useState, useEffect, useCallback } from "react";
+import { getSocket } from "../../utils/socket";
 import { Send } from "lucide-react";
 import { useSelector } from "react-redux";
 
@@ -10,13 +10,15 @@ const getChatId = (userId1, userId2) => {
 
 const MessageInput = ({ onMessageSent }) => {
   const [message, setMessage] = useState("");
-  const socketRef = useRef(null);
 
-  const { selectedChat } = useSelector((store) => store.conversation);
+  const { selectedChatId } = useSelector((store) => store.conversation);
   const { user } = useSelector((store) => store.user);
 
   const handleReceiveMessage = useCallback(
     (data) => {
+      const chatId1 = getChatId(user._id, selectedChatId);
+      const chatId2 = getChatId(data.sender, data.receiver);
+      if (chatId1 !== chatId2) return;
       onMessageSent((prev) => {
         if (prev.some((msg) => msg._id === data._id)) {
           return prev;
@@ -28,35 +30,48 @@ const MessageInput = ({ onMessageSent }) => {
   );
 
   useEffect(() => {
-    if (!user?._id || !selectedChat) return;
+    if (!user?._id || !selectedChatId) return;
 
-    const chatId = getChatId(user._id, selectedChat);
+    const chatId = getChatId(user._id, selectedChatId);
     if (!chatId) return;
 
-    socketRef.current = createSocketConnection();
-    socketRef.current.emit("join-chat", chatId);
+    const socket = getSocket();
+    if (!socket) {
+      console.error("Socket connection not established yet");
+      return;
+    }
 
-    socketRef.current.on("receive-message", handleReceiveMessage);
+    socket.emit("join-chat", chatId);
+    socket.on("receive-message", handleReceiveMessage);
 
     return () => {
-      if (socketRef.current) {
-        socketRef.current.off("receive-message", handleReceiveMessage);
-      }
+      socket.off("receive-message", handleReceiveMessage);
     };
-  }, [selectedChat, user?._id, handleReceiveMessage]);
+  }, [selectedChatId, user?._id, handleReceiveMessage]);
 
   const handleSendMessage = () => {
     const trimmedMessage = message.trim();
-    const chatId = getChatId(user._id, selectedChat);
-    if (trimmedMessage && selectedChat && chatId) {
-      const payload = {
-        text: trimmedMessage,
-        receiverId: selectedChat,
-        chatId: chatId,
-      };
-      socketRef.current.emit("send-message", payload);
-      setMessage("");
+    if (!trimmedMessage) return;
+
+    if (!selectedChatId || !user?._id) return;
+
+    const chatId = getChatId(user._id, selectedChatId);
+    if (!chatId) return;
+
+    const socket = getSocket();
+    if (!socket || !socket.connected) {
+      console.error("Socket not connected");
+      return;
     }
+
+    const payload = {
+      text: trimmedMessage,
+      receiverId: selectedChatId,
+      chatId,
+    };
+
+    socket.emit("send-message", payload);
+    setMessage("");
   };
 
   const handleKeyDown = (e) => {

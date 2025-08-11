@@ -1,7 +1,7 @@
 import { Home, MessageCircle, Bell, PlusSquare, User } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { setShowNotifications } from "../../store/notificationSlice";
-import { setSelectedChat } from "../../store/conversationSlice";
+import { setSelectedChatId } from "../../store/conversationSlice";
 import { Link } from "react-router-dom";
 
 const NavIcons = () => {
@@ -36,7 +36,7 @@ const NavIcons = () => {
 
       <Link
         to="/messages"
-        onClick={() => dispatch(setSelectedChat(null))}
+        onClick={() => dispatch(setSelectedChatId(null))}
         className="group flex flex-col items-center hover:text-amber-200 hover:scale-110 transition-transform cursor-pointer"
       >
         <MessageCircle title="Messages" />

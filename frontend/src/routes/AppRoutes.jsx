@@ -1,7 +1,6 @@
 import { Routes, Route, BrowserRouter } from "react-router-dom";
-import { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
 import ProtectedRoutes from "./ProtectedRoutes";
+import useFetchData from "../utils/useFetchData";
 
 import Login from "../components/Login";
 import Home from "../components/home/Home";
@@ -17,19 +16,13 @@ import CertificationSection from "../components/profile/certificationSection/Cer
 import CodingProfilesSection from "../components/profile/codingProfileSection/CodingProfilesSection";
 import SkillsSection from "../components/profile/skillsSection/SkillsSection";
 import Loader from "../common/Loader";
-import fetchUser from "../utils/fetchUser";
 import AboutSection from "../components/profile/aboutSection/AboutSection";
 import ViewProfile from "../components/network/ViewProfile";
 
 function AppRoutes() {
-  const dispatch = useDispatch();
-  const { loading } = useSelector((state) => state.user);
+  const { initialLoading } = useFetchData();
 
-  useEffect(() => {
-    dispatch(fetchUser());
-  }, [dispatch]);
-
-  if (loading) {
+  if (initialLoading) {
     return <Loader message="Initializing Codynect..." />;
   }
 

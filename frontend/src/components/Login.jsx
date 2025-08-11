@@ -5,6 +5,7 @@ import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import { useDispatch } from "react-redux";
 import { addUser } from "../store/userSlice";
+import { connectSocket } from "../utils/socket";
 
 const Login = () => {
   const [isLoginForm, setIsLoginForm] = useState(true);
@@ -34,6 +35,7 @@ const Login = () => {
 
       console.log("Success:", data);
       dispatch(addUser(data.user));
+      connectSocket();
       navigate("/");
     } catch (err) {
       console.error("Error:", err?.response?.data || err.message);

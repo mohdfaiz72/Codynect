@@ -31,7 +31,7 @@ const ChatWindow = ({ chat }) => {
     };
 
     fetchMessages();
-  }, [chat]);
+  }, [chat?.id]);
 
   useEffect(() => {
     if (messagesEndRef.current) {

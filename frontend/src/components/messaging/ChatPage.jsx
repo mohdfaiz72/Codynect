@@ -1,54 +1,54 @@
 import ConversationList from "./ConversationList";
 import ChatWindow from "./ChatWindow";
 import { useSelector, useDispatch } from "react-redux";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import Loader from "../../common/Loader";
 import { BASE_URL } from "../../utils/constants";
 import { getSocket } from "../../utils/socket";
-import { setConversation } from "../../store/conversationSlice";
+import {
+  addConversation,
+  updateConversationOnNewMessage,
+} from "../../store/conversationSlice";
 
 const ChatPage = () => {
-  const [initialLoading, setInitialLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [chat, setChat] = useState(null);
 
-  const { conversation, selectedChat } = useSelector(
+  const { conversation, selectedChatId } = useSelector(
     (store) => store.conversation
   );
   const { user } = useSelector((store) => store.user);
   const dispatch = useDispatch();
 
-  const fetchUsers = async () => {
-    setInitialLoading(true);
-    try {
-      const res = await axios.get(`${BASE_URL}/message/conversations`, {
-        withCredentials: true,
-      });
-      dispatch(setConversation(res.data));
-    } catch (err) {
-      console.error("Failed to load users", err);
-    } finally {
-      setInitialLoading(false);
-    }
-  };
-
-  const fetchUserById = async (userId) => {
-    setInitialLoading(true);
-    try {
-      const res = await axios.get(`${BASE_URL}/message/${userId}`, {
-        withCredentials: true,
-      });
-      if (!conversation.some((conv) => conv.id === res.data.id)) {
+  // This effect fetches a single user if they are selected but not in our list
+  useEffect(() => {
+    const fetchUserById = async (userId) => {
+      try {
+        setLoading(true);
+        const res = await axios.get(`${BASE_URL}/message/${userId}`, {
+          withCredentials: true,
+        });
         setChat(res.data);
-        dispatch(setConversation([...conversation, res.data]));
+        dispatch(addConversation(res.data));
+      } catch (err) {
+        console.error("Failed to fetch user by ID", err);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error("Failed to fetch user by ID", err);
-    } finally {
-      setInitialLoading(false);
-    }
-  };
+    };
 
+    if (selectedChatId) {
+      const exists = conversation.some((conv) => conv.id === selectedChatId);
+      if (!exists) {
+        fetchUserById(selectedChatId);
+      } else {
+        setLoading(false);
+      }
+    }
+  }, [selectedChatId, conversation]);
+
+  // This effect handles real-time message updates from the socket
   useEffect(() => {
     const socket = getSocket();
     if (!socket || !user?._id) return;
@@ -59,19 +59,14 @@ const ChatPage = () => {
           ? newMessage.receiver
           : newMessage.sender;
 
-      const convoIndex = conversation.findIndex((c) => c.id === otherUserId);
-      if (convoIndex === -1) return;
-
-      const updatedConvo = {
-        ...conversation[convoIndex],
-        lastMessage: newMessage.content,
-        lastMessageTime: newMessage.createdAt,
-      };
-
-      const filteredConvos = conversation.filter((c) => c.id !== otherUserId);
-      const newConversationList = [updatedConvo, ...filteredConvos];
-
-      dispatch(setConversation(newConversationList));
+      // Use the correct reducer to update an existing conversation
+      dispatch(
+        updateConversationOnNewMessage({
+          otherUserId,
+          content: newMessage.content,
+          createdAt: newMessage.createdAt,
+        })
+      );
     };
 
     socket.on("receive-message", handleConversationUpdate);
@@ -79,35 +74,27 @@ const ChatPage = () => {
     return () => {
       socket.off("receive-message", handleConversationUpdate);
     };
-  }, [user?._id, conversation, dispatch]);
+  }, [user?._id, dispatch]);
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  useEffect(() => {
-    if (
-      selectedChat &&
-      !conversation.some((conv) => conv.id === selectedChat)
-    ) {
-      fetchUserById(selectedChat);
-    }
-  }, [selectedChat, conversation]);
+  const selectedChat = useMemo(() => {
+    if (!selectedChatId) return null;
+    return conversation.find((conv) => conv.id === selectedChatId) || null;
+  }, [selectedChatId, conversation]);
 
   return (
     <div className="flex h-[85vh] border border-amber-700 rounded-lg mx-4 mt-4 overflow-hidden">
-      {initialLoading ? (
+      {loading ? (
         <div className="flex items-center justify-center w-full">
           <Loader />
         </div>
       ) : (
         <>
           <ConversationList
-            selectedChat={selectedChat}
+            selectedChatId={selectedChatId}
             conversation={conversation}
             onChat={setChat}
           />
-          <ChatWindow chat={chat} />
+          <ChatWindow chat={selectedChat} />
         </>
       )}
     </div>

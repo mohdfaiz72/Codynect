@@ -1,10 +1,10 @@
 import { Search } from "lucide-react";
 import { useDispatch } from "react-redux";
-import { setSelectedChat } from "../../store/conversationSlice";
+import { setSelectedChatId } from "../../store/conversationSlice";
 import { formatDistanceToNow } from "date-fns";
 import { dummyUser } from "../../utils/dummyUser";
 
-const ConversationList = ({ conversation, onChat, selectedChat }) => {
+const ConversationList = ({ conversation, onChat, selectedChatId }) => {
   const dispatch = useDispatch();
 
   return (
@@ -26,13 +26,13 @@ const ConversationList = ({ conversation, onChat, selectedChat }) => {
       {conversation.length !== 0 ? (
         <div className="h-full bg-fixed px-4 pb-4 pt-2 bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900">
           {conversation.map((conv) => {
-            const isSelected = selectedChat === conv.id;
+            const isSelected = selectedChatId === conv.id;
 
             return (
               <div
                 key={conv.id}
                 onClick={() => {
-                  dispatch(setSelectedChat(conv.id));
+                  dispatch(setSelectedChatId(conv.id));
                   onChat(conv);
                 }}
                 className={`p-2 mb-2 rounded-xl cursor-pointer transition-all duration-200 group flex gap-3 items-start ${

@@ -2,7 +2,7 @@ import { io } from "socket.io-client";
 import { URL } from "./constants";
 
 let socket;
-export const createSocketConnection = () => {
+export const connectSocket = () => {
   if (!socket) {
     socket = io(URL, { withCredentials: true, transports: ["websocket"] });
   }

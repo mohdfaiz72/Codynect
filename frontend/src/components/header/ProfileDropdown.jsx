@@ -5,6 +5,7 @@ import { dummyUser } from "../../utils/dummyUser";
 import { removeUser } from "../../store/userSlice";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../../utils/constants";
+import { disconnectSocket } from "../../utils/socket";
 import axios from "axios";
 
 const ProfileDropdown = () => {
@@ -27,6 +28,7 @@ const ProfileDropdown = () => {
   const handleLogout = async () => {
     try {
       await axios.post(`${BASE_URL}/auth/logout`, { withCredentials: true });
+      disconnectSocket();
       dispatch(removeUser());
       navigate("/login");
     } catch (err) {

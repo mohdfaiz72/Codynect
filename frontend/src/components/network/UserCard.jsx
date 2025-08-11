@@ -1,15 +1,24 @@
 import { dummyUser } from "../../utils/dummyUser";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setSelectedChat } from "../../store/conversationSlice";
+import {
+  removeConversation,
+  setSelectedChatId,
+} from "../../store/conversationSlice";
 
 const UserCard = ({ user, onConnect, isPending }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleMessage = () => {
-    dispatch(setSelectedChat(user._id));
+    dispatch(setSelectedChatId(user._id));
     navigate(`/messages`);
   };
+
+  const handleDisconnect = () => {
+    onConnect(user._id, "disconnect");
+    dispatch(removeConversation(user._id));
+  };
+
   const renderButtons = () => {
     const baseBtn =
       "flex-1 px-3 py-1.5 rounded-full text-sm font-medium transition duration-200 shadow-sm hover:scale-105";
@@ -73,7 +82,7 @@ const UserCard = ({ user, onConnect, isPending }) => {
         return (
           <div className="flex m-4">
             <button
-              onClick={() => onConnect(user._id, "disconnect")}
+              onClick={handleDisconnect}
               className={`${baseBtn} border border-red-500 text-red-400 mr-2 ${
                 isPending
                   ? "opacity-50 cursor-not-allowed shadow-inner"

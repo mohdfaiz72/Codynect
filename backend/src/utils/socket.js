@@ -2,10 +2,10 @@ import Message from "../models/message.model.js";
 import { Server } from "socket.io";
 import cookie from "cookie";
 import jwt from "jsonwebtoken";
-import http from "http";
+import { createServer } from "http";
 import app from "../app.js";
 
-const server = http.createServer(app);
+const server = createServer(app);
 
 const io = new Server(server, {
   cors: {
@@ -47,8 +47,11 @@ io.use((socket, next) => {
 
 // --- Main Connection Handler ---
 io.on("connection", (socket) => {
+  console.log(`Socket ${socket.id} connected`);
+
   socket.on("join-chat", (chatId) => {
     socket.join(chatId);
+    console.log(`Socket ${socket.id} joined chat ${chatId}`);
   });
 
   socket.on("send-message", async (data) => {
@@ -78,7 +81,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    //console.log("User disconnected:", socket.id);
+    console.log(`Socket ${socket.id} disconnected`);
   });
 });
 
