@@ -1,14 +1,15 @@
 import { useState } from "react";
-import { posts } from "../utils/posts";
+import { posts } from "../../utils/posts";
 
-import ShowcaseCard from "./ShowcaseCard";
-import AchievementPost from "./AchievementPost";
-import JobPostCard from "./JobPostCard";
-import PollCard from "./PollCard";
-import QACard from "./QACard";
-// import SnippetCard from "./SnippetCard";
+import ShowcaseCard from "./postCard/ShowcaseCard";
+import AchievementPost from "./postCard/AchievementCard";
+import JobCard from "./postCard/JobCard";
+import PollCard from "./postCard/PollCard";
+import ThoughtCard from "./postCard/ThoughtCard";
+import SnippetCard from "./postCard/SnippetCard";
+import ChallengeCard from "./postCard/ChallengeCard";
 
-const PostFeed = () => {
+const Post = () => {
   const [selectedType, setSelectedType] = useState("All");
 
   const renderPostByType = (post) => {
@@ -17,14 +18,16 @@ const PostFeed = () => {
         return <AchievementPost key={post.id} post={post} />;
       case "Showcase":
         return <ShowcaseCard key={post.id} showcase={post} />;
-      case "Job Post":
-        return <JobPostCard key={post.id} job={post} />;
+      case "Jobs":
+        return <JobCard key={post.id} job={post} />;
       case "Poll":
         return <PollCard key={post.id} poll={post} />;
-      case "Q&A":
-        return <QACard key={post.id} post={post} />;
-      // case "Snippet":
-      //   return <SnippetCard key={post.id} snippet={post} />;
+      case "Thought":
+        return <ThoughtCard key={post.id} post={post} />;
+      case "Snippet":
+        return <SnippetCard key={post.id} snippet={post} />;
+      case "Challenge":
+        return <ChallengeCard key={post.id} challenge={post} />;
       default:
         return null;
     }
@@ -45,13 +48,10 @@ const PostFeed = () => {
             "Showcase",
             "Achievement",
             "Snippet",
-            "Job Post",
-            "Hiring",
+            "Jobs",
             "Challenge",
             "Poll",
-            "Q&A",
-            "Tech Opinion",
-            "Open Source",
+            "Thought",
           ].map((item) => (
             <button
               key={item}
@@ -80,4 +80,4 @@ const PostFeed = () => {
   );
 };
 
-export default PostFeed;
+export default Post;

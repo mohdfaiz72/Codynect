@@ -19,24 +19,48 @@ export const posts = [
   {
     id: "post2",
     type: "Snippet",
-    title: "Throttle Function in JS",
-    code: `function throttle(func, limit) {
-  let inThrottle;
-  return function() {
-    if (!inThrottle) {
-      func.apply(this, arguments);
-      inThrottle = true;
-      setTimeout(() => inThrottle = false, limit);
-    }
-  };
-}`,
-    language: "JavaScript",
-    author: "Faiz",
-    likes: 14,
-    comments: [{ user: "Mehak", text: "Really useful 🔥" }],
-    createdAt: "2025-07-18T13:00:00Z",
-  },
+    title: "Ways to Express an Integer as Sum of Powers",
+    institution: "LeetCode - Problem 2787",
+    approach:
+      "Dynamic Programming (1D DP array) — Precompute all possible powers ≤ n, then use a knapsack-style DP to count ways modulo 1e9+7.",
+    code: `class Solution {
+public:
+    using i64 = long long;
+    const int MOD = 1e9+7;
 
+    int numberOfWays(int n, int x) {
+        // Precompute all powers of integers up to n
+        vector<int> nums = {0};
+        for (int i = 1; (int)pow(i, x) <= n; i++) {
+            nums.push_back((int)pow(i, x));
+        }
+
+        // dp[j] = number of ways to sum to j using available powers
+        vector<i64> dp(n + 1, 0);
+        dp[0] = 1;
+
+        for (int i = 1; i < nums.size(); i++) {
+            for (int j = n; j >= nums[i]; j--) {
+                dp[j] = (dp[j] + dp[j - nums[i]]) % MOD;
+            }
+        }
+
+        return dp[n];
+    }
+};`,
+    language: "cpp",
+    tags: ["Dynamic Programming", "Math", "Combinatorics"],
+    author: "AlgoMaster",
+    createdAt: "2025-08-12T10:20:00Z",
+    likes: 89,
+    comments: [
+      {
+        user: "DPWizard",
+        text: "Nice use of 1D DP to optimize space complexity.",
+      },
+      { user: "MathGeek", text: "The precomputation step is key here." },
+    ],
+  },
   {
     id: "post3",
     type: "Achievement",
@@ -54,7 +78,7 @@ export const posts = [
 
   {
     id: "post4",
-    type: "Job Post",
+    type: "Jobs",
     title: "Frontend Developer - React",
     company: "CRED",
     location: "Remote",
@@ -103,10 +127,6 @@ export const posts = [
       { label: "Context API", votes: 15 },
       { label: "Jotai", votes: 5 },
     ],
-    author: "Faiz",
-    likes: 8,
-    comments: [{ user: "Shreya", text: "Zustand fan here ✌️" }],
-    createdAt: "2025-07-13T08:00:00Z",
   },
 
   {
@@ -146,5 +166,33 @@ export const posts = [
     likes: 27,
     comments: [{ user: "Anjali", text: "Starred and forked!" }],
     createdAt: "2025-07-11T16:00:00Z",
+  },
+  {
+    id: "thought01",
+    type: "Thought",
+    title: "Embracing Remote Work",
+    description:
+      "Remote work has transformed how I approach productivity and work-life balance. Loving the flexibility! 🌍✨",
+    author: "Alex",
+    likes: 15,
+    comments: [
+      { user: "Sam", text: "Absolutely agree! Remote work is the future." },
+      { user: "Jamie", text: "Flexibility is everything these days." },
+    ],
+    createdAt: "2025-08-10T09:30:00Z",
+  },
+  {
+    id: "thought02",
+    type: "Thought",
+    title: "JavaScript Async Patterns",
+    description:
+      "Finally got a good grip on async/await and promises. Async code is no longer a nightmare! 💻👍",
+    author: "Maya",
+    likes: 34,
+    comments: [
+      { user: "Chris", text: "Great tips! Thanks for sharing." },
+      { user: "Nina", text: "Async code is so much cleaner now." },
+    ],
+    createdAt: "2025-08-09T18:45:00Z",
   },
 ];

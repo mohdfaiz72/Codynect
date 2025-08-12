@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import Notifications from "../Notification";
-import PostFeed from "../PostFeed";
+import PostFeed from "../post/PostFeed";
 import Profile from "./miniProfile/Profile";
 import Footer from "./footer/Footer";
 import RandomFact from "./randomFact/RandomFact";
@@ -14,21 +14,21 @@ const Home = () => {
   );
 
   return (
-    <div className="h-full p-4 flex gap-4 overflow-y-auto scrollbar-hide">
+    <div className="flex h-screen p-4 gap-4">
       {/* Left Sidebar */}
-      <div className="w-1/4 self-start">
+      <div className="w-1/4 h-full overflow-y-auto scrollbar-hide">
         <Profile />
         <TodoList />
         <Footer />
       </div>
 
       {/* Center Feed */}
-      <div className="w-2/4 h-screen overflow-y-auto scrollbar-hide">
+      <div className="w-2/4 h-full overflow-y-auto scrollbar-hide">
         {showNotifications ? <Notifications /> : <PostFeed />}
       </div>
 
       {/* Right Sidebar */}
-      <div className="w-1/4 self-start">
+      <div className="w-1/4 h-full overflow-y-auto scrollbar-hide">
         <RandomFact />
         <ExploreEvents />
         <TrendingNews />

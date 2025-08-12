@@ -153,7 +153,7 @@ const SkillsSection = () => {
                   {skillGroup.skills.map((skill, i) => (
                     <span
                       key={i}
-                      className="bg-amber-700/70 text-xs px-2 py-1 rounded-full text-amber-100"
+                      className="bg-amber-700/70 text-xs px-2 py-0.5 rounded-full text-amber-100"
                       title={skill}
                     >
                       {skill}

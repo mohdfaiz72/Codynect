@@ -1,7 +1,7 @@
 import { Search } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { setSelectedChatId } from "../../store/conversationSlice";
-import { formatDistanceToNow } from "date-fns";
+import { timeAgoFormat } from "../../utils/timeAgoFormat";
 import { dummyUser } from "../../utils/dummyUser";
 
 const ConversationList = ({ conversation, onChat, selectedChatId }) => {
@@ -67,9 +67,7 @@ const ConversationList = ({ conversation, onChat, selectedChatId }) => {
                 {/* Time */}
                 {conv.lastMessageTime && (
                   <div className="text-xs text-slate-500 whitespace-nowrap">
-                    {formatDistanceToNow(new Date(conv.lastMessageTime), {
-                      addSuffix: true,
-                    })}
+                    {timeAgoFormat(conv.lastMessageTime)}
                   </div>
                 )}
               </div>

@@ -23,6 +23,7 @@
     "react-dom": "^19.1.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.6.3",
+    "react-syntax-highlighter": "^15.6.1",
     "socket.io-client": "^4.8.1",
     "tailwind-datepicker-react": "^1.4.3",
     "tailwindcss": "^4.1.11"

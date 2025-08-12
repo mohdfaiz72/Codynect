@@ -156,7 +156,7 @@ const ProjectSection = () => {
                     {proj.techStack.map((tech, tidx) => (
                       <span
                         key={tidx}
-                        className="bg-amber-700/70 text-xs px-2 py-1 rounded-full text-amber-100"
+                        className="bg-amber-700/70 text-xs px-2 py-0.5 rounded-full text-amber-100"
                       >
                         {tech}
                       </span>
@@ -176,7 +176,7 @@ const ProjectSection = () => {
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
                         fill="currentColor"
-                        className="w-4 h-4"
+                        className="w-4 h-4 text-white"
                       >
                         <path
                           fillRule="evenodd"
@@ -188,14 +188,17 @@ const ProjectSection = () => {
                     </a>
                   )}
                   {proj.demo && (
-                    <a
-                      href={proj.demo}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-amber-400 hover:underline"
-                    >
-                      🌐 Live Demo
-                    </a>
+                    <p>
+                      🌐{" "}
+                      <a
+                        href={proj.demo}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-amber-400 hover:underline"
+                      >
+                        Live Demo
+                      </a>
+                    </p>
                   )}
                 </div>
               </div>
