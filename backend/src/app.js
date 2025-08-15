@@ -10,8 +10,8 @@ import userRoutes from "./routes/user.routes.js";
 import todoRoutes from "./routes/todo.routes.js";
 import networkRoutes from "./routes/network.routes.js";
 import messageRoutes from "./routes/message.routes.js";
+import postRoutes from "./routes/post.routes.js";
 
-// import postRoutes from "./routes/post.routes.js";
 // import commentRoutes from "./routes/comment.routes.js";
 // import notificationRoutes from "./routes/notification.routes.js";
 
@@ -35,8 +35,8 @@ app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/todo", todoRoutes);
 app.use("/api/v1/network", networkRoutes);
 app.use("/api/v1/message", messageRoutes);
+app.use("/api/v1/post", postRoutes);
 
-// app.use("/api/v1/posts", postRoutes);
 // app.use("/api/v1/comments", commentRoutes);
 // app.use("/api/v1/notifications", notificationRoutes);
 

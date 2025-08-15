@@ -4,7 +4,7 @@ import useFetchData from "../utils/useFetchData";
 
 import Login from "../components/Login";
 import Home from "../components/home/Home";
-import CreatePost from "../components/CreatePost";
+import CreatePost from "../components/post/CreatePost";
 import ChatPage from "../components/messaging/ChatPage";
 import Network from "../components/network/Network";
 import Profile from "../components/profile/Profile";

@@ -15,11 +15,11 @@ const router = express.Router();
 router.use(verifyJWT);
 
 router.get("/get-users", getAllUsers);
-router.post("/send-request", verifyJWT, sendRequest);
-router.post("/accept-request", verifyJWT, acceptRequest);
-router.delete("/reject-request", verifyJWT, rejectRequest);
-router.delete("/withdraw-request", verifyJWT, withdrawRequest);
-router.delete("/disconnect", verifyJWT, disconnectConnection);
+router.post("/send-request", sendRequest);
+router.post("/accept-request", acceptRequest);
+router.delete("/reject-request", rejectRequest);
+router.delete("/withdraw-request", withdrawRequest);
+router.delete("/disconnect", disconnectConnection);
 router.get("/profile-view/:id", getUserProfileById);
 
 export default router;

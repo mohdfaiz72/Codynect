@@ -1,10 +1,22 @@
 import express from "express";
-import { createPost, getFeed } from "../controllers/post.controller.js";
-import authMiddleware from "../middlewares/auth.middleware.js";
+import { verifyJWT } from "../middlewares/auth.middleware.js";
+import {
+  getFeed,
+  postPoll,
+  postThought,
+  postSnippet,
+  postShowcase,
+} from "../controllers/post.controller.js";
+import { upload } from "../utils/cloudinary.js";
 
 const router = express.Router();
 
-router.post("/", authMiddleware, createPost);
-router.get("/feed", authMiddleware, getFeed);
+router.use(verifyJWT);
+
+router.get("/get-feed", getFeed);
+router.post("/thought", upload.single("file"), postThought);
+router.post("/snippet", postSnippet);
+router.post("/showcase", postShowcase);
+router.post("/poll", postPoll);
 
 export default router;
