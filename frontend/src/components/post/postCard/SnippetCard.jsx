@@ -67,7 +67,9 @@ const SnippetCard = ({ snippet }) => {
         <PostTags tags={snippet.tags} />
       </div>
       {/* Code */}
-      <CodeBlock code={snippet.code} language={snippet.language} />
+      {snippet.code && snippet.code.trim() !== "" && (
+        <CodeBlock code={snippet.code} language={snippet.language} />
+      )}
       <hr className="border-amber-700 mb-3" />
       <PostAction />
     </div>

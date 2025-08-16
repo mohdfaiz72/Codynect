@@ -5,12 +5,12 @@ import PostTags from "./PostTags";
 const JobCard = ({ job }) => {
   return (
     <div className="bg-fixed border border-amber-700 p-4 rounded-lg bg-gradient-to-br from-purple-950 via-slate-900 to-gray-900 shadow-md">
-      <PostHeader />
+      <PostHeader createdAt={job.createdAt} user={job.user} />
 
       <div className="m-3 space-y-1">
         {/* Company */}
         <p className="text-sm text-slate-300">
-          <span className="font-medium text-amber-300">📌 Company:</span>{" "}
+          <span className="font-medium text-amber-300">📢 Company:</span>{" "}
           {job.company}
         </p>
 
@@ -34,9 +34,13 @@ const JobCard = ({ job }) => {
 
         <p className="text-sm text-slate-300">
           <span className="font-medium text-amber-300">
-            💰 {job.salary.type}:
+            💰 Expected {job.salary.type}:
           </span>{" "}
-          {job.salary[job.salary.type?.toLowerCase()] || "Not disclosed"}
+          {job.salary.type === "CTC"
+            ? `${job.salary.ctc} LPA`
+            : job.salary.type === "Stipend"
+            ? `₹${job.salary.stipend.toLocaleString()} / month`
+            : "Not disclosed"}
         </p>
 
         {/* Apply Link */}

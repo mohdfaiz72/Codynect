@@ -4,7 +4,7 @@ const jobSchema = new mongoose.Schema(
   {
     type: {
       type: String,
-      default: "Job",
+      default: "Jobs",
     },
     company: {
       type: String,
@@ -29,7 +29,7 @@ const jobSchema = new mongoose.Schema(
     salary: {
       ctc: { type: Number, default: 0 },
       stipend: { type: Number, default: 0 },
-      type: { type: String, enum: ["CTC", "Stipend"], default: null },
+      type: { type: String, enum: ["CTC", "Stipend"], default: "CTC" },
     },
     applyLink: {
       type: String,

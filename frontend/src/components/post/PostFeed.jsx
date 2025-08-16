@@ -1,28 +1,28 @@
 import { useState, useEffect } from "react";
-//import { posts } from "../../utils/posts";
-
 import ShowcaseCard from "./postCard/ShowcaseCard";
 import AchievementPost from "./postCard/AchievementCard";
 import JobCard from "./postCard/JobCard";
 import PollCard from "./postCard/PollCard";
 import ThoughtCard from "./postCard/ThoughtCard";
 import SnippetCard from "./postCard/SnippetCard";
-import ChallengeCard from "./postCard/ChallengeCard";
+import ArticleCard from "./postCard/ArticleCard";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "../../store/postSlice";
 import axios from "axios";
 import { BASE_URL } from "../../utils/constants";
 import Loader from "../../common/Loader";
+import DoubtCard from "./postCard/DoubtCard";
 
 const postTypes = [
   "All",
+  "Thought",
   "Showcase",
   "Achievement",
   "Snippet",
   "Jobs",
-  "Challenge",
+  "Article",
+  "Doubt",
   "Poll",
-  "Thought",
 ];
 
 const PostFeed = () => {
@@ -52,20 +52,22 @@ const PostFeed = () => {
 
   const renderPostByType = (post) => {
     switch (post.type) {
-      // case "Achievement":
-      // return <AchievementPost key={post.id} post={post} />;
+      case "Achievement":
+        return <AchievementPost key={post._id} achievement={post} />;
       case "Showcase":
         return <ShowcaseCard key={post._id} showcase={post} />;
-      // case "Jobs":
-      //   return <JobCard key={post.id} job={post} />;
+      case "Jobs":
+        return <JobCard key={post._id} job={post} />;
       case "Poll":
         return <PollCard key={post._id} poll={post} />;
+      case "Doubt":
+        return <DoubtCard key={post._id} doubt={post} />;
       case "Thought":
         return <ThoughtCard key={post._id} thought={post} />;
       case "Snippet":
         return <SnippetCard key={post._id} snippet={post} />;
-      // case "Challenge":
-      //   return <ChallengeCard key={post.id} challenge={post} />;
+      case "Article":
+        return <ArticleCard key={post._id} article={post} />;
       default:
         return null;
     }

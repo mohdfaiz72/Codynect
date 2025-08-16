@@ -3,17 +3,13 @@ import Editor from "@monaco-editor/react";
 import axios from "axios";
 import { BASE_URL } from "../../../utils/constants";
 
-const SnippetForm = () => {
+const DoubtForm = () => {
   const [formData, setFormData] = useState({
     title: "",
-    intuition: "",
-    approach: "",
-    timeComplexity: "",
-    spaceComplexity: "",
-    language: "cpp",
-    link: "",
-    tags: "",
+    content: "",
     code: "",
+    language: "cpp",
+    tags: "",
   });
   const [loading, setLoading] = useState(false);
 
@@ -25,47 +21,39 @@ const SnippetForm = () => {
   const resetForm = () => {
     setFormData({
       title: "",
-      intuition: "",
-      approach: "",
-      timeComplexity: "",
-      spaceComplexity: "",
-      language: "cpp",
-      link: "",
-      tags: "",
+      content: "",
       code: "",
+      language: "cpp",
+      tags: "",
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (
-      !formData.title.trim() ||
-      !formData.code.trim() ||
-      !formData.language.trim()
-    )
-      return;
+    if (!formData.title.trim() || !formData.content.trim()) return;
 
     const tagsArray = formData.tags
       .split(",")
       .map((tag) => tag.trim())
       .filter(Boolean);
 
+    const payload = {
+      title: formData.title.trim(),
+      content: formData.content.trim(),
+      code: formData.code.trim() || "",
+      language: formData.language,
+      tags: tagsArray,
+    };
+
     try {
       setLoading(true);
-      const payload = {
-        ...formData,
-        code: formData.code.trim(),
-        tags: tagsArray,
-      };
-      const res = await axios.post(`${BASE_URL}/post/snippet`, payload, {
+      const res = await axios.post(`${BASE_URL}/post/doubt`, payload, {
         withCredentials: true,
       });
-
-      console.log("Snippet posted:", res.data);
+      console.log("Doubt posted:", res.data);
       resetForm();
     } catch (error) {
-      console.error("Error posting snippet:", error);
+      console.error("Error posting doubt:", error);
     } finally {
       setLoading(false);
     }
@@ -84,88 +72,51 @@ const SnippetForm = () => {
 
   return (
     <div className="w-full max-w-3xl bg-slate-950 p-6 rounded-xl border border-amber-700 shadow-lg">
-      <h2 className="text-2xl font-bold text-amber-300 mb-4">
-        Post a Code Snippet
-      </h2>
-      <hr className="text-amber-700 mb-3" />
+      <h2 className="text-2xl font-bold text-amber-300 mb-4">Post a Doubt</h2>
+      <hr className="border-amber-700 mb-3" />
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Title */}
         <div>
           <label className="block mb-1 text-sm font-medium text-amber-300">
-            🎯 Problem Title
+            ❓ Doubt Title
           </label>
           <input
             type="text"
             name="title"
             value={formData.title}
             onChange={handleChange}
-            placeholder="e.g. Two Sum"
+            placeholder="Enter a short title for your doubt"
             className="w-full px-3 py-2 bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900 text-slate-300 rounded-md border border-amber-700 shadow-inner outline-none focus:border-purple-600 focus:border-2 text-sm"
-            required
           />
         </div>
 
-        {/* Intuition */}
         <div>
           <label className="block mb-1 text-sm font-medium text-amber-300">
-            🧠 Intuition
+            ✏️ Details
           </label>
           <textarea
-            name="intuition"
-            rows={2}
-            value={formData.intuition}
+            name="content"
+            value={formData.content}
             onChange={handleChange}
-            placeholder="Explain your thought process..."
-            className="w-full px-3 py-2 bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900 text-slate-300 rounded-md border border-amber-700 shadow-inner outline-none focus:border-purple-600 focus:border-2 text-sm resize-none"
+            placeholder="Explain your doubt in detail"
+            rows={5}
+            className="w-full px-3 py-2 bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900 text-slate-300 rounded-md border border-amber-700 shadow-inner outline-none focus:border-purple-600 focus:border-2 text-sm whitespace-pre-line"
           />
         </div>
 
-        {/* Approach */}
         <div>
           <label className="block mb-1 text-sm font-medium text-amber-300">
-            🚀 Approach
-          </label>
-          <textarea
-            name="approach"
-            rows={3}
-            value={formData.approach}
-            onChange={handleChange}
-            placeholder="Explain your approach in detail..."
-            className="w-full px-3 py-2 bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900 text-slate-300 rounded-md border border-amber-700 shadow-inner outline-none focus:border-purple-600 focus:border-2 text-sm resize-none"
-          />
-        </div>
-
-        {/* Time Complexity */}
-        <div>
-          <label className="block mb-1 text-sm font-medium text-amber-300">
-            📊 Time Complexity
+            🏷️ Tags
           </label>
           <input
             type="text"
-            name="timeComplexity"
-            value={formData.timeComplexity}
+            name="tags"
+            value={formData.tags}
             onChange={handleChange}
-            placeholder="e.g. O(n log n)"
-            className="w-full px-3 py-2 bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900 text-slate-300 rounded-md border border-amber-700 shadow-inner outline-none focus:border-purple-600 focus:border-2 text-sm"
+            placeholder="Add comma-separated tags"
+            className="w-full px-3 py-2 bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900 text-amber-300 rounded-md border border-amber-700 shadow-inner outline-none focus:border-purple-600 focus:border-2 text-sm"
           />
         </div>
-
-        {/* Space Complexity */}
-        <div>
-          <label className="block mb-1 text-sm font-medium text-amber-300">
-            📦 Space Complexity
-          </label>
-          <input
-            type="text"
-            name="spaceComplexity"
-            value={formData.spaceComplexity}
-            onChange={handleChange}
-            placeholder="e.g. O(1)"
-            className="w-full px-3 py-2 bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900 text-slate-300 rounded-md border border-amber-700 shadow-inner outline-none focus:border-purple-600 focus:border-2 text-sm"
-          />
-        </div>
-
         {/* Language */}
         <div>
           <label className="block mb-1 text-sm font-medium text-amber-300">
@@ -184,38 +135,6 @@ const SnippetForm = () => {
             <option value="javascript">JavaScript</option>
           </select>
         </div>
-
-        {/* Link */}
-        <div>
-          <label className="block mb-1 text-sm font-medium text-amber-300">
-            🔗 Problem Link
-          </label>
-          <input
-            type="url"
-            name="link"
-            value={formData.link}
-            onChange={handleChange}
-            placeholder="https://leetcode.com/problems/example"
-            className="w-full px-3 py-2 bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900 text-blue-300 rounded-md border border-amber-700 shadow-inner outline-none focus:border-purple-600 focus:border-2 text-sm"
-          />
-        </div>
-
-        {/* Tags */}
-        <div>
-          <label className="block mb-1 text-sm font-medium text-amber-300">
-            🏷 Tags (comma separated)
-          </label>
-          <input
-            type="text"
-            name="tags"
-            value={formData.tags}
-            onChange={handleChange}
-            placeholder="e.g. Array, Two Pointers"
-            className="w-full px-3 py-2 bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900 text-amber-300 rounded-md border border-amber-700 shadow-inner outline-none focus:border-purple-600 focus:border-2 text-sm"
-          />
-        </div>
-
-        {/* Code */}
         <div>
           <label className="block mb-1 text-sm font-medium text-amber-300">
             💻 Code
@@ -265,4 +184,4 @@ const SnippetForm = () => {
   );
 };
 
-export default SnippetForm;
+export default DoubtForm;

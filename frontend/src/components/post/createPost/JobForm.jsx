@@ -91,7 +91,7 @@ const JobForm = () => {
         {/* Company */}
         <div>
           <label className="block mb-1 text-sm font-medium text-amber-300">
-            📌 Company
+            📢 Company
           </label>
           <input
             type="text"
@@ -160,42 +160,47 @@ const JobForm = () => {
             name="salaryType"
             value={formData.salaryType}
             onChange={handleChange}
-            className="w-full px-3 py-2 bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900 text-slate-300 rounded-md border border-amber-700 shadow-inner outline-none focus:border-purple-600 focus:border-2 text-sm"
+            className="w-full px-3 py-2 bg-slate-900 text-amber-300 rounded-md border border-amber-700 shadow-inner outline-none focus:border-purple-600 focus:border-2 transition duration-200 text-sm"
           >
             <option value="CTC">CTC</option>
             <option value="Stipend">Stipend</option>
           </select>
         </div>
 
-        {/* CTC */}
-        <div>
-          <label className="block mb-1 text-sm font-medium text-amber-300">
-            💰 CTC (₹ LPA)
-          </label>
-          <input
-            type="number"
-            name="ctc"
-            value={formData.ctc}
-            onChange={handleChange}
-            placeholder="e.g. 8"
-            className="w-full px-3 py-2 bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900 text-slate-300 rounded-md border border-amber-700 shadow-inner outline-none focus:border-purple-600 focus:border-2 text-sm"
-          />
-        </div>
+        {/* Conditionally render input based on salary type */}
+        {formData.salaryType === "CTC" && (
+          <div>
+            <label className="block mb-1 text-sm font-medium text-amber-300">
+              💰 CTC (₹ LPA)
+            </label>
+            <input
+              type="number"
+              name="ctc"
+              value={formData.ctc}
+              onChange={handleChange}
+              placeholder="e.g. 8"
+              className="w-full px-3 py-2 bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900 text-slate-300 rounded-md border border-amber-700 shadow-inner outline-none focus:border-purple-600 focus:border-2 text-sm"
+              required={formData.salaryType === "CTC"}
+            />
+          </div>
+        )}
 
-        {/* Stipend */}
-        <div>
-          <label className="block mb-1 text-sm font-medium text-amber-300">
-            💰 Stipend (₹)
-          </label>
-          <input
-            type="number"
-            name="stipend"
-            value={formData.stipend}
-            onChange={handleChange}
-            placeholder="e.g. 25000"
-            className="w-full px-3 py-2 bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900 text-slate-300 rounded-md border border-amber-700 shadow-inner outline-none focus:border-purple-600 focus:border-2 text-sm"
-          />
-        </div>
+        {formData.salaryType === "Stipend" && (
+          <div>
+            <label className="block mb-1 text-sm font-medium text-amber-300">
+              💰 Stipend (₹)
+            </label>
+            <input
+              type="number"
+              name="stipend"
+              value={formData.stipend}
+              onChange={handleChange}
+              placeholder="e.g. 25000"
+              className="w-full px-3 py-2 bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900 text-slate-300 rounded-md border border-amber-700 shadow-inner outline-none focus:border-purple-600 focus:border-2 text-sm"
+              required={formData.salaryType === "Stipend"}
+            />
+          </div>
+        )}
 
         {/* Apply Link */}
         <div>

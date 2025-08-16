@@ -18,8 +18,8 @@ const ThoughtCard = ({ thought }) => {
       {thought.image && (
         <img
           src={thought.image}
-          alt="Thought visual"
-          className="w-full rounded-md my-3 object-cover"
+          alt="Thought"
+          className="w-full my-3 rounded-md border border-slate-700 shadow-sm"
         />
       )}
       <hr className="text-amber-700 mb-3" />

@@ -2,7 +2,7 @@ import { Routes, Route, BrowserRouter } from "react-router-dom";
 import ProtectedRoutes from "./ProtectedRoutes";
 import useFetchData from "../utils/useFetchData";
 
-import Login from "../components/Login";
+import Login from "../components/login/Login";
 import Home from "../components/home/Home";
 import CreatePost from "../components/post/CreatePost";
 import ChatPage from "../components/messaging/ChatPage";

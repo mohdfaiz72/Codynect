@@ -2,10 +2,10 @@ import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { BASE_URL } from "../utils/constants";
+import { BASE_URL } from "../../utils/constants";
 import { useDispatch } from "react-redux";
-import { addUser } from "../store/userSlice";
-import { connectSocket } from "../utils/socket";
+import { addUser } from "../../store/userSlice";
+import { connectSocket } from "../../utils/socket";
 
 const Login = () => {
   const [isLoginForm, setIsLoginForm] = useState(true);

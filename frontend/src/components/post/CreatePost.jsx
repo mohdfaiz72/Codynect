@@ -3,9 +3,10 @@ import ThoughtForm from "./createPost/ThoughtForm";
 import JobForm from "./createPost/JobForm";
 import SnippetForm from "./createPost/SnippetForm";
 import ShowcaseForm from "./createPost/ShowcaseForm";
-import AchievementForm from "./createPost/AchiementForm";
+import AchievementForm from "./createPost/AchievementForm";
 import PollForm from "./createPost/PollForm";
-import ChallengeForm from "./createPost/ChallengeForm";
+import ArticleForm from "./createPost/ArticleForm";
+import DoubtForm from "./createPost/DoubtForm";
 
 const postTypes = [
   "Thought",
@@ -13,7 +14,8 @@ const postTypes = [
   "Achievement",
   "Snippet",
   "Jobs",
-  "Challenge",
+  "Article",
+  "Doubt",
   "Poll",
 ];
 const CreatePost = () => {
@@ -33,8 +35,10 @@ const CreatePost = () => {
         return <ThoughtForm />;
       case "Snippet":
         return <SnippetForm />;
-      case "Challenge":
-        return <ChallengeForm />;
+      case "Article":
+        return <ArticleForm />;
+      case "Doubt":
+        return <DoubtForm />;
       default:
         return null;
     }

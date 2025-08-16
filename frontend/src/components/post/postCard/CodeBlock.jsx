@@ -10,7 +10,6 @@ const CodeBlock = ({ code, language }) => {
       showLineNumbers
       customStyle={{
         backgroundColor: "#001",
-        paddingLeft: "0",
         scrollbarWidth: "none",
         msOverflowStyle: "none",
       }}
