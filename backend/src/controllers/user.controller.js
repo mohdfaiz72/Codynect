@@ -242,34 +242,6 @@ export const updateUserSkills = async (req, res) => {
   }
 };
 
-export const updateUserCodingProfiles = async (req, res) => {
-  try {
-    const { userId } = req;
-    const { codingProfiles } = req.body;
-
-    if (!Array.isArray(codingProfiles)) {
-      return res
-        .status(400)
-        .json({ message: "'codingProfiles' must be an array." });
-    }
-
-    const user = await User.findByIdAndUpdate(
-      userId,
-      { codingProfiles },
-      { new: true }
-    );
-
-    res
-      .status(200)
-      .json({ message: "Coding profiles updated successfully.", user });
-  } catch (err) {
-    console.error("Error updating coding profiles:", err);
-    res
-      .status(500)
-      .json({ message: "Error updating coding profiles.", error: err.message });
-  }
-};
-
 export const updateUserLanguages = async (req, res) => {
   try {
     const { userId } = req;

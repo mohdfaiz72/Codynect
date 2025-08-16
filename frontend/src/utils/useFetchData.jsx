@@ -13,7 +13,6 @@ const useFetchData = () => {
     const fetchData = async () => {
       setInitialLoading(true);
       try {
-        // Run both requests in parallel
         const [userRes, conversationsRes] = await Promise.all([
           axios.get(`${BASE_URL}/user/get-details`, { withCredentials: true }),
           axios.get(`${BASE_URL}/message/conversations`, {

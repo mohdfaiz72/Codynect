@@ -55,19 +55,6 @@ const projectSchema = new mongoose.Schema(
   { _id: false }
 );
 
-// Coding Profile Schema
-const codingProfileSchema = new mongoose.Schema(
-  {
-    platform: { type: String, required: true },
-    link: { type: String, required: true },
-    currentTitle: { type: String, default: "" },
-    currentRating: { type: Number, default: 0 },
-    maxTitle: { type: String, default: "" },
-    maxRating: { type: Number, default: 0 },
-  },
-  { _id: false }
-);
-
 // Certification Schema
 const certificationSchema = new mongoose.Schema(
   {
@@ -101,7 +88,6 @@ const userSchema = new mongoose.Schema(
     skills: { type: [skillCategorySchema], default: [] },
     languages: { type: [languageSchema], default: [] },
     projects: { type: [projectSchema], default: [] },
-    codingProfiles: { type: [codingProfileSchema], default: [] },
     certifications: { type: [certificationSchema], default: [] },
   },
   { timestamps: true }

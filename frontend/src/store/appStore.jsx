@@ -4,6 +4,7 @@ import todoReducer from "./todoSlice";
 import factReducer from "./factSlice";
 import newsReducer from "./newsSlice";
 import postReducer from "./postSlice";
+import codingReducer from "./codingSlice";
 import eventsReducer from "./eventsSlice";
 import profileReducer from "./profileSlice";
 import networkReducer from "./networkSlice";
@@ -17,6 +18,7 @@ const appStore = configureStore({
     fact: factReducer,
     news: newsReducer,
     post: postReducer,
+    coding: codingReducer,
     events: eventsReducer,
     profile: profileReducer,
     network: networkReducer,

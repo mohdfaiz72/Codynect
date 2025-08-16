@@ -12,7 +12,6 @@ import {
   updateUserProjects,
   updateUserCertifications,
   updateUserLanguages,
-  updateUserCodingProfiles,
 } from "../controllers/user.controller.js";
 import { upload } from "../utils/cloudinary.js";
 
@@ -35,6 +34,5 @@ router.patch("/update-skills", updateUserSkills);
 router.patch("/update-projects", updateUserProjects);
 router.patch("/update-certifications", updateUserCertifications);
 router.patch("/update-languages", updateUserLanguages);
-router.patch("/update-coding-profiles", updateUserCodingProfiles);
 
 export default router;
