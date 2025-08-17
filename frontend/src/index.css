@@ -4,3 +4,22 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+.custom-toast {
+  font-size: 14px;
+  border-radius: 8px;
+  padding: 12px 16px;
+  max-width: 80vw;
+  width: fit-content;
+  margin-top: 12px;
+  background: linear-gradient(to right, #3b0764, #1f2937, #111827) !important;
+  color: #fbbf24;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.custom-toast-body {
+  display: flex;
+  flex-wrap: wrap;
+  word-break: break-word;
+}

@@ -45,7 +45,7 @@ const AddCodingProfile = ({ onClose, onSave }) => {
               value={formData.platform}
               onChange={handleChange}
               className="w-full px-3 py-2 bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900 text-amber-300 rounded-md border border-amber-700 shadow-inner outline-none focus:border-purple-600 focus:border-2 transition duration-200 text-sm"
-              placeholder="e.g. LeetCode, GFG, Codeforces, CodeChef, AtCoder"
+              placeholder="e.g. LeetCode, Codeforces, CodeChef"
               required
             />
           </div>

@@ -1,24 +1,17 @@
 import axios from "axios";
 
-const getTitleByBadge = (badgeData, preferMax = false) => {
+const getTitleByBadge = (badgeData) => {
   const badges = Array.isArray(badgeData)
     ? badgeData
     : badgeData
     ? [badgeData]
     : [];
-  if (badges.length === 0) return "";
-  if (preferMax) {
-    const guardian = badges.find((b) =>
-      b.name.toLowerCase().includes("guardian")
-    );
-    if (guardian) return guardian.name;
-  }
-  const knight = badges.find(
-    (b) => b.name.toLowerCase().includes("knight") && !b.expired
-  );
-  if (knight) return knight.name;
-  return "";
+  if (badges.length === 0) return "NA";
+  const badge = badges[0];
+  if (!badge.expired) return badge.name;
+  return "NA";
 };
+
 export const fetchLeetCodeData = async (username) => {
   try {
     const query = `
@@ -64,9 +57,8 @@ export const fetchLeetCodeData = async (username) => {
       (item) => item.difficulty === "All"
     );
     const totalSolved = totalSolvedObj ? totalSolvedObj.count : 0;
-    console.log(totalSolved);
-    const currentTitle = getTitleByBadge(user.contestBadge, false);
-    const maxTitle = getTitleByBadge(user.contestBadge, true);
+    const currentTitle = getTitleByBadge(user.contestBadge);
+    const maxTitle = "";
     const currentRating = data.userContestRanking?.rating || 0;
     const historyRatings = (data.userContestRankingHistory || [])
       .map((c) => c.rating)

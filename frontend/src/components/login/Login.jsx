@@ -6,6 +6,8 @@ import { BASE_URL } from "../../utils/constants";
 import { useDispatch } from "react-redux";
 import { addUser } from "../../store/userSlice";
 import { connectSocket } from "../../utils/socket";
+import { toast } from "react-toastify";
+import { fetchUserData } from "../../utils/useFetchData";
 
 const Login = () => {
   const [isLoginForm, setIsLoginForm] = useState(true);
@@ -20,21 +22,20 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const endpoint = isLoginForm ? "login" : "register";
       const payload = isLoginForm
         ? { email, password }
         : { name, email, password };
-
       const { data } = await axios.post(
         `${BASE_URL}/auth/${endpoint}`,
         payload,
-        { withCredentials: true } // ensures cookies (like JWT tokens) are stored
+        { withCredentials: true }
       );
-
       console.log("Success:", data);
+      toast.success(data.message);
       dispatch(addUser(data.user));
+      await fetchUserData();
       connectSocket();
       navigate("/");
     } catch (err) {

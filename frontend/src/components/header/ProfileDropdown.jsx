@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../../utils/constants";
 import { disconnectSocket } from "../../utils/socket";
 import axios from "axios";
+import { clearCoding } from "../../store/codingSlice";
 
 const ProfileDropdown = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -30,6 +31,7 @@ const ProfileDropdown = () => {
       await axios.post(`${BASE_URL}/auth/logout`, { withCredentials: true });
       disconnectSocket();
       dispatch(removeUser());
+      dispatch(clearCoding());
       navigate("/login");
     } catch (err) {
       console.error("Logout failed:", err?.response?.data || err.message);

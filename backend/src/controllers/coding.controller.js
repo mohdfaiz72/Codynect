@@ -79,7 +79,7 @@ export const fetchProfile = async (req, res) => {
     const updatedProfile = await CodingProfile.findOneAndUpdate(
       { user: userId, platform, username },
       { ...liveData },
-      { new: true, upsert: true }
+      { new: true }
     );
     res.status(200).json(updatedProfile);
   } catch (err) {
@@ -130,5 +130,16 @@ export const updateProfile = async (req, res) => {
   } catch (error) {
     console.error("Error updating profile:", error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const getCodingProfile = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const profiles = await CodingProfile.find({ user: id });
+    return res.status(200).json(profiles);
+  } catch (err) {
+    console.error("Error fetching coding profiles:", err.message);
+    return res.status(500).json({ message: "Failed to fetch coding profiles" });
   }
 };

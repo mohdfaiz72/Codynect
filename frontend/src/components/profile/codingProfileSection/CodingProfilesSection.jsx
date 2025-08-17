@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Pencil, Plus, ArrowLeft, Trash2, RotateCcw } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -7,50 +7,29 @@ import AddCodingProfile from "./AddCodingProfile";
 import EditCodingProfile from "./EditCodingProfile";
 import DeleteConfirmation from "../../../common/DeleteConfirmation";
 import { codingPlatforms } from "../../../utils/codingPlatforms";
+import { toast } from "react-toastify";
 import {
   addCoding,
   deleteCoding,
   updateCoding,
-  setCoding,
 } from "../../../store/codingSlice";
 import { BASE_URL } from "../../../utils/constants";
 
 const CodingProfilesSection = () => {
   const isOwnProfile = useSelector((store) => store.profile.isOwnProfile);
-  // const user = isOwnProfile
-  //   ? useSelector((store) => store.user.user)
-  //   : useSelector((store) => store.profile.profile);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [codingProfileToEdit, setCodingProfileToEdit] = useState(null);
+  const [codingProfileToUpdate, setCodingProfileToUpdate] = useState(null);
   const [loadingIds, setLoadingIds] = useState({});
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isEditablePage =
     location.pathname === "/profile/coding-profiles-section";
-
-  const { coding, isLoaded } = useSelector((store) => store.coding);
-
-  const fetchProfile = async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/coding/get-profile`, {
-        withCredentials: true,
-      });
-      dispatch(setCoding(res.data));
-    } catch (err) {
-      console.error(
-        "Failed to fetch tasks: " + (err.response?.data?.message || err.message)
-      );
-    }
-  };
-
-  useEffect(() => {
-    if (!isLoaded) {
-      fetchProfile();
-    }
-  }, []);
+  const profiles = useSelector((store) =>
+    store.profile.isOwnProfile ? store.coding.coding : store.profile.coding
+  );
 
   const handleSaveCodingProfile = async (formData) => {
     try {
@@ -58,10 +37,12 @@ const CodingProfilesSection = () => {
         withCredentials: true,
       });
       dispatch(addCoding(res.data));
-      alert("Profile added!");
+      toast.success("Profile added!");
       setShowAddModal(false);
     } catch (err) {
-      alert("Failed to save: " + (err.response?.data?.message || err.message));
+      toast.error(
+        "Failed to save: " + (err.response?.data?.message || err.message)
+      );
     }
   };
 
@@ -70,15 +51,15 @@ const CodingProfilesSection = () => {
       const res = await axios.post(
         `${BASE_URL}/coding/update-profile/${formData.id}`,
         formData,
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
       dispatch(updateCoding(res.data));
-      alert("Profile updated!");
+      toast.success("Profile updated!");
       setShowEditModal(false);
     } catch (err) {
-      alert("Failed to save: " + (err.response?.data?.message || err.message));
+      toast.error(
+        "Failed to save: " + (err.response?.data?.message || err.message)
+      );
     }
   };
 
@@ -91,9 +72,9 @@ const CodingProfilesSection = () => {
         { withCredentials: true }
       );
       dispatch(updateCoding(res.data));
-      alert(`Live data for ${profile.platform} fetched!`);
+      toast.info(`Live data for ${profile.platform} fetched!`);
     } catch (err) {
-      alert(
+      toast.error(
         "Failed to fetch live data: " +
           (err.response?.data?.message || err.message)
       );
@@ -108,10 +89,10 @@ const CodingProfilesSection = () => {
         withCredentials: true,
       });
       dispatch(deleteCoding(id));
-      alert("Coding profile deleted.");
+      toast.success("Coding profile deleted.");
       setShowDeleteModal(false);
     } catch (err) {
-      alert(
+      toast.error(
         "Failed to delete: " + (err.response?.data?.message || err.message)
       );
     }
@@ -126,7 +107,7 @@ const CodingProfilesSection = () => {
           </h2>
           {isOwnProfile && (
             <div className="flex items-center gap-4">
-              {coding?.length > 0 && !isEditablePage && (
+              {profiles?.length > 0 && !isEditablePage && (
                 <button
                   onClick={() => navigate("/profile/coding-profiles-section")}
                   className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
@@ -155,15 +136,15 @@ const CodingProfilesSection = () => {
           )}
         </div>
 
-        {coding.length === 0 ? (
+        {profiles.length === 0 ? (
           <p className="text-slate-400 text-sm">
             No coding profiles added yet.
           </p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {coding.map((profile, idx) => (
+            {profiles.map((profile) => (
               <div
-                key={idx}
+                key={profile._id}
                 className="relative border border-amber-700 p-4 rounded-md bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900 shadow-md hover:border-purple-600 transition duration-200 text-sm"
               >
                 {isEditablePage && (
@@ -171,7 +152,7 @@ const CodingProfilesSection = () => {
                     {profile.platform.toLowerCase() === "codechef" ? (
                       <button
                         onClick={() => {
-                          setCodingProfileToEdit(profile);
+                          setCodingProfileToUpdate(profile);
                           setShowEditModal(true);
                         }}
                         className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
@@ -196,7 +177,7 @@ const CodingProfilesSection = () => {
 
                     <button
                       onClick={() => {
-                        handleDeleteCodingProfile(profile._id);
+                        setCodingProfileToUpdate(profile);
                         setShowDeleteModal(true);
                       }}
                       className="text-red-400 hover:text-red-300 hover:scale-110 transition-transform"
@@ -281,7 +262,7 @@ const CodingProfilesSection = () => {
         <EditCodingProfile
           onClose={() => setShowEditModal(false)}
           onSave={handleUpdateCodingProfile}
-          codingProfileToEdit={codingProfileToEdit}
+          codingProfileToEdit={codingProfileToUpdate}
         />
       )}
       {showAddModal && (
@@ -293,7 +274,7 @@ const CodingProfilesSection = () => {
       {showDeleteModal && (
         <DeleteConfirmation
           onClose={() => setShowDeleteModal(false)}
-          onConfirm={handleDeleteCodingProfile}
+          onConfirm={() => handleDeleteCodingProfile(codingProfileToUpdate._id)}
           itemName="coding profile"
         />
       )}

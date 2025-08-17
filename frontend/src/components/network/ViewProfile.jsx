@@ -16,10 +16,21 @@ const ViewProfile = () => {
     const fetchProfile = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`${BASE_URL}/network/profile-view/${id}`, {
-          withCredentials: true,
-        });
-        dispatch(setProfile({ ...res.data, isOwnProfile: false }));
+        const [profileRes, codingRes] = await Promise.all([
+          axios.get(`${BASE_URL}/network/profile-view/${id}`, {
+            withCredentials: true,
+          }),
+          axios.get(`${BASE_URL}/coding/get-profile/${id}`, {
+            withCredentials: true,
+          }),
+        ]);
+
+        dispatch(
+          setProfile({
+            profile: profileRes.data,
+            coding: codingRes.data,
+          })
+        );
       } catch (err) {
         console.error("Fetch profile error:", err);
       } finally {
