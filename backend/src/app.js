@@ -11,7 +11,7 @@ import todoRoutes from "./routes/todo.routes.js";
 import codingRoutes from "./routes/coding.routes.js";
 import networkRoutes from "./routes/network.routes.js";
 import messageRoutes from "./routes/message.routes.js";
-import postRoutes from "./routes/post.routes.js";
+// import postRoutes from "./routes/post.routes.js";
 
 // import commentRoutes from "./routes/comment.routes.js";
 // import notificationRoutes from "./routes/notification.routes.js";

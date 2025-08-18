@@ -56,3 +56,22 @@ export const getEnhanceAbout = async (req, res) => {
     return res.status(500).json({ error: "Failed to enhance content." });
   }
 };
+
+// --------- Enhance Message Controller ---------
+export const getEnhanceMessage = async (req, res) => {
+  const { message } = req.body;
+  if (!message || message.trim() === "") {
+    return res.status(400).json({ error: "Text content is required." });
+  }
+  const prompt = `Enhance the following text for grammar, spelling, clarity, and style. Keep the meaning the same and make it professional and easy to read. Do not add suggestions—just return the enhanced text.\n\n"${message}"`;
+  try {
+    const enhancedMessage = await callGemini(prompt);
+    if (!enhancedMessage || typeof enhancedMessage !== "string") {
+      return res.status(500).json({ error: "No valid response from AI." });
+    }
+    return res.json({ enhanced: enhancedMessage });
+  } catch (error) {
+    console.error("Text enhancement failed:", error);
+    return res.status(500).json({ error: "Failed to enhance text." });
+  }
+};

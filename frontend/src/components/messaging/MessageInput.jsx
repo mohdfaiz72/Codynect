@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { getSocket } from "../../utils/socket";
-import { Send } from "lucide-react";
+import { Send, Wand2, Loader2 } from "lucide-react";
 import { useSelector } from "react-redux";
+import axios from "axios";
+import { BASE_URL } from "../../utils/constants";
 
 const getChatId = (userId1, userId2) => {
   if (!userId1 || !userId2) return null;
@@ -10,9 +12,30 @@ const getChatId = (userId1, userId2) => {
 
 const MessageInput = ({ onMessageSent }) => {
   const [message, setMessage] = useState("");
+  const [loadingEnhance, setLoadingEnhance] = useState(false);
 
   const { selectedChatId } = useSelector((store) => store.conversation);
   const { user } = useSelector((store) => store.user);
+
+  const handleEnhanceMessage = async () => {
+    if (!message.trim()) return;
+    try {
+      setLoadingEnhance(true);
+      const res = await axios.post(
+        `${BASE_URL}/ai/enhance-message`,
+        { message },
+        { withCredentials: true }
+      );
+      const enhanced = res.data.enhanced;
+      if (!enhanced) throw new Error("No enhanced message received.");
+      setMessage(enhanced);
+    } catch (error) {
+      console.error("Enhancement failed", error);
+      alert("Failed to enhance your message.");
+    } finally {
+      setLoadingEnhance(false);
+    }
+  };
 
   const handleReceiveMessage = useCallback(
     (data) => {
@@ -20,13 +43,11 @@ const MessageInput = ({ onMessageSent }) => {
       const chatId2 = getChatId(data.sender, data.receiver);
       if (chatId1 !== chatId2) return;
       onMessageSent((prev) => {
-        if (prev.some((msg) => msg._id === data._id)) {
-          return prev;
-        }
+        if (prev.some((msg) => msg._id === data._id)) return prev;
         return [...prev, data];
       });
     },
-    [onMessageSent]
+    [onMessageSent, user?._id, selectedChatId]
   );
 
   useEffect(() => {
@@ -52,7 +73,6 @@ const MessageInput = ({ onMessageSent }) => {
   const handleSendMessage = () => {
     const trimmedMessage = message.trim();
     if (!trimmedMessage) return;
-
     if (!selectedChatId || !user?._id) return;
 
     const chatId = getChatId(user._id, selectedChatId);
@@ -82,7 +102,7 @@ const MessageInput = ({ onMessageSent }) => {
   };
 
   return (
-    <div className="flex items-center gap-2 mx-4 mb-4">
+    <div className="flex items-center gap-3 mx-4 mb-4">
       {/* Input Box */}
       <div className="flex-1 border border-amber-700 bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900 px-3 py-2 rounded-md shadow-inner focus-within:border-purple-600 focus-within:border-2 transition-colors duration-200">
         <input
@@ -95,10 +115,28 @@ const MessageInput = ({ onMessageSent }) => {
         />
       </div>
 
-      {/* Send Button Outside */}
+      {/* Enhance Button */}
+      <button
+        onClick={handleEnhanceMessage}
+        disabled={loadingEnhance}
+        className={`transition-transform cursor-pointer ${
+          loadingEnhance
+            ? "text-purple-400 animate-spin"
+            : "hover:text-purple-400 hover:scale-110 text-purple-600"
+        }`}
+      >
+        {loadingEnhance ? <Loader2 /> : <Wand2 />}
+      </button>
+
+      {/* Send Button */}
       <button
         onClick={handleSendMessage}
-        className="hover:text-amber-200 hover:scale-110 transition-transform cursor-pointer text-amber-400"
+        disabled={loadingEnhance}
+        className={`hover:scale-110 transition-transform cursor-pointer ${
+          loadingEnhance
+            ? "text-gray-500 cursor-not-allowed"
+            : "hover:text-amber-200 text-amber-400"
+        }`}
       >
         <Send />
       </button>

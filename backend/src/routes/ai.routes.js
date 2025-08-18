@@ -4,6 +4,7 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 import {
   getRandomFact,
   getEnhanceAbout,
+  getEnhanceMessage,
 } from "../controllers/ai.controller.js";
 
 const router = express.Router();
@@ -12,5 +13,6 @@ router.use(verifyJWT);
 
 router.get("/random-fact", getRandomFact);
 router.post("/enhance-about", getEnhanceAbout);
+router.post("/enhance-message", getEnhanceMessage);
 
 export default router;

@@ -242,13 +242,14 @@ const CodingProfilesSection = () => {
                 </div>
                 {profile.link && (
                   <div className="mb-1 text-sm text-blue-400">
+                    🔗{" "}
                     <a
                       href={profile.link}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center hover:underline"
                     >
-                      profile link
+                      Profile Link
                     </a>
                   </div>
                 )}
