@@ -1,58 +1,44 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
-// --------------- Generate tokens ----------------
-const generateAccessAndRefreshTokens = async (userId) => {
-  try {
-    const user = await User.findById(userId);
-    const accessToken = user.generateAccessToken();
-    const refreshToken = user.generateRefreshToken();
-    user.refreshToken = refreshToken;
-    await user.save();
-    return { accessToken, refreshToken };
-  } catch (error) {
-    throw Error(
-      "Something went wrong while generating refresh and access token."
-    );
-  }
+// Cookie options
+const cookieOptions = {
+  httpOnly: true,
+  secure: false, // set true in production
+  sameSite: "strict",
 };
 
 // ---------------- REGISTER ----------------
 export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    if (!name || !email || !password) {
+    if (!name || !email || !password)
       return res
         .status(400)
-        .json({ error: "Name, email, and password are required" });
-    }
+        .json({ error: "Name, email, and password required" });
+
     const existingUser = await User.findOne({ email });
-    if (existingUser) {
+    if (existingUser)
       return res.status(409).json({ error: "Email already in use" });
-    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({
-      name,
-      email,
-      password: hashedPassword,
-    });
-    const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
-      user._id
-    );
+    const user = await User.create({ name, email, password: hashedPassword });
+
+    const accessToken = user.generateAccessToken();
+    const refreshToken = user.generateRefreshToken();
+    user.refreshToken = refreshToken;
+    await user.save();
+
     const { password: _, refreshToken: __, ...userData } = user._doc;
-    const options = {
-      httpOnly: true,
-      secure: false,
-    };
+
     return res
       .status(201)
-      .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", refreshToken, options)
+      .cookie("refreshToken", refreshToken, cookieOptions)
       .json({
         message: "Registered successfully",
-        user: userData,
         accessToken,
-        refreshToken,
+        user: userData,
       });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -63,29 +49,23 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select("+refreshToken");
     if (!user) return res.status(404).json({ error: "User not found" });
-    const isPasswordValid = await user.isPasswordCorrect(password);
-    if (!isPasswordValid)
-      return res.status(401).json({ error: "Invalid credentials" });
-    const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
-      user._id
-    );
+
+    const valid = await user.isPasswordCorrect(password);
+    if (!valid) return res.status(401).json({ error: "Invalid credentials" });
+
+    const accessToken = user.generateAccessToken();
+    const refreshToken = user.generateRefreshToken();
+    user.refreshToken = refreshToken;
+    await user.save();
+
     const { password: _, refreshToken: __, ...userData } = user._doc;
-    const options = {
-      httpOnly: true,
-      secure: false,
-    };
+
     return res
       .status(200)
-      .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", refreshToken, options)
-      .json({
-        message: "Logged In successfully",
-        user: userData,
-        accessToken,
-        refreshToken,
-      });
+      .cookie("refreshToken", refreshToken, cookieOptions)
+      .json({ message: "Logged in successfully", accessToken, user: userData });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -94,28 +74,39 @@ export const login = async (req, res) => {
 // ---------------- LOGOUT ----------------
 export const logout = async (req, res) => {
   try {
-    const userId = req.user._id;
-    await User.findByIdAndUpdate(
-      userId,
-      {
-        $set: {
-          refreshToken: "",
-        },
-      },
-      {
-        new: true,
-      }
-    );
-    const options = {
-      httpOnly: true,
-      secure: false,
-    };
-    res
-      .clearCookie("accessToken", options)
-      .clearCookie("refreshToken", options)
+    const userId = req.user?._id;
+    if (userId) await User.findByIdAndUpdate(userId, { refreshToken: "" });
+
+    return res
+      .clearCookie("refreshToken", cookieOptions)
       .status(200)
       .json({ message: "Logged out successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+};
+
+// ---------------- RENEW ACCESS TOKEN ----------------
+export const renewAccessToken = async (req, res) => {
+  try {
+    const refreshToken = req.cookies?.refreshToken;
+    if (!refreshToken)
+      return res.status(401).json({ message: "Refresh token missing" });
+
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    const user = await User.findById(decoded._id).select("+refreshToken");
+
+    if (!user || user.refreshToken !== refreshToken)
+      return res.status(401).json({ message: "Invalid refresh token" });
+
+    const accessToken = user.generateAccessToken();
+
+    const { password: _, refreshToken: __, ...userData } = user._doc;
+
+    return res.status(200).json({ accessToken, user: userData });
+  } catch (err) {
+    return res
+      .status(401)
+      .json({ message: err.message || "Could not refresh token" });
   }
 };

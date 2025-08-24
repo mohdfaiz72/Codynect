@@ -5,6 +5,7 @@ import axios from "axios";
 import { BASE_URL } from "../../utils/constants";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../store/userSlice";
+import { setAccessToken } from "../../store/authSlice";
 import { connectSocket } from "../../utils/socket";
 import { toast } from "react-toastify";
 import fetchData from "../../utils/fetchData";
@@ -34,6 +35,7 @@ const Login = () => {
       });
       console.log("Success:", res.data);
       dispatch(setUser(res.data.user));
+      dispatch(setAccessToken(res.data.accessToken));
       await fetchData(dispatch);
       toast.success(res.data.message);
       connectSocket();

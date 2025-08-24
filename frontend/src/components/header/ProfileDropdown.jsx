@@ -14,12 +14,8 @@ import { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { dummyUser } from "../../utils/dummyUser";
-import { clearUser } from "../../store/userSlice";
 import { useNavigate } from "react-router-dom";
-import { BASE_URL } from "../../utils/constants";
-import { disconnectSocket } from "../../utils/socket";
-import axios from "axios";
-import { clearCoding } from "../../store/codingSlice";
+import { logout } from "../../utils/Logout";
 import { setShowNotifications } from "../../store/notificationSlice";
 
 const ProfileDropdown = () => {
@@ -40,20 +36,7 @@ const ProfileDropdown = () => {
   }, []);
 
   const handleLogout = async () => {
-    try {
-      await axios.post(
-        `${BASE_URL}/v1/auth/logout`,
-        {},
-        { withCredentials: true }
-      );
-      //disconnectSocket();
-      dispatch(clearUser());
-      dispatch(clearCoding());
-      navigate("/login");
-    } catch (err) {
-      console.error("Logout failed:", err?.response?.data || err.message);
-      alert(err?.response?.data?.message || "Failed to logout. Try again.");
-    }
+    logout(dispatch, navigate);
   };
 
   const base =
