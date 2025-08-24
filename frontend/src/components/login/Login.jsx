@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "../../utils/constants";
 import { useDispatch } from "react-redux";
-import { addUser } from "../../store/userSlice";
+import { setUser } from "../../store/userSlice";
 import { connectSocket } from "../../utils/socket";
 import { toast } from "react-toastify";
-import { fetchUserData } from "../../utils/useFetchData";
+import fetchData from "../../utils/fetchData";
 
 const Login = () => {
   const [isLoginForm, setIsLoginForm] = useState(true);
@@ -15,6 +15,7 @@ const Login = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const [accountType, setAccountType] = useState("Personal");
   const dispatch = useDispatch();
 
@@ -22,25 +23,26 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const endpoint = isLoginForm ? "login" : "register";
       const payload = isLoginForm
         ? { email, password }
         : { name, email, password };
-      const { data } = await axios.post(
-        `${BASE_URL}/auth/${endpoint}`,
-        payload,
-        { withCredentials: true }
-      );
-      console.log("Success:", data);
-      toast.success(data.message);
-      dispatch(addUser(data.user));
-      await fetchUserData();
+      const res = await axios.post(`${BASE_URL}/v1/auth/${endpoint}`, payload, {
+        withCredentials: true,
+      });
+      console.log("Success:", res.data);
+      dispatch(setUser(res.data.user));
+      await fetchData(dispatch);
+      toast.success(res.data.message);
       connectSocket();
       navigate("/");
     } catch (err) {
       console.error("Error:", err?.response?.data || err.message);
-      alert(err?.response?.data?.message || "Something went wrong");
+      alert(err?.res?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -116,9 +118,17 @@ const Login = () => {
 
           <button
             type="submit"
-            className="w-full py-2 rounded-full font-semibold text-slate-900 text-sm bg-gradient-to-br from-amber-700 via-amber-600 to-yellow-500 hover:from-amber-800 hover:to-amber-700 shadow-md hover:scale-105 transition duration-200"
+            disabled={loading}
+            className={`w-full py-2 rounded-full font-semibold text-slate-900 text-sm shadow-md transition duration-200 bg-gradient-to-br from-amber-700 via-amber-600 to-yellow-500 hover:from-amber-800 hover:to-amber-700 hover:scale-105
+    ${loading && "opacity-50 cursor-not-allowed"}`}
           >
-            {isLoginForm ? "Login" : "Register"}
+            {loading ? (
+              <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+            ) : isLoginForm ? (
+              "Login"
+            ) : (
+              "Register"
+            )}
           </button>
         </form>
 

@@ -68,7 +68,7 @@ const ShowcaseForm = () => {
         tags: tagsArray,
       };
 
-      const res = await axios.post(`${BASE_URL}/post/showcase`, payload, {
+      const res = await axios.post(`${BASE_URL}/v1/post/showcase`, payload, {
         withCredentials: true,
       });
       console.log("Showcase posted:", res.data);

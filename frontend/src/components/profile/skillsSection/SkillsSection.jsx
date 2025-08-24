@@ -2,64 +2,60 @@ import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Pencil, Plus, ArrowLeft, Trash2 } from "lucide-react";
 import EditSkills from "./EditSkills";
-import DeleteConfirmation from "../../../common/DeleteConfirmation";
+import DeleteConfirmation from "../../common/DeleteConfirmation";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import { addUser } from "../../../store/userSlice";
+import { addSkill, updateSkill, deleteSkill } from "../../../store/skillsSlice";
 import { BASE_URL } from "../../../utils/constants";
 
 const SkillsSection = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [skillToUpdate, setSkillToUpdate] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
   const location = useLocation();
   const navigate = useNavigate();
-  const isOwnProfile = useSelector((store) => store.profile.isOwnProfile);
-  const user = isOwnProfile
-    ? useSelector((store) => store.user.user)
-    : useSelector((store) => store.profile.profile);
-  const isEditablePage = location.pathname === "/profile/skills-section";
-
   const dispatch = useDispatch();
 
+  const isOwnProfile = useSelector((store) => store.profile.isOwnProfile);
+  const skills = isOwnProfile
+    ? useSelector((store) => store.skills.skills)
+    : useSelector((store) => store.profile.profile.skills);
+
+  const isEditablePage = location.pathname === "/profile/skills-section";
+
+  // ---------- Add / Update ----------
   const handleSaveSkill = async (formData) => {
-    let updatedSkills;
-    if (skillToUpdate) {
-      updatedSkills = user.skills.map((skill) =>
-        skill === skillToUpdate ? formData : skill
-      );
-    } else {
-      updatedSkills = [...(user.skills || []), formData];
-    }
-
     try {
-      const res = await axios.patch(
-        `${BASE_URL}/user/update-skills`,
-        { skills: updatedSkills },
-        { withCredentials: true }
-      );
-
-      dispatch(addUser(res.data.user));
-      alert(skillToUpdate ? "Skill updated!" : "Skill added!");
+      let res;
+      if (skillToUpdate) {
+        res = await axios.patch(
+          `${BASE_URL}/v1/skill/${skillToUpdate._id}`,
+          formData,
+          { withCredentials: true }
+        );
+        dispatch(updateSkill(res.data));
+        alert("Skill updated!");
+      } else {
+        res = await axios.post(`${BASE_URL}/v1/skill/`, formData, {
+          withCredentials: true,
+        });
+        dispatch(addSkill(res.data));
+        alert("Skill added!");
+      }
       setShowEditModal(false);
     } catch (err) {
       alert("Failed to save: " + (err.response?.data?.message || err.message));
     }
   };
 
+  // ---------- Delete ----------
   const handleDeleteSkill = async () => {
-    const updatedSkills = user.skills.filter(
-      (skill) => skill !== skillToUpdate
-    );
-
     try {
-      const res = await axios.patch(
-        `${BASE_URL}/user/update-skills`,
-        { skills: updatedSkills },
-        { withCredentials: true }
-      );
-
-      dispatch(addUser(res.data.user));
+      await axios.delete(`${BASE_URL}/v1/skill/${skillToUpdate._id}`, {
+        withCredentials: true,
+      });
+      dispatch(deleteSkill(skillToUpdate._id));
       alert("Skill deleted.");
       setShowDeleteModal(false);
       setSkillToUpdate(null);
@@ -77,7 +73,7 @@ const SkillsSection = () => {
           <h2 className="text-amber-400 text-lg font-semibold">Skills</h2>
           {isOwnProfile && (
             <div className="flex items-center gap-4">
-              {user.skills?.length > 0 && !isEditablePage && (
+              {skills?.length > 0 && !isEditablePage && (
                 <button
                   onClick={() => navigate("/profile/skills-section")}
                   className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
@@ -110,9 +106,9 @@ const SkillsSection = () => {
           )}
         </div>
 
-        {user.skills.length > 0 ? (
+        {skills.length > 0 ? (
           <div className="space-y-4">
-            {user.skills.map((skillGroup, idx) => (
+            {skills.map((skillGroup, idx) => (
               <div
                 key={idx}
                 className="relative border border-amber-700 p-4 rounded-md bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900 shadow-md hover:border-purple-600 transition duration-200"

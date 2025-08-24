@@ -3,7 +3,7 @@ import Todo from "../models/todo.model.js";
 // Get all todos of the logged-in user
 export const getTodos = async (req, res) => {
   try {
-    const userId = req.userId;
+    const userId = req.user._id;
     const todos = await Todo.find({ user: userId });
     res.status(200).json({ todos });
   } catch (err) {
@@ -17,7 +17,7 @@ export const getTodos = async (req, res) => {
 // Add a new todo for the logged-in user
 export const addTodo = async (req, res) => {
   try {
-    const userId = req.userId;
+    const userId = req.user._id;
     const { task, date, time, isCompleted } = req.body;
 
     if (!task || !date || !time) {
@@ -50,7 +50,7 @@ export const addTodo = async (req, res) => {
 // Update a todo by ID for the logged-in user
 export const updateTodo = async (req, res) => {
   try {
-    const userId = req.userId;
+    const userId = req.user._id;
     const todoId = req.params.id;
     const updates = req.body;
 
@@ -74,7 +74,7 @@ export const updateTodo = async (req, res) => {
 // Delete a todo by ID for the logged-in user
 export const deleteTodo = async (req, res) => {
   try {
-    const userId = req.userId;
+    const userId = req.user._id;
     const todoId = req.params.id;
 
     const todo = await Todo.findOneAndDelete({ _id: todoId, user: userId });

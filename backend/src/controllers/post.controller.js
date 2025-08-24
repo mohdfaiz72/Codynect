@@ -77,6 +77,7 @@ export const getFeed = async (req, res) => {
 export const postThought = async (req, res) => {
   try {
     const { content, tags } = req.body;
+    const { _id: userId } = req.user;
 
     if (!content || content.trim() === "") {
       return res.status(400).json({
@@ -96,7 +97,7 @@ export const postThought = async (req, res) => {
       content,
       tags: tagsArray,
       image: imageUrl,
-      user: req.userId,
+      user: userId,
     });
 
     return res.status(201).json({
@@ -126,6 +127,7 @@ export const postSnippet = async (req, res) => {
       tags,
       code,
     } = req.body;
+    const { _id: userId } = req.user;
 
     if (!title || !title.trim() || !code || !code.trim()) {
       return res.status(400).json({
@@ -152,7 +154,7 @@ export const postSnippet = async (req, res) => {
       link: link?.trim() || "",
       tags: tagsArray,
       code: code.trim(),
-      user: req.userId,
+      user: userId,
     });
 
     return res.status(201).json({
@@ -173,6 +175,7 @@ export const postShowcase = async (req, res) => {
   try {
     const { projectName, description, techStack, duration, link, tags } =
       req.body;
+    const { _id: userId } = req.user;
 
     if (!projectName?.trim() || !description?.trim()) {
       return res.status(400).json({
@@ -203,7 +206,7 @@ export const postShowcase = async (req, res) => {
       duration: duration?.trim() || "",
       link: link?.trim() || "",
       tags: tagsArray,
-      user: req.userId,
+      user: userId,
     });
 
     return res.status(201).json({
@@ -223,6 +226,7 @@ export const postShowcase = async (req, res) => {
 export const postPoll = async (req, res) => {
   try {
     const { question, options, tags } = req.body;
+    const { _id: userId } = req.user;
 
     // Validation
     if (!question?.trim()) {
@@ -258,7 +262,7 @@ export const postPoll = async (req, res) => {
       question: question.trim(),
       options: trimmedOptions.map((opt) => ({ text: opt, votes: 0 })),
       tags: tagsArray,
-      user: req.userId,
+      user: userId,
     });
 
     return res.status(201).json({
@@ -287,6 +291,7 @@ export const postJob = async (req, res) => {
       description,
       tags,
     } = req.body;
+    const { _id: userId } = req.user;
 
     if (!company?.trim() || !role?.trim() || !location?.trim()) {
       return res.status(400).json({
@@ -336,7 +341,7 @@ export const postJob = async (req, res) => {
       applyLink: applyLink?.trim(),
       description: description?.trim(),
       tags: tagsArray,
-      user: req.userId,
+      user: userId,
     });
 
     return res.status(201).json({
@@ -356,6 +361,7 @@ export const postJob = async (req, res) => {
 export const postAchievement = async (req, res) => {
   try {
     const { title, description, tags } = req.body;
+    const { _id: userId } = req.user;
 
     if (!title?.trim() || !description?.trim()) {
       return res.status(400).json({
@@ -378,7 +384,7 @@ export const postAchievement = async (req, res) => {
       description: description.trim(),
       image: imageUrl,
       tags: tagsArray,
-      user: req.userId,
+      user: userId,
     });
 
     return res.status(201).json({
@@ -398,6 +404,7 @@ export const postAchievement = async (req, res) => {
 export const postArticle = async (req, res) => {
   try {
     const { title, content, tags, externalLink } = req.body;
+    const { _id: userId } = req.user;
 
     if (!title?.trim() || !content?.trim()) {
       return res.status(400).json({
@@ -420,7 +427,7 @@ export const postArticle = async (req, res) => {
       tags: tagsArray,
       externalLink: externalLink?.trim() || "",
       image: imageUrl,
-      user: req.userId,
+      user: userId,
     });
 
     return res.status(201).json({
@@ -440,6 +447,7 @@ export const postArticle = async (req, res) => {
 export const postDoubt = async (req, res) => {
   try {
     const { title, content, code, language, tags } = req.body;
+    const { _id: userId } = req.user;
 
     if (!title?.trim() || !content?.trim()) {
       return res.status(400).json({
@@ -461,7 +469,7 @@ export const postDoubt = async (req, res) => {
       code: code?.trim() || "",
       language: code?.trim() ? language || "plaintext" : "",
       tags: tagsArray,
-      user: req.userId,
+      user: userId,
     });
 
     return res.status(201).json({

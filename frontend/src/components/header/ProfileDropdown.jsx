@@ -1,13 +1,26 @@
-import { LogOut, Settings, User, ShieldCheck } from "lucide-react";
+import {
+  LogOut,
+  Settings,
+  User,
+  Users,
+  ShieldCheck,
+  Home,
+  MessageCircle,
+  Bell,
+  PlusSquare,
+  LayoutDashboard,
+} from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import { dummyUser } from "../../utils/dummyUser";
-import { removeUser } from "../../store/userSlice";
+import { clearUser } from "../../store/userSlice";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../../utils/constants";
 import { disconnectSocket } from "../../utils/socket";
 import axios from "axios";
 import { clearCoding } from "../../store/codingSlice";
+import { setShowNotifications } from "../../store/notificationSlice";
 
 const ProfileDropdown = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -28,9 +41,13 @@ const ProfileDropdown = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post(`${BASE_URL}/auth/logout`, { withCredentials: true });
-      disconnectSocket();
-      dispatch(removeUser());
+      await axios.post(
+        `${BASE_URL}/v1/auth/logout`,
+        {},
+        { withCredentials: true }
+      );
+      //disconnectSocket();
+      dispatch(clearUser());
       dispatch(clearCoding());
       navigate("/login");
     } catch (err) {
@@ -38,6 +55,9 @@ const ProfileDropdown = () => {
       alert(err?.response?.data?.message || "Failed to logout. Try again.");
     }
   };
+
+  const base =
+    "flex items-center gap-2 px-4 py-1 text-sm text-slate-200 hover:text-amber-300 hover:bg-slate-800 rounded-full shadow hover:scale-105 transition duration-200";
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -50,7 +70,7 @@ const ProfileDropdown = () => {
           alt="Profile"
           className="h-7 w-7 rounded-full border-amber-700 border"
         />
-        <span className="text-amber-400 hover:text-amber-200 text-xs">
+        <span className="text-amber-400 hover:text-amber-200 text-xs whitespace-nowrap">
           {user.name}
         </span>
       </div>
@@ -67,43 +87,90 @@ const ProfileDropdown = () => {
               {user.name}
             </h2>
           </div>
-
           <div className="mt-3 flex flex-col gap-1">
-            <button
-              onClick={() => {
-                setIsDropdownOpen(false);
-                navigate("/profile");
-              }}
+            <Link
+              to="/profile"
+              onClick={() => setIsDropdownOpen(false)}
               className="flex items-center gap-2 px-4 py-1 font-medium text-slate-900 rounded-full text-sm bg-gradient-to-br from-amber-700 via-amber-600 to-yellow-500 hover:from-amber-800 hover:to-amber-700 shadow-md hover:scale-105 transition duration-200"
             >
               <User size={16} /> View Profile
-            </button>
+            </Link>
 
-            <button
+            <Link
+              to="/"
               onClick={() => {
+                dispatch(setShowNotifications(false));
                 setIsDropdownOpen(false);
-                navigate("/settings");
               }}
-              className="flex items-center gap-2 px-4 py-1 text-sm text-white hover:text-amber-300 hover:bg-slate-800 rounded-full shadow hover:scale-105 transition duration-200"
+              className={`${base} block md:hidden`}
+            >
+              <Home size={16} /> Home
+            </Link>
+
+            <Link
+              to="/dashboard"
+              onClick={() => setIsDropdownOpen(false)}
+              className={`${base} block md:hidden`}
+            >
+              <LayoutDashboard size={16} /> Dashboard
+            </Link>
+
+            <Link
+              to="/network"
+              onClick={() => setIsDropdownOpen(false)}
+              className={`${base} block md:hidden`}
+            >
+              <Users size={16} /> Network
+            </Link>
+
+            <Link
+              to="/messages"
+              onClick={() => setIsDropdownOpen(false)}
+              className={`${base} block md:hidden`}
+            >
+              <MessageCircle size={16} /> Messaging
+            </Link>
+
+            <Link
+              to="/create"
+              onClick={() => setIsDropdownOpen(false)}
+              className={`${base} block md:hidden`}
+            >
+              <PlusSquare size={16} /> Create
+            </Link>
+
+            <Link
+              to="/"
+              onClick={() => {
+                dispatch(setShowNotifications(true));
+                setIsDropdownOpen(false);
+              }}
+              className={`${base} block md:hidden`}
+            >
+              <Bell size={16} /> Notifications
+            </Link>
+
+            <Link
+              to="/settings"
+              onClick={() => setIsDropdownOpen(false)}
+              className={base}
             >
               <Settings size={16} /> Settings
-            </button>
+            </Link>
 
-            <button
-              onClick={() => {
-                setIsDropdownOpen(false);
-                navigate("/privacy");
-              }}
-              className="flex items-center gap-2 px-4 py-1 text-sm text-white hover:text-amber-300 hover:bg-slate-800 rounded-full transition shadow hover:scale-105 duration-200"
+            <Link
+              to="/privacy"
+              onClick={() => setIsDropdownOpen(false)}
+              className={base}
             >
               <ShieldCheck size={16} /> Privacy
-            </button>
-
+            </Link>
             <button
               onClick={handleLogout}
               className="w-full flex items-center gap-2 px-4 py-1 text-sm text-red-400 hover:text-red-300 hover:bg-red-900 rounded-full transition shadow hover:scale-105 duration-200"
             >
-              <LogOut size={16} /> Log Out
+              {" "}
+              <LogOut size={16} /> Log Out{" "}
             </button>
           </div>
         </div>

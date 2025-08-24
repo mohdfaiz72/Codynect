@@ -43,7 +43,9 @@ const ConversationList = ({ conversation, onChat, selectedChatId }) => {
                 <img
                   src={conv.profileImage || dummyUser.profileImage}
                   alt="profile"
-                  className="w-10 h-10 rounded-full object-cover"
+                  className={`w-10 h-10 rounded-full object-cover border ${
+                    isSelected ? "border-purple-600" : "border-amber-700"
+                  }`}
                 />
 
                 {/* Text Info */}

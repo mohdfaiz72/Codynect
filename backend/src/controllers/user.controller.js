@@ -2,15 +2,13 @@ import User from "../models/user.model.js";
 
 export const updateProfileImage = async (req, res) => {
   try {
-    const { userId } = req; // from verifyJWT middleware
-
-    // Logic for removing the current profile image
+    const userId = req.user._id;
     if (req.body.remove === "true") {
       const user = await User.findByIdAndUpdate(
         userId,
-        { profileImage: "" }, // Set to an empty string or a default image URL
+        { profileImage: "" },
         { new: true }
-      ).select("-password"); // Exclude password hash from the response
+      ).select("-password");
 
       if (!user) {
         return res.status(404).json({ error: "User not found." });
@@ -21,7 +19,6 @@ export const updateProfileImage = async (req, res) => {
         .json({ message: "Profile image removed successfully.", user });
     }
 
-    // Check if a file was uploaded by multer
     if (!req.file) {
       return res.status(400).json({ error: "No image file was provided." });
     }
@@ -49,13 +46,11 @@ export const updateProfileImage = async (req, res) => {
 
 export const updateCoverImage = async (req, res) => {
   try {
-    const { userId } = req;
-
-    // Handle removal request
+    const userId = req.user._id;
     if (req.body.remove === "true") {
       const user = await User.findByIdAndUpdate(
         userId,
-        { coverImage: "" }, // or set to a default cover image URL
+        { coverImage: "" },
         { new: true }
       ).select("-password");
 
@@ -68,7 +63,6 @@ export const updateCoverImage = async (req, res) => {
         .json({ message: "Cover image removed successfully.", user });
     }
 
-    // Check if file is uploaded
     if (!req.file) {
       return res.status(400).json({ error: "No cover image file provided." });
     }
@@ -96,7 +90,7 @@ export const updateCoverImage = async (req, res) => {
 
 export const updateUserDetails = async (req, res) => {
   try {
-    const { userId } = req;
+    const userId = req.user._id;
     const { name, headline, address } = req.body;
 
     if (!name || !headline || !address || typeof address !== "object")
@@ -116,7 +110,8 @@ export const updateUserDetails = async (req, res) => {
 
 export const getUserDetails = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select("-password");
+    const userId = req.user._id;
+    const user = await User.findById(userId).select("-password");
     if (!user) return res.status(404).json({ message: "User not found" });
     res.json(user);
   } catch (error) {
@@ -126,7 +121,7 @@ export const getUserDetails = async (req, res) => {
 
 export const updateUserAbout = async (req, res) => {
   try {
-    const { userId } = req;
+    const userId = req.user._id;
     const { about } = req.body;
     const user = await User.findByIdAndUpdate(userId, { about }, { new: true });
 
@@ -143,177 +138,13 @@ export const updateUserAbout = async (req, res) => {
   }
 };
 
-export const updateUserEducation = async (req, res) => {
+export const getUserDetailsById = async (req, res) => {
   try {
-    const { userId } = req;
-    const { education } = req.body;
-
-    if (!Array.isArray(education)) {
-      return res.status(400).json({
-        message: "Invalid input. The 'education' field must be an array.",
-      });
-    }
-
-    const user = await User.findByIdAndUpdate(
-      userId,
-      { education },
-      { new: true }
-    );
-
-    res.status(200).json({
-      message: "User education details updated successfully.",
-      user,
-    });
-  } catch (err) {
-    console.error("Error updating user education:", err);
-    res.status(500).json({
-      message: "An error occurred while updating education details.",
-      error: err.message,
-    });
-  }
-};
-
-export const updateUserExperience = async (req, res) => {
-  try {
-    const { userId } = req;
-    const { experience } = req.body;
-
-    if (!Array.isArray(experience)) {
-      return res.status(400).json({
-        message: "Invalid input. The 'experience' field must be an array.",
-      });
-    }
-
-    const user = await User.findByIdAndUpdate(
-      userId,
-      { experience },
-      { new: true }
-    );
-
-    res.status(200).json({
-      message: "User experience details updated successfully.",
-      user,
-    });
-  } catch (err) {
-    console.error("Error updating user experience:", err);
-    res.status(500).json({
-      message: "An error occurred while updating experience details.",
-      error: err.message,
-    });
-  }
-};
-
-export const updateUserSkills = async (req, res) => {
-  try {
-    const { userId } = req;
-    const { skills } = req.body;
-
-    const isValid =
-      Array.isArray(skills) &&
-      skills.every(
-        (group) =>
-          typeof group.category === "string" &&
-          Array.isArray(group.skills) &&
-          group.skills.every((s) => typeof s === "string")
-      );
-
-    if (!isValid) {
-      return res.status(400).json({
-        message:
-          "Invalid input. 'skills' must be an array of objects with 'category' and 'skills' as string arrays.",
-      });
-    }
-
-    const user = await User.findByIdAndUpdate(
-      userId,
-      { skills },
-      { new: true }
-    );
-    res.status(200).json({
-      message: "User skills updated successfully.",
-      user,
-    });
-  } catch (err) {
-    console.error("Error updating user skills:", err);
-    res.status(500).json({
-      message: "An error occurred while updating skills.",
-      error: err.message,
-    });
-  }
-};
-
-export const updateUserLanguages = async (req, res) => {
-  try {
-    const { userId } = req;
-    const { languages } = req.body;
-
-    if (!Array.isArray(languages)) {
-      return res.status(400).json({ message: "'languages' must be an array." });
-    }
-
-    const user = await User.findByIdAndUpdate(
-      userId,
-      { languages },
-      { new: true }
-    );
-
-    res.status(200).json({ message: "Languages updated successfully.", user });
-  } catch (err) {
-    console.error("Error updating languages:", err);
-    res
-      .status(500)
-      .json({ message: "Error updating languages.", error: err.message });
-  }
-};
-
-export const updateUserCertifications = async (req, res) => {
-  try {
-    const { userId } = req;
-    const { certifications } = req.body;
-
-    if (!Array.isArray(certifications)) {
-      return res
-        .status(400)
-        .json({ message: "'certifications' must be an array." });
-    }
-
-    const user = await User.findByIdAndUpdate(
-      userId,
-      { certifications },
-      { new: true }
-    );
-
-    res
-      .status(200)
-      .json({ message: "Certifications updated successfully.", user });
-  } catch (err) {
-    console.error("Error updating certifications:", err);
-    res
-      .status(500)
-      .json({ message: "Error updating certifications.", error: err.message });
-  }
-};
-
-export const updateUserProjects = async (req, res) => {
-  try {
-    const { userId } = req;
-    const { projects } = req.body;
-
-    if (!Array.isArray(projects)) {
-      return res.status(400).json({ message: "'projects' must be an array." });
-    }
-
-    const user = await User.findByIdAndUpdate(
-      userId,
-      { projects },
-      { new: true }
-    );
-
-    res.status(200).json({ message: "Projects updated successfully.", user });
-  } catch (err) {
-    console.error("Error updating projects:", err);
-    res
-      .status(500)
-      .json({ message: "Error updating projects.", error: err.message });
+    const { id } = req.params;
+    const user = await User.findById(id).select("-password");
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
   }
 };

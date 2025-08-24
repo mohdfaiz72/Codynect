@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import DeleteConfirmation from "../../../common/DeleteConfirmation";
-import { addUser } from "../../../store/userSlice";
+import DeleteConfirmation from "../../common/DeleteConfirmation";
+import { setUser } from "../../../store/userSlice";
 import axios from "axios";
 import { BASE_URL } from "../../../utils/constants";
 import { dummyUser } from "../../../utils/dummyUser";
@@ -36,7 +36,7 @@ const EditCoverImage = ({ onClose }) => {
       formData.append("remove", true);
 
       const res = await axios.patch(
-        `${BASE_URL}/user/update-cover-image`,
+        `${BASE_URL}/v1/user/cover-image`,
         formData,
         {
           headers: {
@@ -47,7 +47,7 @@ const EditCoverImage = ({ onClose }) => {
       );
 
       if (res.status === 200) {
-        dispatch(addUser(res.data.user));
+        dispatch(setUser(res.data.user));
         alert("Cover image removed!");
         setSelectedImage(null);
         setPreview(dummyUser.coverImage);
@@ -74,7 +74,7 @@ const EditCoverImage = ({ onClose }) => {
       formData.append("file", selectedImage);
 
       const res = await axios.patch(
-        `${BASE_URL}/user/update-cover-image`,
+        `${BASE_URL}/v1/user/cover-image`,
         formData,
         {
           headers: {
@@ -85,7 +85,7 @@ const EditCoverImage = ({ onClose }) => {
       );
 
       if (res.status === 200) {
-        dispatch(addUser(res.data.user));
+        dispatch(setUser(res.data.user));
         alert("Cover image updated!");
         onClose();
       } else {

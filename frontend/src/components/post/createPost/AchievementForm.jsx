@@ -56,7 +56,7 @@ const AchievementForm = () => {
         data.append("file", formData.image);
       }
 
-      const res = await axios.post(`${BASE_URL}/post/achievement`, data, {
+      const res = await axios.post(`${BASE_URL}/v1/post/achievement`, data, {
         withCredentials: true,
         headers: { "Content-Type": "multipart/form-data" },
       });

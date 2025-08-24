@@ -4,7 +4,7 @@ import ConnectionTabs from "./ConnectionTabs";
 import UserCard from "./UserCard";
 import axios from "axios";
 import { setNetwork } from "../../store/networkSlice";
-import Loader from "../../common/Loader";
+import Loader from "../../components/common/Loader";
 import { BASE_URL } from "../../utils/constants";
 
 const Network = () => {
@@ -17,7 +17,7 @@ const Network = () => {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${BASE_URL}/network/get-users`, {
+      const res = await axios.get(`${BASE_URL}/v1/network/get-users`, {
         withCredentials: true,
       });
       dispatch(setNetwork(res.data));
@@ -50,7 +50,7 @@ const Network = () => {
 
   const sendConnectionRequest = async (receiverId) => {
     await axios.post(
-      `${BASE_URL}/network/send-request`,
+      `${BASE_URL}/v1/network/send-request`,
       { receiverId },
       { withCredentials: true }
     );
@@ -58,28 +58,28 @@ const Network = () => {
 
   const acceptConnectionRequest = async (senderId) => {
     await axios.post(
-      `${BASE_URL}/network/accept-request`,
+      `${BASE_URL}/v1/network/accept-request`,
       { senderId },
       { withCredentials: true }
     );
   };
 
   const rejectConnectionRequest = async (senderId) => {
-    await axios.delete(`${BASE_URL}/network/reject-request`, {
+    await axios.delete(`${BASE_URL}/v1/network/reject-request`, {
       data: { senderId },
       withCredentials: true,
     });
   };
 
   const withdrawConnectionRequest = async (receiverId) => {
-    await axios.delete(`${BASE_URL}/network/withdraw-request`, {
+    await axios.delete(`${BASE_URL}/v1/network/withdraw-request`, {
       data: { receiverId },
       withCredentials: true,
     });
   };
 
   const disconnectConnectionRequest = async (receiverId) => {
-    await axios.delete(`${BASE_URL}/network/disconnect`, {
+    await axios.delete(`${BASE_URL}/v1/network/disconnect`, {
       data: { receiverId },
       withCredentials: true,
     });

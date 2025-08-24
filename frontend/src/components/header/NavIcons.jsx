@@ -1,56 +1,75 @@
-import { Home, MessageCircle, Bell, PlusSquare, User } from "lucide-react";
-import { useDispatch } from "react-redux";
+import { Home, MessageCircle, Bell, PlusSquare, Users } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
 import { setShowNotifications } from "../../store/notificationSlice";
 import { setSelectedChatId } from "../../store/conversationSlice";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const NavIcons = () => {
+  const showNotifications = useSelector(
+    (state) => state.notification.showNotifications
+  );
   const dispatch = useDispatch();
+  const base =
+    "group flex flex-col items-center hover:text-amber-200 hover:scale-110 transition-transform cursor-pointer";
 
   return (
-    <div className="flex items-center mt-2 gap-6 text-amber-400">
-      <Link
+    <div className="hidden md:flex items-center mt-2 gap-5">
+      <NavLink
         to="/"
         onClick={() => dispatch(setShowNotifications(false))}
-        className="group flex flex-col items-center hover:text-amber-200 hover:scale-110 transition-transform cursor-pointer"
+        className={({ isActive }) =>
+          `${base} ${
+            isActive && !showNotifications ? "text-amber-200" : "text-amber-400"
+          }`
+        }
       >
         <Home title="Home" />
         <span className="text-xs">Home</span>
-      </Link>
+      </NavLink>
 
-      <Link
+      <NavLink
         to="/network"
-        className="group flex flex-col items-center hover:text-amber-200 hover:scale-110 transition-transform cursor-pointer"
+        className={({ isActive }) =>
+          `${base} ${isActive ? "text-amber-200" : "text-amber-400"}`
+        }
       >
-        <User title="Network" />
+        <Users title="Network" />
         <span className="text-xs">Network</span>
-      </Link>
+      </NavLink>
 
-      <Link
+      <NavLink
         to="/create"
-        className="group flex flex-col items-center hover:text-amber-200 hover:scale-110 transition-transform cursor-pointer"
+        className={({ isActive }) =>
+          `${base} ${isActive ? "text-amber-200" : "text-amber-400"}`
+        }
       >
         <PlusSquare title="Create Post" />
         <span className="text-xs">Create</span>
-      </Link>
+      </NavLink>
 
-      <Link
+      <NavLink
         to="/messages"
         onClick={() => dispatch(setSelectedChatId(null))}
-        className="group flex flex-col items-center hover:text-amber-200 hover:scale-110 transition-transform cursor-pointer"
+        className={({ isActive }) =>
+          `${base} ${isActive ? "text-amber-200" : "text-amber-400"}`
+        }
       >
-        <MessageCircle title="Messages" />
+        <MessageCircle title="Messaging" />
         <span className="text-xs">Message</span>
-      </Link>
+      </NavLink>
 
-      <Link
+      <NavLink
         to="/"
         onClick={() => dispatch(setShowNotifications(true))}
-        className="group flex flex-col items-center hover:text-amber-200 hover:scale-110 transition-transform cursor-pointer"
+        className={({ isActive }) =>
+          `${base} ${
+            isActive && showNotifications ? "text-amber-200" : "text-amber-400"
+          }`
+        }
       >
         <Bell title="Notifications" />
         <span className="text-xs">Notify</span>
-      </Link>
+      </NavLink>
     </div>
   );
 };

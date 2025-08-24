@@ -1,66 +1,65 @@
 import { useState } from "react";
-import EditProject from "./EditProject";
 import { useSelector, useDispatch } from "react-redux";
 import { Pencil, Plus, ArrowLeft, Trash2, Github } from "lucide-react";
-import DeleteConfirmation from "../../../common/DeleteConfirmation";
+import EditProject from "./EditProject";
+import DeleteConfirmation from "../../common/DeleteConfirmation";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import { addUser } from "../../../store/userSlice";
+import {
+  addProject,
+  updateProject,
+  deleteProject,
+} from "../../../store/projectSlice";
 import { BASE_URL } from "../../../utils/constants";
 
 const ProjectSection = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [projectToUpdate, setProjectToUpdate] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const isOwnProfile = useSelector((store) => store.profile.isOwnProfile);
-  const user = isOwnProfile
-    ? useSelector((store) => store.user.user)
-    : useSelector((store) => store.profile.profile);
+  const projects = isOwnProfile
+    ? useSelector((store) => store.project.project)
+    : useSelector((store) => store.profile.profile.project);
 
   const isEditablePage = location.pathname === "/profile/projects-section";
 
-  const dispatch = useDispatch();
-
+  // ---------- Add / Update ----------
   const handleSaveProject = async (formData) => {
-    let updatedProjects;
-    if (projectToUpdate) {
-      updatedProjects = user.projects.map((proj) =>
-        proj === projectToUpdate ? formData : proj
-      );
-    } else {
-      updatedProjects = [...(user.projects || []), formData];
-    }
-
     try {
-      const res = await axios.patch(
-        `${BASE_URL}/user/update-projects`,
-        { projects: updatedProjects },
-        { withCredentials: true }
-      );
-
-      dispatch(addUser(res.data.user));
-      alert(projectToUpdate ? "Project updated!" : "Project added!");
+      let res;
+      if (projectToUpdate) {
+        res = await axios.patch(
+          `${BASE_URL}/v1/project/${projectToUpdate._id}`,
+          formData,
+          { withCredentials: true }
+        );
+        dispatch(updateProject(res.data));
+        alert("Project updated!");
+      } else {
+        res = await axios.post(`${BASE_URL}/v1/project/`, formData, {
+          withCredentials: true,
+        });
+        dispatch(addProject(res.data));
+        alert("Project added!");
+      }
       setShowEditModal(false);
     } catch (err) {
       alert("Failed to save: " + (err.response?.data?.message || err.message));
     }
   };
 
+  // ---------- Delete ----------
   const handleDeleteProject = async () => {
-    const updatedProjects = user.projects.filter(
-      (proj) => proj !== projectToUpdate
-    );
-
     try {
-      const res = await axios.patch(
-        `${BASE_URL}/user/update-projects`,
-        { projects: updatedProjects },
-        { withCredentials: true }
-      );
-
-      dispatch(addUser(res.data.user));
+      await axios.delete(`${BASE_URL}/v1/project/${projectToUpdate._id}`, {
+        withCredentials: true,
+      });
+      dispatch(deleteProject(projectToUpdate._id));
       alert("Project deleted.");
       setShowDeleteModal(false);
       setProjectToUpdate(null);
@@ -88,7 +87,7 @@ const ProjectSection = () => {
           <h2 className="text-amber-400 text-lg font-semibold">Projects</h2>
           {isOwnProfile && (
             <div className="flex items-center gap-4">
-              {user.projects.length > 0 && !isEditablePage && (
+              {projects.length > 0 && !isEditablePage && (
                 <button
                   onClick={() => navigate("/profile/projects-section")}
                   className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
@@ -120,9 +119,9 @@ const ProjectSection = () => {
           )}
         </div>
 
-        {user.projects.length > 0 ? (
+        {projects.length > 0 ? (
           <div className="space-y-4">
-            {user.projects.map((proj, idx) => (
+            {projects.map((proj, idx) => (
               <div
                 key={idx}
                 className="relative border border-amber-700 rounded-md p-4 bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900 shadow-md hover:border-purple-600 transition duration-200"
@@ -188,17 +187,17 @@ const ProjectSection = () => {
                     </a>
                   )}
                   {proj.demo && (
-                    <p>
-                      🌐{" "}
+                    <div className="mb-1 text-sm text-blue-400">
+                      🔗{" "}
                       <a
                         href={proj.demo}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-amber-400 hover:underline"
+                        className="inline-flex items-center hover:underline"
                       >
                         Live Demo
                       </a>
-                    </p>
+                    </div>
                   )}
                 </div>
               </div>
@@ -211,7 +210,6 @@ const ProjectSection = () => {
 
       {showEditModal && (
         <EditProject
-          user={user}
           projectToEdit={projectToUpdate}
           onClose={() => setShowEditModal(false)}
           onSave={handleSaveProject}

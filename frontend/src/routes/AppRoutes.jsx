@@ -1,11 +1,10 @@
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import ProtectedRoutes from "./ProtectedRoutes";
-import useFetchData from "../utils/useFetchData";
 
 import Login from "../components/login/Login";
 import Home from "../components/home/Home";
 import CreatePost from "../components/post/CreatePost";
-import ChatPage from "../components/messaging/ChatPage";
+import ChatPage from "../components/message/ChatPage";
 import Network from "../components/network/Network";
 import Profile from "../components/profile/Profile";
 import EducationSection from "../components/profile/educationSection/EducationSection";
@@ -15,17 +14,12 @@ import LanguageSection from "../components/profile/languageSection/LanguageSecti
 import CertificationSection from "../components/profile/certificationSection/CertificationSection";
 import CodingProfilesSection from "../components/profile/codingProfileSection/CodingProfilesSection";
 import SkillsSection from "../components/profile/skillsSection/SkillsSection";
-import Loader from "../common/Loader";
+import Loader from "../components/common/Loader";
 import AboutSection from "../components/profile/aboutSection/AboutSection";
 import ViewProfile from "../components/network/ViewProfile";
+import Dashboard from "../components/home/Dashboard";
 
 function AppRoutes() {
-  const { initialLoading } = useFetchData();
-
-  if (initialLoading) {
-    return <Loader message="Initializing Codynect..." />;
-  }
-
   return (
     <div className="min-h-screen bg-gray-900 pt-14">
       <BrowserRouter>
@@ -39,6 +33,7 @@ function AppRoutes() {
             <Route path="/create" element={<CreatePost />} />
             <Route path="/messages" element={<ChatPage />} />
             <Route path="/network" element={<Network />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/view-profile/:id" element={<ViewProfile />} />
 
             {/* Nested Profile Routes */}

@@ -2,10 +2,10 @@ import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Pencil, Plus, ArrowLeft, Trash2 } from "lucide-react";
 import EditAbout from "./EditAbout";
-import DeleteConfirmation from "../../../common/DeleteConfirmation";
+import DeleteConfirmation from "../../common/DeleteConfirmation";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import { addUser } from "../../../store/userSlice";
+import { setUser } from "../../../store/userSlice";
 import { BASE_URL } from "../../../utils/constants";
 
 const AboutSection = () => {
@@ -18,19 +18,19 @@ const AboutSection = () => {
   const isOwnProfile = useSelector((store) => store.profile.isOwnProfile);
   const user = isOwnProfile
     ? useSelector((store) => store.user.user)
-    : useSelector((store) => store.profile.profile);
+    : useSelector((store) => store.profile.profile.user);
 
   const isEditablePage = location.pathname === "/profile/about-section";
 
   const handleSaveAbout = async (updatedText) => {
     try {
       const res = await axios.patch(
-        `${BASE_URL}/user/update-about`,
+        `${BASE_URL}/v1/user/about`,
         { about: updatedText },
         { withCredentials: true }
       );
 
-      dispatch(addUser(res.data.user));
+      dispatch(setUser(res.data.user));
       alert(user.about ? "About updated!" : "About added!");
       setShowEditModal(false);
     } catch (err) {
@@ -41,11 +41,11 @@ const AboutSection = () => {
   const handleDeleteAbout = async () => {
     try {
       const res = await axios.patch(
-        `${BASE_URL}/user/update-about`,
+        `${BASE_URL}/v1/user/about`,
         { about: "" },
         { withCredentials: true }
       );
-      dispatch(addUser(res.data.user));
+      dispatch(setUser(res.data.user));
       alert("About section deleted.");
       setShowDeleteModal(false);
     } catch (err) {

@@ -16,7 +16,7 @@ const ProfileHeader = () => {
   const isOwnProfile = useSelector((store) => store.profile.isOwnProfile);
   const user = isOwnProfile
     ? useSelector((store) => store.user.user)
-    : useSelector((store) => store.profile.profile);
+    : useSelector((store) => store.profile.profile.user);
 
   const countryName = Country.getCountryByCode(user.address?.country)?.name;
   const stateName = State.getStateByCodeAndCountry(

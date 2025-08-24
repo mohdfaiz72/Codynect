@@ -1,8 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { useDispatch } from "react-redux";
-import { addUser } from "../../../store/userSlice";
-import { BASE_URL } from "../../../utils/constants";
 
 const EditExperience = ({ onClose, onSave, experienceToEdit }) => {
   const dispatch = useDispatch();

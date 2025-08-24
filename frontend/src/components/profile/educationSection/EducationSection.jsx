@@ -2,65 +2,64 @@ import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Pencil, Plus, ArrowLeft, Trash2 } from "lucide-react";
 import EditEducation from "./EditEducation";
-import DeleteConfirmation from "../../../common/DeleteConfirmation";
+import DeleteConfirmation from "../../common/DeleteConfirmation";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import { addUser } from "../../../store/userSlice";
+import {
+  addEducation,
+  updateEducation,
+  deleteEducation,
+} from "../../../store/educationSlice";
 import { BASE_URL } from "../../../utils/constants";
 
 const EducationSection = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [educationToUpdate, setEducationToUpdate] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const isOwnProfile = useSelector((store) => store.profile.isOwnProfile);
-  const user = isOwnProfile
-    ? useSelector((store) => store.user.user)
-    : useSelector((store) => store.profile.profile);
+  const education = isOwnProfile
+    ? useSelector((store) => store.education.education)
+    : useSelector((store) => store.profile.profile.education);
 
   const isEditablePage = location.pathname === "/profile/education-section";
 
-  const dispatch = useDispatch();
-
+  // ---------- Add / Update ----------
   const handleSaveEducation = async (formData) => {
-    let updatedEducation;
-    if (educationToUpdate) {
-      updatedEducation = user.education.map((edu) =>
-        edu === educationToUpdate ? formData : edu
-      );
-    } else {
-      updatedEducation = [...(user.education || []), formData];
-    }
-
     try {
-      const res = await axios.patch(
-        `${BASE_URL}/user/update-education`,
-        { education: updatedEducation },
-        { withCredentials: true }
-      );
-
-      dispatch(addUser(res.data.user));
-      alert(educationToUpdate ? "Education updated!" : "Education added!");
+      let res;
+      if (educationToUpdate) {
+        res = await axios.patch(
+          `${BASE_URL}/v1/education/${educationToUpdate._id}`,
+          formData,
+          { withCredentials: true }
+        );
+        dispatch(updateEducation(res.data));
+        alert("Education updated!");
+      } else {
+        res = await axios.post(`${BASE_URL}/v1/education/`, formData, {
+          withCredentials: true,
+        });
+        dispatch(addEducation(res.data));
+        alert("Education added!");
+      }
       setShowEditModal(false);
     } catch (err) {
       alert("Failed to save: " + (err.response?.data?.message || err.message));
     }
   };
 
+  // ---------- Delete ----------
   const handleDeleteEducation = async () => {
-    const updatedEducation = user.education.filter(
-      (edu) => edu !== educationToUpdate
-    );
-
     try {
-      const res = await axios.patch(
-        `${BASE_URL}/user/update-education`,
-        { education: updatedEducation },
-        { withCredentials: true }
-      );
-
-      dispatch(addUser(res.data.user));
+      await axios.delete(`${BASE_URL}/v1/education/${educationToUpdate._id}`, {
+        withCredentials: true,
+      });
+      dispatch(deleteEducation(educationToUpdate._id));
       alert("Education entry deleted.");
       setShowDeleteModal(false);
       setEducationToUpdate(null);
@@ -78,7 +77,7 @@ const EducationSection = () => {
           <h2 className="text-amber-400 text-lg font-semibold">Education</h2>
           {isOwnProfile && (
             <div className="flex items-center gap-4">
-              {user.education.length > 0 && !isEditablePage && (
+              {education.length > 0 && !isEditablePage && (
                 <button
                   onClick={() => navigate("/profile/education-section")}
                   className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
@@ -110,9 +109,9 @@ const EducationSection = () => {
             </div>
           )}
         </div>
-        {user.education.length > 0 ? (
+        {education.length > 0 ? (
           <div className="space-y-4">
-            {user.education.map((edu, idx) => (
+            {education.map((edu, idx) => (
               <div
                 key={idx}
                 className="relative border border-amber-700 p-4 rounded-md bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900 shadow-md hover:border-purple-600 transition duration-200"
@@ -167,7 +166,6 @@ const EducationSection = () => {
 
       {showEditModal && (
         <EditEducation
-          user={user}
           educationToEdit={educationToUpdate}
           onClose={() => setShowEditModal(false)}
           onSave={handleSaveEducation}

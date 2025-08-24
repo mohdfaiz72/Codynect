@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import MessageInput from "./MessageInput";
 import MessageBubble from "./MessageBubble";
-import Loader from "../../common/Loader";
+import Loader from "../../components/common/Loader";
 import axios from "axios";
 import { BASE_URL } from "../../utils/constants";
 import { dummyUser } from "../../utils/dummyUser";
@@ -17,7 +17,7 @@ const ChatWindow = ({ chat }) => {
       setchatLoading(true);
       try {
         const res = await axios.get(
-          `${BASE_URL}/message/get-message/${chat.id}`,
+          `${BASE_URL}/v1/message/get-message/${chat.id}`,
           {
             withCredentials: true,
           }
@@ -62,7 +62,7 @@ const ChatWindow = ({ chat }) => {
         <img
           src={chat.profileImage || dummyUser.profileImage}
           alt={`${chat.name}'s profile`}
-          className="w-10 h-10 rounded-full object-cover border border-amber-700"
+          className="w-10 h-10 rounded-full object-cover border border-purple-600"
         />
         <h2 className="text-xl font-semibold text-amber-400">{chat.name}</h2>
       </div>

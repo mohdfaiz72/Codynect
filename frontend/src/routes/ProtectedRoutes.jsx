@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
-import Loader from "../common/Loader";
+import Loader from "../components/common/Loader";
 import Header from "../components/header/Header";
 import ProfileRemover from "../utils/ProfileRemover";
 

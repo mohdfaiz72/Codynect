@@ -6,7 +6,7 @@ import {
 
 export const getProfiles = async (req, res) => {
   try {
-    const { userId } = req;
+    const userId = req.user._id;
     const profiles = await CodingProfile.find({ user: userId });
     res.status(200).json(profiles);
   } catch (err) {
@@ -18,7 +18,7 @@ export const getProfiles = async (req, res) => {
 export const addProfile = async (req, res) => {
   try {
     const { platform, username } = req.body;
-    const { userId } = req;
+    const userId = req.user._id;
     if (!platform || !username) {
       return res
         .status(400)
@@ -52,7 +52,7 @@ export const addProfile = async (req, res) => {
 export const fetchProfile = async (req, res) => {
   try {
     const { platform, username } = req.body;
-    const { userId } = req;
+    const userId = req.user._id;
     if (!platform || !username) {
       return res
         .status(400)
@@ -90,7 +90,7 @@ export const fetchProfile = async (req, res) => {
 
 export const deleteProfile = async (req, res) => {
   try {
-    const { userId } = req;
+    const userId = req.user._id;
     const profileId = req.params.id;
 
     const profile = await CodingProfile.findOneAndDelete({
@@ -133,7 +133,7 @@ export const updateProfile = async (req, res) => {
   }
 };
 
-export const getCodingProfile = async (req, res) => {
+export const getProfileById = async (req, res) => {
   try {
     const { id } = req.params;
     const profiles = await CodingProfile.find({ user: id });

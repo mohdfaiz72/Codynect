@@ -49,7 +49,7 @@ const ThoughtForm = () => {
         data.append("file", formData.image);
       }
 
-      const res = await axios.post(`${BASE_URL}/post/thought`, data, {
+      const res = await axios.post(`${BASE_URL}/v1/post/thought`, data, {
         withCredentials: true,
         headers: { "Content-Type": "multipart/form-data" },
       });

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { removeProfile } from "../store/profileSlice";
+import { clearProfile } from "../store/profileSlice";
 
 const ProfileRemover = () => {
   const location = useLocation();
@@ -9,7 +9,7 @@ const ProfileRemover = () => {
 
   useEffect(() => {
     if (!location.pathname.startsWith("/view-profile")) {
-      dispatch(removeProfile());
+      dispatch(clearProfile());
     }
   }, [location.pathname, dispatch]);
 

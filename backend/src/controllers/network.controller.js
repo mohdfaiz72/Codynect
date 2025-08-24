@@ -3,7 +3,7 @@ import Network from "../models/network.model.js";
 
 export const getAllUsers = async (req, res) => {
   try {
-    const { userId } = req;
+    const userId = req.user._id;
 
     const users = await User.find({ _id: { $ne: userId } }).select(
       "_id name headline profileImage coverImage"
@@ -64,9 +64,8 @@ export const getUserProfileById = async (req, res) => {
   }
 };
 
-// 1. Send Request
 export const sendRequest = async (req, res) => {
-  const senderId = req.userId;
+  const senderId = req.user._id;
   const { receiverId } = req.body;
 
   try {
@@ -86,9 +85,8 @@ export const sendRequest = async (req, res) => {
   }
 };
 
-// 2. Accept Request
 export const acceptRequest = async (req, res) => {
-  const receiverId = req.userId;
+  const receiverId = req.user._id;
   const { senderId } = req.body;
 
   try {
@@ -110,9 +108,8 @@ export const acceptRequest = async (req, res) => {
   }
 };
 
-// 3. Reject Request (delete)
 export const rejectRequest = async (req, res) => {
-  const receiverId = req.userId;
+  const receiverId = req.user._id;
   const { senderId } = req.body;
 
   try {
@@ -133,9 +130,8 @@ export const rejectRequest = async (req, res) => {
   }
 };
 
-// 4. Withdraw Request (sender deletes)
 export const withdrawRequest = async (req, res) => {
-  const senderId = req.userId;
+  const senderId = req.user._id;
   const { receiverId } = req.body;
 
   try {
@@ -156,9 +152,8 @@ export const withdrawRequest = async (req, res) => {
   }
 };
 
-// 5. Disconnect Connection (both users are already connected)
 export const disconnectConnection = async (req, res) => {
-  const userId = req.userId;
+  const userId = req.user._id;
   const { receiverId } = req.body;
 
   try {

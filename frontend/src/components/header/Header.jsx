@@ -4,7 +4,7 @@ import ProfileDropdown from "./ProfileDropdown";
 
 const Header = () => {
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-gradient-to-br from-purple-950 via-slate-900 to-gray-900 border-b border-amber-700 rounded-b-xl h-14 px-6 shadow-md flex justify-between items-center">
+    <header className="fixed top-0 left-0 w-full z-50 bg-gradient-to-br from-purple-950 via-slate-900 to-gray-900 border-b border-amber-700 rounded-b-xl h-14 px-6 shadow-md flex justify-between items-center gap-6">
       {/* Logo */}
       <div className="flex items-center">
         <button

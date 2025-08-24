@@ -5,19 +5,19 @@ import {
   addProfile,
   fetchProfile,
   updateProfile,
-  getCodingProfile,
   deleteProfile,
+  getProfileById,
 } from "../controllers/coding.controller.js";
 
 const router = express.Router();
 
 router.use(verifyJWT);
 
-router.get("/get-profile", getProfiles);
-router.get("/get-profile/:id", getCodingProfile);
-router.post("/add-profile", addProfile);
-router.post("/fetch-profile", fetchProfile);
-router.delete("/delete-profile/:id", deleteProfile);
-router.post("/update-profile/:id", updateProfile);
+router.post("/refresh", fetchProfile);
+router.get("/", getProfiles);
+router.get("/:id", getProfileById);
+router.post("/", addProfile);
+router.put("/:id", updateProfile);
+router.delete("/:id", deleteProfile);
 
 export default router;

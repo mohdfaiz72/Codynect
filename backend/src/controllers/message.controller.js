@@ -3,7 +3,7 @@ import Message from "../models/message.model.js";
 
 export const getConversations = async (req, res) => {
   try {
-    const { userId } = req;
+    const { _id: userId } = req.user;
 
     // 1. Find all messages where user is sender or receiver
     const messages = await Message.find({
@@ -55,7 +55,7 @@ export const getConversations = async (req, res) => {
 
 export const getConversationById = async (req, res) => {
   try {
-    const { userId } = req;
+    const { _id: userId } = req.user;
     const { partnerId } = req.params;
 
     // 1. Fetch user info
@@ -93,7 +93,7 @@ export const getConversationById = async (req, res) => {
 
 export const getMessages = async (req, res) => {
   try {
-    const { userId } = req;
+    const { _id: userId } = req.user;
     const { receiverId } = req.params;
     const messages = await Message.find({
       $or: [

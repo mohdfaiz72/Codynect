@@ -4,29 +4,23 @@ import User from "../models/user.model.js";
 export const verifyJWT = async (req, res, next) => {
   try {
     const token =
-      req.cookies?.token || req.header("Authorization")?.replace("Bearer ", "");
-
+      req.cookies?.accessToken ||
+      req.header("Authorization")?.replace("Bearer ", "");
     if (!token) {
-      return res
-        .status(401)
-        .json({ message: "Access denied. No token provided." });
+      return res.status(401).json({ message: "Unauthorized request" });
     }
-
-    // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    // Get user from DB and attach to req
-    const user = await User.findById(decoded.userId).select("-password");
+    const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const user = await User.findById(decodedToken?._id).select(
+      "-password -refreshToken"
+    );
     if (!user) {
-      return res.status(404).json({ message: "User not found." });
+      return res.status(401).json({ message: "Invalid Access Token" });
     }
-
     req.user = user;
-    req.userId = decoded.userId;
-
     next();
-  } catch (err) {
-    console.error("JWT verification error:", err.message);
-    return res.status(401).json({ message: "Invalid or expired token." });
+  } catch (error) {
+    return res
+      .status(401)
+      .json({ message: error.message || "Invalid access token" });
   }
 };

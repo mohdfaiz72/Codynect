@@ -2,7 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   profile: null,
-  coding: [],
   isOwnProfile: true,
 };
 
@@ -11,17 +10,15 @@ const profileSlice = createSlice({
   initialState,
   reducers: {
     setProfile: (state, action) => {
-      state.profile = action.payload.profile;
-      state.coding = action.payload.coding;
+      state.profile = action.payload;
       state.isOwnProfile = false;
     },
-    removeProfile: (state) => {
+    clearProfile: (state) => {
       state.profile = null;
-      state.coding = [];
       state.isOwnProfile = true;
     },
   },
 });
 
-export const { setProfile, removeProfile } = profileSlice.actions;
+export const { setProfile, clearProfile } = profileSlice.actions;
 export default profileSlice.reducer;

@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import AddCodingProfile from "./AddCodingProfile";
 import EditCodingProfile from "./EditCodingProfile";
-import DeleteConfirmation from "../../../common/DeleteConfirmation";
+import DeleteConfirmation from "../../common/DeleteConfirmation";
 import { codingPlatforms } from "../../../utils/codingPlatforms";
 import { toast } from "react-toastify";
 import {
@@ -16,7 +16,6 @@ import {
 import { BASE_URL } from "../../../utils/constants";
 
 const CodingProfilesSection = () => {
-  const isOwnProfile = useSelector((store) => store.profile.isOwnProfile);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -27,13 +26,15 @@ const CodingProfilesSection = () => {
   const dispatch = useDispatch();
   const isEditablePage =
     location.pathname === "/profile/coding-profiles-section";
-  const profiles = useSelector((store) =>
-    store.profile.isOwnProfile ? store.coding.coding : store.profile.coding
-  );
+
+  const isOwnProfile = useSelector((store) => store.profile.isOwnProfile);
+  const profiles = isOwnProfile
+    ? useSelector((store) => store.coding.coding)
+    : useSelector((store) => store.profile.profile.coding);
 
   const handleSaveCodingProfile = async (formData) => {
     try {
-      const res = await axios.post(`${BASE_URL}/coding/add-profile`, formData, {
+      const res = await axios.post(`${BASE_URL}/v1/coding/`, formData, {
         withCredentials: true,
       });
       dispatch(addCoding(res.data));
@@ -49,7 +50,7 @@ const CodingProfilesSection = () => {
   const handleUpdateCodingProfile = async (formData) => {
     try {
       const res = await axios.post(
-        `${BASE_URL}/coding/update-profile/${formData.id}`,
+        `${BASE_URL}/v1/coding/${formData.id}`,
         formData,
         { withCredentials: true }
       );
@@ -67,7 +68,7 @@ const CodingProfilesSection = () => {
     setLoadingIds((prev) => ({ ...prev, [profile._id]: true }));
     try {
       const res = await axios.post(
-        `${BASE_URL}/coding/fetch-profile`,
+        `${BASE_URL}/v1/coding/refresh`,
         { platform: profile.platform, username: profile.username },
         { withCredentials: true }
       );
@@ -85,7 +86,7 @@ const CodingProfilesSection = () => {
 
   const handleDeleteCodingProfile = async (id) => {
     try {
-      await axios.delete(`${BASE_URL}/coding/delete-profile/${id}`, {
+      await axios.delete(`${BASE_URL}/v1/coding/${id}`, {
         withCredentials: true,
       });
       dispatch(deleteCoding(id));

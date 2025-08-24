@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "../../store/postSlice";
 import axios from "axios";
 import { BASE_URL } from "../../utils/constants";
-import Loader from "../../common/Loader";
+import Loader from "../../components/common/Loader";
 import DoubtCard from "./postCard/DoubtCard";
 
 const postTypes = [
@@ -33,7 +33,7 @@ const PostFeed = () => {
   const fetchPost = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${BASE_URL}/post/get-feed`, {
+      const res = await axios.get(`${BASE_URL}/v1/post/get-feed`, {
         withCredentials: true,
       });
       dispatch(setPost(res.data.data));

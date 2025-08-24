@@ -22,7 +22,7 @@ const MessageInput = ({ onMessageSent }) => {
     try {
       setLoadingEnhance(true);
       const res = await axios.post(
-        `${BASE_URL}/ai/enhance-message`,
+        `${BASE_URL}/v1/ai/enhance-message`,
         { message },
         { withCredentials: true }
       );

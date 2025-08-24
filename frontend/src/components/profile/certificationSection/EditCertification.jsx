@@ -7,7 +7,7 @@ const EditCertification = ({ onClose, onSave, certificationToEdit }) => {
         title: "",
         issuedBy: "",
         issuedDate: "",
-        id: "",
+        credentialId: "",
         url: "",
       }
   );
@@ -61,8 +61,8 @@ const EditCertification = ({ onClose, onSave, certificationToEdit }) => {
             </label>
             <input
               type="text"
-              name="issuer"
-              value={formData.issuer}
+              name="issuedBy"
+              value={formData.issuedBy}
               onChange={handleChange}
               className="w-full px-3 py-2 bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900 text-amber-400 rounded-md border border-amber-700 shadow-inner outline-none focus:border-purple-600 focus:border-2 text-sm"
               placeholder="e.g. Amazon Web Services"
@@ -76,11 +76,12 @@ const EditCertification = ({ onClose, onSave, certificationToEdit }) => {
             </label>
             <input
               type="text"
-              name="issueDate"
-              value={formData.issueDate}
+              name="issuedDate"
+              value={formData.issuedDate}
               onChange={handleChange}
               className="w-full px-3 py-2 bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900 text-slate-300 rounded-md border border-amber-700 shadow-inner outline-none focus:border-purple-600 focus:border-2 text-sm"
               placeholder="e.g. Aug 2024"
+              required
             />
           </div>
 
@@ -91,10 +92,11 @@ const EditCertification = ({ onClose, onSave, certificationToEdit }) => {
             <input
               type="text"
               name="credentialId"
-              value={formData.Id}
+              value={formData.credentialId}
               onChange={handleChange}
               className="w-full px-3 py-2 bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900 text-slate-300 rounded-md border border-amber-700 shadow-inner outline-none focus:border-purple-600 focus:border-2 text-sm"
               placeholder="e.g. ABCD-1234"
+              required
             />
           </div>
 
@@ -105,10 +107,12 @@ const EditCertification = ({ onClose, onSave, certificationToEdit }) => {
             <input
               type="url"
               name="url"
+              rel="noreferrer noopener"
               value={formData.url}
               onChange={handleChange}
               className="w-full px-3 py-2 bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900 text-slate-300 rounded-md border border-amber-700 shadow-inner outline-none focus:border-purple-600 focus:border-2 text-sm"
               placeholder="https://www.credly.com/..."
+              required
             />
           </div>
 
@@ -124,7 +128,7 @@ const EditCertification = ({ onClose, onSave, certificationToEdit }) => {
               type="submit"
               className="px-6 py-2 rounded-full font-semibold text-sm text-slate-900 bg-gradient-to-br from-amber-700 via-amber-600 to-yellow-500 hover:from-amber-800 hover:to-amber-700 shadow-md hover:scale-105 transition duration-200"
             >
-              Save Changes
+              Save
             </button>
           </div>
         </form>

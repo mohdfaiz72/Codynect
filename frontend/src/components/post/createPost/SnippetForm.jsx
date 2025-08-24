@@ -58,7 +58,7 @@ const SnippetForm = () => {
         code: formData.code.trim(),
         tags: tagsArray,
       };
-      const res = await axios.post(`${BASE_URL}/post/snippet`, payload, {
+      const res = await axios.post(`${BASE_URL}/v1/post/snippet`, payload, {
         withCredentials: true,
       });
 

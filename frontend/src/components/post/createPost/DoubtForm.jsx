@@ -47,7 +47,7 @@ const DoubtForm = () => {
 
     try {
       setLoading(true);
-      const res = await axios.post(`${BASE_URL}/post/doubt`, payload, {
+      const res = await axios.post(`${BASE_URL}/v1/post/doubt`, payload, {
         withCredentials: true,
       });
       console.log("Doubt posted:", res.data);

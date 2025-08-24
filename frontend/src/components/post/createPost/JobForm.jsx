@@ -69,7 +69,7 @@ const JobForm = () => {
 
     try {
       setLoading(true);
-      const res = await axios.post(`${BASE_URL}/post/job`, payload, {
+      const res = await axios.post(`${BASE_URL}/v1/post/job`, payload, {
         withCredentials: true,
       });
       console.log("Job posted:", res.data);

@@ -67,7 +67,7 @@ const PollForm = () => {
         tags: tagsArray,
       };
 
-      const res = await axios.post(`${BASE_URL}/post/poll`, payload, {
+      const res = await axios.post(`${BASE_URL}/v1/post/poll`, payload, {
         withCredentials: true,
       });
 

@@ -57,7 +57,7 @@ const ArticleForm = () => {
       tagsArray.forEach((tag) => payload.append("tags[]", tag));
       if (formData.image) payload.append("file", formData.image);
 
-      const res = await axios.post(`${BASE_URL}/post/article`, payload, {
+      const res = await axios.post(`${BASE_URL}/v1/post/article`, payload, {
         withCredentials: true,
         headers: {
           "Content-Type": "multipart/form-data",

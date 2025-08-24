@@ -3,7 +3,7 @@ import ChatWindow from "./ChatWindow";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
-import Loader from "../../common/Loader";
+import Loader from "../../components/common/Loader";
 import { BASE_URL } from "../../utils/constants";
 import { getSocket } from "../../utils/socket";
 import {
@@ -14,6 +14,7 @@ import {
 const ChatPage = () => {
   const [loading, setLoading] = useState(false);
   const [chat, setChat] = useState(null);
+  const [showChat, setShowChat] = useState(false);
 
   const { conversation, selectedChatId } = useSelector(
     (store) => store.conversation
@@ -26,7 +27,7 @@ const ChatPage = () => {
     const fetchUserById = async (userId) => {
       try {
         setLoading(true);
-        const res = await axios.get(`${BASE_URL}/message/${userId}`, {
+        const res = await axios.get(`${BASE_URL}/v1/message/${userId}`, {
           withCredentials: true,
         });
         setChat(res.data);

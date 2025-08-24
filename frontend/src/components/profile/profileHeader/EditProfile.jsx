@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Country, State, City } from "country-state-city";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { addUser } from "../../../store/userSlice";
+import { setUser } from "../../../store/userSlice";
 import { BASE_URL } from "../../../utils/constants";
 
 const EditProfile = ({ onClose }) => {
@@ -116,15 +116,11 @@ const EditProfile = ({ onClose }) => {
         address: formData.address,
       };
 
-      const res = await axios.patch(
-        `${BASE_URL}/user/update-details`,
-        payload,
-        {
-          withCredentials: true,
-        }
-      );
+      const res = await axios.patch(`${BASE_URL}/v1/user/details`, payload, {
+        withCredentials: true,
+      });
 
-      dispatch(addUser(res.data.user));
+      dispatch(setUser(res.data.user));
       alert("Profile updated successfully");
       onClose();
     } catch (err) {
