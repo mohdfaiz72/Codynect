@@ -3,36 +3,32 @@ import Network from "../models/network.model.js";
 
 export const getAllUsers = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userIdStr = req.user._id.toString();
 
-    const users = await User.find({ _id: { $ne: userId } }).select(
+    const users = await User.find({ _id: { $ne: userIdStr } }).select(
       "_id name headline profileImage coverImage"
     );
 
     const networks = await Network.find({
-      $or: [{ sender: userId }, { receiver: userId }],
+      $or: [{ sender: userIdStr }, { receiver: userIdStr }],
+    });
+
+    const netMap = {};
+    networks.forEach((n) => {
+      const key = [n.sender.toString(), n.receiver.toString()].sort().join("-");
+      netMap[key] = n;
     });
 
     const enrichedUsers = users.map((user) => {
-      const net = networks.find(
-        (n) =>
-          (n.sender.toString() === userId &&
-            n.receiver.toString() === user._id.toString()) ||
-          (n.receiver.toString() === userId &&
-            n.sender.toString() === user._id.toString())
-      );
+      const key = [userIdStr, user._id.toString()].sort().join("-");
+      const net = netMap[key];
 
       let status = "new";
-
       if (net) {
         if (net.status === "connected") {
           status = "connected";
         } else if (net.status === "pending") {
-          if (net.sender.toString() === userId) {
-            status = "sent";
-          } else {
-            status = "received";
-          }
+          status = net.sender.toString() === userIdStr ? "sent" : "received";
         }
       }
 
@@ -44,7 +40,7 @@ export const getAllUsers = async (req, res) => {
 
     res.json(enrichedUsers);
   } catch (err) {
-    console.error("Error in getUsersForNetwork:", err);
+    console.error("Error in getAllUsers:", err);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
@@ -110,7 +106,7 @@ export const acceptRequest = async (req, res) => {
 
 export const rejectRequest = async (req, res) => {
   const receiverId = req.user._id;
-  const { senderId } = req.body;
+  const { senderId } = req.query;
 
   try {
     const request = await Network.findOneAndDelete({
@@ -132,7 +128,7 @@ export const rejectRequest = async (req, res) => {
 
 export const withdrawRequest = async (req, res) => {
   const senderId = req.user._id;
-  const { receiverId } = req.body;
+  const { receiverId } = req.query;
 
   try {
     const request = await Network.findOneAndDelete({
@@ -154,7 +150,7 @@ export const withdrawRequest = async (req, res) => {
 
 export const disconnectConnection = async (req, res) => {
   const userId = req.user._id;
-  const { receiverId } = req.body;
+  const { receiverId } = req.query;
 
   try {
     const connection = await Network.findOneAndDelete({

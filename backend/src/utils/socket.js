@@ -1,6 +1,6 @@
 import Message from "../models/message.model.js";
+import User from "../models/user.model.js";
 import { Server } from "socket.io";
-import cookie from "cookie";
 import jwt from "jsonwebtoken";
 import { createServer } from "http";
 import app from "../app.js";
@@ -11,37 +11,30 @@ const io = new Server(server, {
   cors: {
     origin: process.env.CORS_ORIGIN,
     methods: ["GET", "POST"],
-    credentials: true,
   },
 });
 
 // --- Authentication Middleware for Socket.io ---
-io.use((socket, next) => {
+io.use(async (socket, next) => {
   try {
-    const cookieString = socket.handshake.headers.cookie;
-    if (!cookieString) {
-      return next(new Error("Authentication error: No cookie provided."));
-    }
-    const cookies = cookie.parse(cookieString);
-
-    const token = cookies.token;
+    const token = socket.handshake.auth?.token;
     if (!token) {
-      return next(
-        new Error("Authentication error: Token not found in cookies.")
-      );
+      return next(new Error("Authentication error: No token provided."));
     }
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-      if (err) {
-        return next(
-          new Error("Authentication error: Invalid or expired token.")
-        );
-      }
-      socket.userId = decoded.userId;
-      next();
-    });
+
+    const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const user = await User.findById(decodedToken?._id).select("-password");
+
+    if (!user) {
+      return next(new Error("Authentication error: User not found."));
+    }
+
+    socket.user = user;
+    socket.userId = user._id;
+    next();
   } catch (error) {
-    console.error("Error in socket authentication middleware:", error);
-    next(new Error("Authentication error."));
+    console.error("Socket authentication error:", error);
+    next(new Error("Authentication error: Invalid or expired token."));
   }
 });
 

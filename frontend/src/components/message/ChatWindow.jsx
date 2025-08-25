@@ -2,9 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import MessageInput from "./MessageInput";
 import MessageBubble from "./MessageBubble";
 import Loader from "../../components/common/Loader";
-import axios from "axios";
-import { BASE_URL } from "../../utils/constants";
 import { dummyUser } from "../../utils/dummyUser";
+import api from "../../utils/api";
 
 const ChatWindow = ({ chat }) => {
   const [messages, setMessages] = useState([]);
@@ -16,12 +15,7 @@ const ChatWindow = ({ chat }) => {
       if (!chat?.id) return;
       setchatLoading(true);
       try {
-        const res = await axios.get(
-          `${BASE_URL}/v1/message/get-message/${chat.id}`,
-          {
-            withCredentials: true,
-          }
-        );
+        const res = await api.get(`/v1/message/get-message/${chat.id}`);
         setMessages(res.data);
       } catch (err) {
         console.error("Error fetching messages:", err);

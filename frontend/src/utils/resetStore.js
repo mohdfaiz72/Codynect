@@ -16,7 +16,6 @@ export const resetStore = (dispatch) => {
   dispatch(clearAuth());
   dispatch(clearSkills());
   dispatch(clearCoding());
-  dispatch(clearEvents());
   dispatch(clearProfile());
   dispatch(clearProject());
   dispatch(clearLanguage());

@@ -14,11 +14,11 @@ const router = express.Router();
 
 router.use(verifyJWT);
 
-router.get("/get-users", getAllUsers);
-router.post("/send-request", sendRequest);
-router.post("/accept-request", acceptRequest);
-router.delete("/reject-request", rejectRequest);
-router.delete("/withdraw-request", withdrawRequest);
+router.get("/", getAllUsers);
+router.post("/send", sendRequest);
+router.post("/accept", acceptRequest);
+router.delete("/reject", rejectRequest);
+router.delete("/withdraw", withdrawRequest);
 router.delete("/disconnect", disconnectConnection);
 router.get("/profile-view/:id", getUserProfileById);
 

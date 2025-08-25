@@ -2,8 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { getSocket } from "../../utils/socket";
 import { Send, Wand2, Loader2 } from "lucide-react";
 import { useSelector } from "react-redux";
-import axios from "axios";
-import { BASE_URL } from "../../utils/constants";
+import api from "../../utils/api";
 
 const getChatId = (userId1, userId2) => {
   if (!userId1 || !userId2) return null;
@@ -21,11 +20,7 @@ const MessageInput = ({ onMessageSent }) => {
     if (!message.trim()) return;
     try {
       setLoadingEnhance(true);
-      const res = await axios.post(
-        `${BASE_URL}/v1/ai/enhance-message`,
-        { message },
-        { withCredentials: true }
-      );
+      const res = await api.post(`/v1/ai/enhance-message`, { message });
       const enhanced = res.data.enhanced;
       if (!enhanced) throw new Error("No enhanced message received.");
       setMessage(enhanced);

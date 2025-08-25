@@ -24,7 +24,7 @@ const experienceSlice = createSlice({
         (exp) => exp._id !== action.payload
       );
     },
-    clearExperiences: (state) => {
+    clearExperience: (state) => {
       state.experience = [];
     },
   },
