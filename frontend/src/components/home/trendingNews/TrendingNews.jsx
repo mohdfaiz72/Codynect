@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RotateCcw } from "lucide-react";
-import { BASE_URL } from "../../../utils/constants";
 import { setNews } from "../../../store/newsSlice";
-import axios from "axios";
+import api from "../../../utils/api";
 
 const TrendingNews = () => {
   const dispatch = useDispatch();
@@ -13,9 +12,7 @@ const TrendingNews = () => {
   const fetchNews = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${BASE_URL}/external/tech-news`, {
-        withCredentials: true,
-      });
+      const res = await api.get("/v1/external/tech-news");
       dispatch(setNews(res.data.articles));
     } catch (err) {
       console.error(

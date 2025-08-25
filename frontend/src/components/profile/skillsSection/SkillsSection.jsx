@@ -4,9 +4,8 @@ import { Pencil, Plus, ArrowLeft, Trash2 } from "lucide-react";
 import EditSkills from "./EditSkills";
 import DeleteConfirmation from "../../common/DeleteConfirmation";
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
+import api from "../../../utils/api";
 import { addSkill, updateSkill, deleteSkill } from "../../../store/skillsSlice";
-import { BASE_URL } from "../../../utils/constants";
 
 const SkillsSection = () => {
   const [showEditModal, setShowEditModal] = useState(false);
@@ -22,24 +21,18 @@ const SkillsSection = () => {
     ? useSelector((store) => store.skills.skills)
     : useSelector((store) => store.profile.profile.skills);
 
-  const isEditablePage = location.pathname === "/profile/skills-section";
+  const isEditablePage = location.pathname === "/profile/skills";
 
   // ---------- Add / Update ----------
   const handleSaveSkill = async (formData) => {
     try {
       let res;
       if (skillToUpdate) {
-        res = await axios.patch(
-          `${BASE_URL}/v1/skill/${skillToUpdate._id}`,
-          formData,
-          { withCredentials: true }
-        );
+        res = await api.patch(`/v1/skill/${skillToUpdate._id}`, formData);
         dispatch(updateSkill(res.data));
         alert("Skill updated!");
       } else {
-        res = await axios.post(`${BASE_URL}/v1/skill/`, formData, {
-          withCredentials: true,
-        });
+        res = await api.post(`/v1/skill/`, formData);
         dispatch(addSkill(res.data));
         alert("Skill added!");
       }
@@ -52,9 +45,7 @@ const SkillsSection = () => {
   // ---------- Delete ----------
   const handleDeleteSkill = async () => {
     try {
-      await axios.delete(`${BASE_URL}/v1/skill/${skillToUpdate._id}`, {
-        withCredentials: true,
-      });
+      await api.delete(`/v1/skill/${skillToUpdate._id}`);
       dispatch(deleteSkill(skillToUpdate._id));
       alert("Skill deleted.");
       setShowDeleteModal(false);
@@ -75,7 +66,7 @@ const SkillsSection = () => {
             <div className="flex items-center gap-4">
               {skills?.length > 0 && !isEditablePage && (
                 <button
-                  onClick={() => navigate("/profile/skills-section")}
+                  onClick={() => navigate("/profile/skills")}
                   className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
                   title="Go to Edit Page"
                 >

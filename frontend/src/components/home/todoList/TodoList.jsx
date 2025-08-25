@@ -6,14 +6,13 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "../../../datepicker.css";
 import { MoreVertical } from "lucide-react";
-import axios from "axios";
-import { BASE_URL } from "../../../utils/constants";
 import {
   addTodo,
   deleteTodo,
   updateTodo,
   setTodos,
 } from "../../../store/todoSlice";
+import api from "../../../utils/api";
 
 const TodoList = () => {
   const [task, setTask] = useState("");
@@ -28,9 +27,7 @@ const TodoList = () => {
 
   const fetchTask = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/todo/`, {
-        withCredentials: true,
-      });
+      const res = await api.get("/v1/todo/");
       dispatch(setTodos(res.data.todos));
     } catch (err) {
       console.error(
@@ -78,9 +75,7 @@ const TodoList = () => {
 
   const addTask = async (newTask) => {
     try {
-      const res = await axios.post(`${BASE_URL}/todo/`, newTask, {
-        withCredentials: true,
-      });
+      const res = await api.post("/v1/todo/", newTask);
       dispatch(addTodo(res.data.todo));
     } catch (err) {
       console.error(
@@ -91,9 +86,7 @@ const TodoList = () => {
 
   const updateTask = async (id, newTask) => {
     try {
-      const res = await axios.patch(`${BASE_URL}/todo/${id}`, newTask, {
-        withCredentials: true,
-      });
+      const res = await api.patch(`/v1/todo/${id}`, newTask);
       dispatch(updateTodo(res.data.todo));
       setEditingId(null);
     } catch (err) {
@@ -115,9 +108,7 @@ const TodoList = () => {
 
   const deleteTask = async (id) => {
     try {
-      await axios.delete(`${BASE_URL}/todo/${id}`, {
-        withCredentials: true,
-      });
+      await api.delete(`/v1/todo/${id}`);
       dispatch(deleteTodo(id));
     } catch (err) {
       console.error(

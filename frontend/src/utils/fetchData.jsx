@@ -1,5 +1,3 @@
-import axios from "axios";
-import { BASE_URL } from "./constants";
 import { setEducation } from "../store/educationSlice";
 import { setExperience } from "../store/experienceSlice";
 import { setSkills } from "../store/skillsSlice";
@@ -7,6 +5,7 @@ import { setCoding } from "../store/codingSlice";
 import { setProject } from "../store/projectSlice";
 import { setCertification } from "../store/certificationSlice";
 import { setLanguage } from "../store/languageSlice";
+import api from "./api";
 
 const fetchData = async (dispatch) => {
   try {
@@ -19,27 +18,13 @@ const fetchData = async (dispatch) => {
       certificationRes,
       languageRes,
     ] = await Promise.all([
-      axios.get(`${BASE_URL}/v1/education/`, {
-        withCredentials: true,
-      }),
-      axios.get(`${BASE_URL}/v1/experience/`, {
-        withCredentials: true,
-      }),
-      axios.get(`${BASE_URL}/v1/skill/`, {
-        withCredentials: true,
-      }),
-      axios.get(`${BASE_URL}/v1/coding/`, {
-        withCredentials: true,
-      }),
-      axios.get(`${BASE_URL}/v1/project/`, {
-        withCredentials: true,
-      }),
-      axios.get(`${BASE_URL}/v1/certification/`, {
-        withCredentials: true,
-      }),
-      axios.get(`${BASE_URL}/v1/language/`, {
-        withCredentials: true,
-      }),
+      api.get("/v1/education/"),
+      api.get("/v1/experience/"),
+      api.get("/v1/skill/"),
+      api.get("/v1/coding/"),
+      api.get("/v1/project/"),
+      api.get("/v1/certification/"),
+      api.get("/v1/language/"),
     ]);
     dispatch(setEducation(educationRes.data));
     dispatch(setExperience(experienceRes.data));
@@ -48,9 +33,6 @@ const fetchData = async (dispatch) => {
     dispatch(setProject(projectRes.data));
     dispatch(setCertification(certificationRes.data));
     dispatch(setLanguage(languageRes.data));
-    {
-      console.log(educationRes, experienceRes, skillRes, codingRes, projectRes);
-    }
   } catch (err) {
     console.error("Failed to fetch extra data:", err);
   }

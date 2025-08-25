@@ -1,7 +1,6 @@
 import { useState } from "react";
 import Editor from "@monaco-editor/react";
-import axios from "axios";
-import { BASE_URL } from "../../../utils/constants";
+import api from "../../../utils/api";
 
 const SnippetForm = () => {
   const [formData, setFormData] = useState({
@@ -58,9 +57,7 @@ const SnippetForm = () => {
         code: formData.code.trim(),
         tags: tagsArray,
       };
-      const res = await axios.post(`${BASE_URL}/v1/post/snippet`, payload, {
-        withCredentials: true,
-      });
+      const res = await api.post("/v1/post/snippet", payload);
 
       console.log("Snippet posted:", res.data);
       resetForm();

@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { Country, State, City } from "country-state-city";
 import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
+import api from "../../../utils/api";
 import { setUser } from "../../../store/userSlice";
-import { BASE_URL } from "../../../utils/constants";
 
 const EditProfile = ({ onClose }) => {
   const user = useSelector((store) => store.user.user);
@@ -116,9 +115,7 @@ const EditProfile = ({ onClose }) => {
         address: formData.address,
       };
 
-      const res = await axios.patch(`${BASE_URL}/v1/user/details`, payload, {
-        withCredentials: true,
-      });
+      const res = await api.patch("/v1/user/details", payload);
 
       dispatch(setUser(res.data.user));
       alert("Profile updated successfully");

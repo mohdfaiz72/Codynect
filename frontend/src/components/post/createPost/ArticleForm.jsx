@@ -1,6 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
-import { BASE_URL } from "../../../utils/constants";
+import api from "../../../utils/api";
 
 const ArticleForm = () => {
   const [loading, setLoading] = useState(false);
@@ -57,8 +56,7 @@ const ArticleForm = () => {
       tagsArray.forEach((tag) => payload.append("tags[]", tag));
       if (formData.image) payload.append("file", formData.image);
 
-      const res = await axios.post(`${BASE_URL}/v1/post/article`, payload, {
-        withCredentials: true,
+      const res = await api.post("/v1/post/article", payload, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

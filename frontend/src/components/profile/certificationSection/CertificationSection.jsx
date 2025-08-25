@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Pencil, Plus, ArrowLeft, Trash2 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
+import api from "../../../utils/api";
 import EditCertification from "./EditCertification";
 import DeleteConfirmation from "../../common/DeleteConfirmation";
 import {
@@ -10,7 +10,6 @@ import {
   updateCertification,
   deleteCertification,
 } from "../../../store/certificationSlice";
-import { BASE_URL } from "../../../utils/constants";
 
 const CertificationSection = () => {
   const [showEditModal, setShowEditModal] = useState(false);
@@ -26,25 +25,21 @@ const CertificationSection = () => {
     ? useSelector((store) => store.certification.certification)
     : useSelector((store) => store.profile.profile.certification);
 
-  const isEditablePage =
-    location.pathname === "/profile/certifications-section";
+  const isEditablePage = location.pathname === "/profile/certifications";
 
   // ---------- Add / Update ----------
   const handleSaveCertification = async (formData) => {
     try {
       let res;
       if (certToUpdate) {
-        res = await axios.patch(
-          `${BASE_URL}/v1/certification/${certToUpdate._id}`,
-          formData,
-          { withCredentials: true }
+        res = await api.patch(
+          `/v1/certification/${certToUpdate._id}`,
+          formData
         );
         dispatch(updateCertification(res.data));
         alert("Certification updated!");
       } else {
-        res = await axios.post(`${BASE_URL}/v1/certification`, formData, {
-          withCredentials: true,
-        });
+        res = await api.post("/v1/certification", formData);
         dispatch(addCertification(res.data));
         alert("Certification added!");
       }
@@ -58,9 +53,7 @@ const CertificationSection = () => {
   // ---------- Delete ----------
   const handleDeleteCertification = async () => {
     try {
-      await axios.delete(`${BASE_URL}/v1/certification/${certToUpdate._id}`, {
-        withCredentials: true,
-      });
+      await api.delete(`/v1/certification/${certToUpdate._id}`);
       dispatch(deleteCertification(certToUpdate._id));
       alert("Certification deleted.");
       setShowDeleteModal(false);
@@ -83,7 +76,7 @@ const CertificationSection = () => {
             <div className="flex items-center gap-4">
               {certifications.length > 0 && !isEditablePage && (
                 <button
-                  onClick={() => navigate("/profile/certifications-section")}
+                  onClick={() => navigate("/profile/certifications")}
                   className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
                   title="Go to Edit Page"
                 >

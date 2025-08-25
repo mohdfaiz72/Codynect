@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
 import Loader from "../components/common/Loader";
@@ -6,20 +6,16 @@ import Header from "../components/header/Header";
 import ProfileRemover from "../utils/ProfileRemover";
 
 const ProtectedRoutes = () => {
-  const { user, loading } = useSelector((store) => store.user);
+  const { isAuthenticated } = useSelector((store) => store.auth);
   const navigate = useNavigate();
-  const [checkedAuth, setCheckedAuth] = useState(false);
 
   useEffect(() => {
-    if (!loading) {
-      if (!user) {
-        navigate("/login");
-      }
-      setCheckedAuth(true);
+    if (!isAuthenticated) {
+      navigate("/login");
     }
-  }, [loading, user, navigate]);
+  }, [isAuthenticated, navigate]);
 
-  if (loading || !checkedAuth) {
+  if (!isAuthenticated) {
     return <Loader message="Checking authentication..." />;
   }
 

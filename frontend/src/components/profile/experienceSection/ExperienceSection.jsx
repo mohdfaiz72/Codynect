@@ -4,13 +4,12 @@ import { Pencil, Plus, ArrowLeft, Trash2 } from "lucide-react";
 import EditExperience from "./EditExperience";
 import DeleteConfirmation from "../../common/DeleteConfirmation";
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
+import api from "../../../utils/api";
 import {
   addExperience,
   updateExperience,
   deleteExperience,
 } from "../../../store/experienceSlice";
-import { BASE_URL } from "../../../utils/constants";
 
 const ExperienceSection = () => {
   const [showEditModal, setShowEditModal] = useState(false);
@@ -26,24 +25,21 @@ const ExperienceSection = () => {
     ? useSelector((store) => store.experience.experience)
     : useSelector((store) => store.profile.profile.experience);
 
-  const isEditablePage = location.pathname === "/profile/experience-section";
+  const isEditablePage = location.pathname === "/profile/experience";
 
   // ---------- Add / Update ----------
   const handleSaveExperience = async (formData) => {
     try {
       let res;
       if (experienceToUpdate) {
-        res = await axios.patch(
-          `${BASE_URL}/v1/experience/${experienceToUpdate._id}`,
-          formData,
-          { withCredentials: true }
+        res = await api.patch(
+          `/v1/experience/${experienceToUpdate._id}`,
+          formData
         );
         dispatch(updateExperience(res.data));
         alert("Experience updated!");
       } else {
-        res = await axios.post(`${BASE_URL}/v1/experience/`, formData, {
-          withCredentials: true,
-        });
+        res = await api.post("/v1/experience/", formData);
         dispatch(addExperience(res.data));
         alert("Experience added!");
       }
@@ -56,12 +52,7 @@ const ExperienceSection = () => {
   // ---------- Delete ----------
   const handleDeleteExperience = async () => {
     try {
-      await axios.delete(
-        `${BASE_URL}/v1/experience/${experienceToUpdate._id}`,
-        {
-          withCredentials: true,
-        }
-      );
+      await api.delete(`/v1/experience/${experienceToUpdate._id}`);
       dispatch(deleteExperience(experienceToUpdate._id));
       alert("Experience entry deleted.");
       setShowDeleteModal(false);
@@ -82,7 +73,7 @@ const ExperienceSection = () => {
             <div className="flex items-center gap-4">
               {experience.length > 0 && !isEditablePage && (
                 <button
-                  onClick={() => navigate("/profile/experience-section")}
+                  onClick={() => navigate("/profile/experience")}
                   className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
                   title="Go to Edit Page"
                 >

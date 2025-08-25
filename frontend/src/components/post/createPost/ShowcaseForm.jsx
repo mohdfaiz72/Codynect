@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { CirclePlus } from "lucide-react";
-import axios from "axios";
-import { BASE_URL } from "../../../utils/constants";
+import api from "../../../utils/api";
 
 const ShowcaseForm = () => {
   const [techInput, setTechInput] = useState("");
@@ -68,9 +67,7 @@ const ShowcaseForm = () => {
         tags: tagsArray,
       };
 
-      const res = await axios.post(`${BASE_URL}/v1/post/showcase`, payload, {
-        withCredentials: true,
-      });
+      const res = await api.post("/v1/post/showcase", payload);
       console.log("Showcase posted:", res.data);
       resetForm();
     } catch (error) {

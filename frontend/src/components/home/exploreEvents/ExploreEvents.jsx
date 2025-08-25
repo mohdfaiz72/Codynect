@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../../utils/api";
 import {
   format,
   addDays,
@@ -10,7 +10,6 @@ import {
 } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
 import { setEvents } from "../../../store/eventsSlice";
-import { BASE_URL } from "../../../utils/constants";
 
 const ExploreEvents = () => {
   const [weekStart, setWeekStart] = useState(
@@ -22,9 +21,7 @@ const ExploreEvents = () => {
 
   const fetchContests = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/external/contests`, {
-        withCredentials: true,
-      });
+      const res = await api.get("/v1/external/contests");
       const data = res.data;
 
       const newEvents = {};

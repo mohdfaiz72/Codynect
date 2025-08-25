@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { BASE_URL } from "../../../utils/constants";
-import axios from "axios";
+import api from "../../../utils/api";
 
 const AchievementForm = () => {
   const [formData, setFormData] = useState({
@@ -56,8 +55,7 @@ const AchievementForm = () => {
         data.append("file", formData.image);
       }
 
-      const res = await axios.post(`${BASE_URL}/v1/post/achievement`, data, {
-        withCredentials: true,
+      const res = await api.post("/v1/post/achievement", data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 

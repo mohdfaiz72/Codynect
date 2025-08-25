@@ -8,10 +8,9 @@ import SnippetCard from "./postCard/SnippetCard";
 import ArticleCard from "./postCard/ArticleCard";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "../../store/postSlice";
-import axios from "axios";
-import { BASE_URL } from "../../utils/constants";
 import Loader from "../../components/common/Loader";
 import DoubtCard from "./postCard/DoubtCard";
+import api from "../../utils/api";
 
 const postTypes = [
   "All",
@@ -33,9 +32,7 @@ const PostFeed = () => {
   const fetchPost = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${BASE_URL}/v1/post/get-feed`, {
-        withCredentials: true,
-      });
+      const res = await api.get("/v1/post/get-feed");
       dispatch(setPost(res.data.data));
     } catch (err) {
       console.error("Failed to load users", err);

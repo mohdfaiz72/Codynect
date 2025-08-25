@@ -35,15 +35,13 @@ function AppRoutes() {
   useEffect(() => {
     const autoLogin = async () => {
       try {
-        const res = await axios.post(
-          `${BASE_URL}/v1/auth/renew`,
-          {},
-          { withCredentials: true }
-        );
+        const res = await axios.post(`${BASE_URL}/v1/auth/renew`, null, {
+          withCredentials: true,
+        });
         dispatch(setAccessToken(res.data.accessToken));
         dispatch(setUser(res.data.user));
-        //await fetchData(dispatch);
-        //connectSocket();
+        await fetchData(dispatch);
+        connectSocket();
       } catch (err) {
         console.log("Not logged in:", err.message);
       } finally {
@@ -54,7 +52,7 @@ function AppRoutes() {
   }, [dispatch]);
 
   if (loading) {
-    return <Loader message="Checking authentication..." />;
+    return <Loader message="Initializing Codynect..." />;
   }
 
   return (
@@ -75,23 +73,14 @@ function AppRoutes() {
 
             {/* Nested Profile Routes */}
             <Route path="/profile" element={<Profile />}>
-              <Route path="about-section" element={<AboutSection />} />
-              <Route path="education-section" element={<EducationSection />} />
-              <Route
-                path="experience-section"
-                element={<ExperienceSection />}
-              />
-              <Route path="projects-section" element={<ProjectSection />} />
-              <Route path="languages-section" element={<LanguageSection />} />
-              <Route
-                path="certifications-section"
-                element={<CertificationSection />}
-              />
-              <Route
-                path="coding-profiles-section"
-                element={<CodingProfilesSection />}
-              />
-              <Route path="skills-section" element={<SkillsSection />} />
+              <Route path="about" element={<AboutSection />} />
+              <Route path="education" element={<EducationSection />} />
+              <Route path="experience" element={<ExperienceSection />} />
+              <Route path="projects" element={<ProjectSection />} />
+              <Route path="languages" element={<LanguageSection />} />
+              <Route path="certifications" element={<CertificationSection />} />
+              <Route path="coding" element={<CodingProfilesSection />} />
+              <Route path="skills" element={<SkillsSection />} />
             </Route>
           </Route>
         </Routes>

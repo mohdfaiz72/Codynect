@@ -4,13 +4,12 @@ import { Pencil, Plus, ArrowLeft, Trash2 } from "lucide-react";
 import EditEducation from "./EditEducation";
 import DeleteConfirmation from "../../common/DeleteConfirmation";
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
+import api from "../../../utils/api";
 import {
   addEducation,
   updateEducation,
   deleteEducation,
 } from "../../../store/educationSlice";
-import { BASE_URL } from "../../../utils/constants";
 
 const EducationSection = () => {
   const [showEditModal, setShowEditModal] = useState(false);
@@ -26,24 +25,21 @@ const EducationSection = () => {
     ? useSelector((store) => store.education.education)
     : useSelector((store) => store.profile.profile.education);
 
-  const isEditablePage = location.pathname === "/profile/education-section";
+  const isEditablePage = location.pathname === "/profile/education";
 
   // ---------- Add / Update ----------
   const handleSaveEducation = async (formData) => {
     try {
       let res;
       if (educationToUpdate) {
-        res = await axios.patch(
-          `${BASE_URL}/v1/education/${educationToUpdate._id}`,
-          formData,
-          { withCredentials: true }
+        res = await api.patch(
+          `/v1/education/${educationToUpdate._id}`,
+          formData
         );
         dispatch(updateEducation(res.data));
         alert("Education updated!");
       } else {
-        res = await axios.post(`${BASE_URL}/v1/education/`, formData, {
-          withCredentials: true,
-        });
+        res = await api.post("/v1/education/", formData);
         dispatch(addEducation(res.data));
         alert("Education added!");
       }
@@ -56,9 +52,7 @@ const EducationSection = () => {
   // ---------- Delete ----------
   const handleDeleteEducation = async () => {
     try {
-      await axios.delete(`${BASE_URL}/v1/education/${educationToUpdate._id}`, {
-        withCredentials: true,
-      });
+      await api.delete(`/v1/education/${educationToUpdate._id}`);
       dispatch(deleteEducation(educationToUpdate._id));
       alert("Education entry deleted.");
       setShowDeleteModal(false);
@@ -79,7 +73,7 @@ const EducationSection = () => {
             <div className="flex items-center gap-4">
               {education.length > 0 && !isEditablePage && (
                 <button
-                  onClick={() => navigate("/profile/education-section")}
+                  onClick={() => navigate("/profile/education")}
                   className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
                   title="Go to Edit Page"
                 >

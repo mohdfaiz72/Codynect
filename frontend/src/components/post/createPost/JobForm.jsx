@@ -1,6 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
-import { BASE_URL } from "../../../utils/constants";
+import api from "../../../utils/api";
 
 const JobForm = () => {
   const [loading, setLoading] = useState(false);
@@ -69,9 +68,7 @@ const JobForm = () => {
 
     try {
       setLoading(true);
-      const res = await axios.post(`${BASE_URL}/v1/post/job`, payload, {
-        withCredentials: true,
-      });
+      const res = await api.post("/v1/post/job", payload);
       console.log("Job posted:", res.data);
       resetForm();
     } catch (error) {

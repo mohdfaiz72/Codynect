@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { BASE_URL } from "../../../utils/constants";
-import axios from "axios";
+import api from "../../../utils/api";
 
 const PollForm = () => {
   const [loading, setLoading] = useState(false);
@@ -67,9 +66,7 @@ const PollForm = () => {
         tags: tagsArray,
       };
 
-      const res = await axios.post(`${BASE_URL}/v1/post/poll`, payload, {
-        withCredentials: true,
-      });
+      const res = await api.post("/v1/post/poll", payload);
 
       console.log("Poll posted:", res.data);
       resetForm();

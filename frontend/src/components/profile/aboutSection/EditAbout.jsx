@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../../utils/api";
 import EnhanceAboutConfirmation from "./EnhanceAboutConfirmation";
-import { BASE_URL } from "../../../utils/constants";
 
 const EditAbout = ({ aboutToEdit, onClose, onSave }) => {
   const [formData, setFormData] = useState(() => aboutToEdit || "");
@@ -24,11 +23,8 @@ const EditAbout = ({ aboutToEdit, onClose, onSave }) => {
   const handleEnhance = async () => {
     try {
       setLoadingEnhance(true);
-      const response = await axios.post(
-        `${BASE_URL}/ai/enhance-about`,
-        { about: formData },
-        { withCredentials: true }
-      );
+
+      const response = await api.post("/ai/enhance-about", { about: formData });
 
       const enhanced = response.data.enhanced;
       if (!enhanced) {
@@ -46,7 +42,7 @@ const EditAbout = ({ aboutToEdit, onClose, onSave }) => {
   };
 
   const handleConfirmEnhance = () => {
-    setFormData(enhancedText); // update textarea with enhanced text
+    setFormData(enhancedText);
     setShowEnhanceModal(false);
   };
 

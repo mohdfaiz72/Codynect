@@ -29,39 +29,27 @@ const EditCoverImage = ({ onClose }) => {
       setPreview(URL.createObjectURL(file));
     }
   };
-
-  const handleRemoveImage = async () => {
+  const handleRemoveCoverImage = async () => {
     try {
       const formData = new FormData();
       formData.append("remove", true);
 
-      const res = await axios.patch(
-        `${BASE_URL}/v1/user/cover-image`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          withCredentials: true,
-        }
-      );
+      const res = await api.patch("/v1/user/cover-image", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
-      if (res.status === 200) {
-        dispatch(setUser(res.data.user));
-        alert("Cover image removed!");
-        setSelectedImage(null);
-        setPreview(dummyUser.coverImage);
-        onClose();
-      } else {
-        alert("Failed to remove cover image.");
-      }
+      dispatch(setUser(res.data.user));
+      alert("Cover image removed!");
+      setSelectedImage(null);
+      setPreview(dummyUser.coverImage);
+      onClose();
     } catch (error) {
       console.error("Remove error:", error);
       alert("Something went wrong while removing the image.");
     }
   };
 
-  const handleSaveImage = async (e) => {
+  const handleSaveCoverImage = async (e) => {
     e.preventDefault();
 
     if (!selectedImage) {
@@ -73,24 +61,13 @@ const EditCoverImage = ({ onClose }) => {
       const formData = new FormData();
       formData.append("file", selectedImage);
 
-      const res = await axios.patch(
-        `${BASE_URL}/v1/user/cover-image`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          withCredentials: true,
-        }
-      );
+      const res = await api.patch("/v1/user/cover-image", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
-      if (res.status === 200) {
-        dispatch(setUser(res.data.user));
-        alert("Cover image updated!");
-        onClose();
-      } else {
-        alert("Failed to update cover image.");
-      }
+      dispatch(setUser(res.data.user));
+      alert("Cover image updated!");
+      onClose();
     } catch (error) {
       console.error("Upload error:", error);
       alert("Something went wrong while uploading.");

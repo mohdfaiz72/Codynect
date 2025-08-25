@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setUser } from "../../../store/userSlice";
 import DeleteConfirmation from "../../common/DeleteConfirmation";
-import axios from "axios";
-import { BASE_URL } from "../../../utils/constants";
+import api from "../../../utils/api";
 import { dummyUser } from "../../../utils/dummyUser";
 
 const EditProfilePhoto = ({ onClose }) => {
@@ -35,26 +34,15 @@ const EditProfilePhoto = ({ onClose }) => {
       const formData = new FormData();
       formData.append("remove", true);
 
-      const res = await axios.patch(
-        `${BASE_URL}/v1/user/profile-image`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          withCredentials: true,
-        }
-      );
+      const res = await api.patch("/v1/user/profile-image", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
-      if (res.status === 200) {
-        dispatch(setUser(res.data.user));
-        alert("Profile image removed!");
-        setSelectedImage(null);
-        setPreview(dummyUser.profileImage);
-        onClose();
-      } else {
-        alert("Failed to remove profile image.");
-      }
+      dispatch(setUser(res.data.user));
+      alert("Profile image removed!");
+      setSelectedImage(null);
+      setPreview(dummyUser.profileImage);
+      onClose();
     } catch (error) {
       console.error("Remove error:", error);
       alert("Something went wrong while removing the image.");
@@ -73,24 +61,13 @@ const EditProfilePhoto = ({ onClose }) => {
       const formData = new FormData();
       formData.append("file", selectedImage);
 
-      const res = await axios.patch(
-        `${BASE_URL}/v1/user/profile-image`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          withCredentials: true,
-        }
-      );
+      const res = await api.patch("/v1/user/profile-image", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
-      if (res.status === 200) {
-        dispatch(setUser(res.data.user));
-        alert("Profile photo updated!");
-        onClose();
-      } else {
-        alert("Failed to update profile photo.");
-      }
+      dispatch(setUser(res.data.user));
+      alert("Profile photo updated!");
+      onClose();
     } catch (error) {
       console.error("Upload error:", error);
       alert("Something went wrong while uploading.");

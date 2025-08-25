@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
 import { RotateCcw } from "lucide-react";
-import { BASE_URL } from "../../../utils/constants";
 import { setFact } from "../../../store/factSlice";
+import api from "../../../utils/api";
 
 const RandomFact = () => {
   const dispatch = useDispatch();
@@ -13,9 +12,7 @@ const RandomFact = () => {
   const fetchFact = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${BASE_URL}/ai/random-fact`, {
-        withCredentials: true,
-      });
+      const res = await api.get("/v1/ai/random-fact");
       dispatch(setFact(res.data));
     } catch (err) {
       dispatch(setFact(null));

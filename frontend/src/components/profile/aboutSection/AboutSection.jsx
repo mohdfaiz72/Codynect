@@ -4,13 +4,13 @@ import { Pencil, Plus, ArrowLeft, Trash2 } from "lucide-react";
 import EditAbout from "./EditAbout";
 import DeleteConfirmation from "../../common/DeleteConfirmation";
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
+import api from "../../../utils/api";
 import { setUser } from "../../../store/userSlice";
-import { BASE_URL } from "../../../utils/constants";
 
 const AboutSection = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -20,16 +20,12 @@ const AboutSection = () => {
     ? useSelector((store) => store.user.user)
     : useSelector((store) => store.profile.profile.user);
 
-  const isEditablePage = location.pathname === "/profile/about-section";
+  const isEditablePage = location.pathname === "/profile/about";
 
+  // ---------- Add / Update ----------
   const handleSaveAbout = async (updatedText) => {
     try {
-      const res = await axios.patch(
-        `${BASE_URL}/v1/user/about`,
-        { about: updatedText },
-        { withCredentials: true }
-      );
-
+      const res = await api.patch("/v1/user/about", { about: updatedText });
       dispatch(setUser(res.data.user));
       alert(user.about ? "About updated!" : "About added!");
       setShowEditModal(false);
@@ -38,13 +34,10 @@ const AboutSection = () => {
     }
   };
 
+  // ---------- Delete ----------
   const handleDeleteAbout = async () => {
     try {
-      const res = await axios.patch(
-        `${BASE_URL}/v1/user/about`,
-        { about: "" },
-        { withCredentials: true }
-      );
+      const res = await api.patch("/v1/user/about", { about: "" });
       dispatch(setUser(res.data.user));
       alert("About section deleted.");
       setShowDeleteModal(false);
@@ -66,7 +59,7 @@ const AboutSection = () => {
               <button
                 onClick={() =>
                   user.about
-                    ? navigate("/profile/about-section")
+                    ? navigate("/profile/about")
                     : setShowEditModal(true)
                 }
                 className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"

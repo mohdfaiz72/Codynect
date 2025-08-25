@@ -2,8 +2,7 @@ import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    // bg-gradient-to-br from-purple-950 via-slate-900 to-gray-900
-    <footer className="bg-transparent text-slate-400 border border-amber-700 p-4 text-xs rounded-xl mt-3">
+    <footer className="bg-fixed bg-gradient-to-br from-purple-950 via-slate-900 to-gray-900 text-slate-400 border border-amber-700 p-4 text-xs rounded-xl mt-3">
       {/* Slogan */}
       <p className="text-center mb-2 text-amber-400 font-semibold">
         Codynect – Code. Connect. Collaborate.

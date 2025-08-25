@@ -1,10 +1,11 @@
 import axios from "axios";
 import store from "../store/appStore";
-import { setAccessToken, clearAuth } from "../store/authSlice";
+import { setAccessToken } from "../store/authSlice";
 import { BASE_URL } from "./constants";
+import { forceLogout } from "./logout";
 
 const api = axios.create({
-  baseURL: `${BASE_URL}`,
+  baseURL: BASE_URL,
 });
 
 api.interceptors.request.use(
@@ -29,7 +30,7 @@ api.interceptors.response.use(
 
       try {
         const res = await axios.post(
-          `${BASE_URL}/v1/auth/refresh`,
+          `${BASE_URL}/v1/auth/renew`,
           {},
           { withCredentials: true }
         );
@@ -39,8 +40,7 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return api(originalRequest);
       } catch (refreshError) {
-        store.dispatch(clearAuth());
-        window.location.href = "/login";
+        forceLogout(store.dispatch);
         return Promise.reject(refreshError);
       }
     }

@@ -1,6 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
-import { BASE_URL } from "../../../utils/constants";
+import api from "../../../utils/api";
 
 const ThoughtForm = () => {
   const [formData, setFormData] = useState({
@@ -49,8 +48,7 @@ const ThoughtForm = () => {
         data.append("file", formData.image);
       }
 
-      const res = await axios.post(`${BASE_URL}/v1/post/thought`, data, {
-        withCredentials: true,
+      const res = await api.post("/v1/post/thought", data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 

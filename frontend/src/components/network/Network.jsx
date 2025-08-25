@@ -2,10 +2,9 @@ import { useState, useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import ConnectionTabs from "./ConnectionTabs";
 import UserCard from "./UserCard";
-import axios from "axios";
+import api from "../../utils/api";
 import { setNetwork } from "../../store/networkSlice";
 import Loader from "../../components/common/Loader";
-import { BASE_URL } from "../../utils/constants";
 
 const Network = () => {
   const [selectedTab, setSelectedTab] = useState("Suggestions");
@@ -17,9 +16,7 @@ const Network = () => {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${BASE_URL}/v1/network/get-users`, {
-        withCredentials: true,
-      });
+      const res = await api.get("/v1/network/get-users");
       dispatch(setNetwork(res.data));
     } catch (err) {
       console.error("Failed to load users", err);
@@ -48,69 +45,23 @@ const Network = () => {
     });
   }, [users, selectedTab]);
 
-  const sendConnectionRequest = async (receiverId) => {
-    await axios.post(
-      `${BASE_URL}/v1/network/send-request`,
-      { receiverId },
-      { withCredentials: true }
-    );
+  const connectionActions = {
+    connect: (id) => api.post("/v1/network/send-request", { receiverId: id }),
+    accept: (id) => api.post("/v1/network/accept-request", { senderId: id }),
+    reject: (id) =>
+      api.delete("/v1/network/reject-request", { data: { senderId: id } }),
+    withdraw: (id) =>
+      api.delete("/v1/network/withdraw-request", { data: { receiverId: id } }),
+    disconnect: (id) =>
+      api.delete("/v1/network/disconnect", { data: { receiverId: id } }),
   };
 
-  const acceptConnectionRequest = async (senderId) => {
-    await axios.post(
-      `${BASE_URL}/v1/network/accept-request`,
-      { senderId },
-      { withCredentials: true }
-    );
-  };
-
-  const rejectConnectionRequest = async (senderId) => {
-    await axios.delete(`${BASE_URL}/v1/network/reject-request`, {
-      data: { senderId },
-      withCredentials: true,
-    });
-  };
-
-  const withdrawConnectionRequest = async (receiverId) => {
-    await axios.delete(`${BASE_URL}/v1/network/withdraw-request`, {
-      data: { receiverId },
-      withCredentials: true,
-    });
-  };
-
-  const disconnectConnectionRequest = async (receiverId) => {
-    await axios.delete(`${BASE_URL}/v1/network/disconnect`, {
-      data: { receiverId },
-      withCredentials: true,
-    });
-  };
-
-  const handleConnect = async (userId, status = "connect") => {
+  const handleConnect = async (userId, action = "connect") => {
     setPendingUsers((prev) => [...prev, userId]);
-
     const delay = new Promise((resolve) => setTimeout(resolve, 600));
 
     try {
-      switch (status) {
-        case "connect":
-          await Promise.all([sendConnectionRequest(userId), delay]);
-          break;
-        case "accept":
-          await Promise.all([acceptConnectionRequest(userId), delay]);
-          break;
-        case "reject":
-          await Promise.all([rejectConnectionRequest(userId), delay]);
-          break;
-        case "withdraw":
-          await Promise.all([withdrawConnectionRequest(userId), delay]);
-          break;
-        case "disconnect":
-          await Promise.all([disconnectConnectionRequest(userId), delay]);
-          break;
-        default:
-          break;
-      }
-
+      await Promise.all([connectionActions[action](userId), delay]);
       await fetchUsers();
     } catch (err) {
       console.error("Connection action failed:", err);
@@ -119,9 +70,7 @@ const Network = () => {
     }
   };
 
-  if (loading) {
-    return <Loader />;
-  }
+  if (loading) return <Loader />;
 
   return (
     <div className="w-full p-4">

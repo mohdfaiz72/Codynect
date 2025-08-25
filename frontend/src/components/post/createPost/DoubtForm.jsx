@@ -1,7 +1,6 @@
 import { useState } from "react";
 import Editor from "@monaco-editor/react";
-import axios from "axios";
-import { BASE_URL } from "../../../utils/constants";
+import api from "../../../utils/api";
 
 const DoubtForm = () => {
   const [formData, setFormData] = useState({
@@ -47,9 +46,7 @@ const DoubtForm = () => {
 
     try {
       setLoading(true);
-      const res = await axios.post(`${BASE_URL}/v1/post/doubt`, payload, {
-        withCredentials: true,
-      });
+      const res = await api.post("/v1/post/doubt", payload);
       console.log("Doubt posted:", res.data);
       resetForm();
     } catch (error) {

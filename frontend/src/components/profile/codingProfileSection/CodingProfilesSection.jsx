@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Pencil, Plus, ArrowLeft, Trash2, RotateCcw } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import axios from "axios";
+import api from "../../../utils/api";
 import AddCodingProfile from "./AddCodingProfile";
 import EditCodingProfile from "./EditCodingProfile";
 import DeleteConfirmation from "../../common/DeleteConfirmation";
@@ -13,7 +13,6 @@ import {
   deleteCoding,
   updateCoding,
 } from "../../../store/codingSlice";
-import { BASE_URL } from "../../../utils/constants";
 
 const CodingProfilesSection = () => {
   const [showEditModal, setShowEditModal] = useState(false);
@@ -24,19 +23,17 @@ const CodingProfilesSection = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const isEditablePage =
-    location.pathname === "/profile/coding-profiles-section";
+  const isEditablePage = location.pathname === "/profile/coding";
 
   const isOwnProfile = useSelector((store) => store.profile.isOwnProfile);
   const profiles = isOwnProfile
     ? useSelector((store) => store.coding.coding)
     : useSelector((store) => store.profile.profile.coding);
 
+  // ---------- Add ----------
   const handleSaveCodingProfile = async (formData) => {
     try {
-      const res = await axios.post(`${BASE_URL}/v1/coding/`, formData, {
-        withCredentials: true,
-      });
+      const res = await api.post("/v1/coding/", formData);
       dispatch(addCoding(res.data));
       toast.success("Profile added!");
       setShowAddModal(false);
@@ -47,13 +44,10 @@ const CodingProfilesSection = () => {
     }
   };
 
+  // ---------- Update ----------
   const handleUpdateCodingProfile = async (formData) => {
     try {
-      const res = await axios.post(
-        `${BASE_URL}/v1/coding/${formData.id}`,
-        formData,
-        { withCredentials: true }
-      );
+      const res = await api.patch(`/v1/coding/${formData.id}`, formData);
       dispatch(updateCoding(res.data));
       toast.success("Profile updated!");
       setShowEditModal(false);
@@ -64,14 +58,14 @@ const CodingProfilesSection = () => {
     }
   };
 
+  // ---------- Refresh ----------
   const handleRefreshProfile = async (profile) => {
     setLoadingIds((prev) => ({ ...prev, [profile._id]: true }));
     try {
-      const res = await axios.post(
-        `${BASE_URL}/v1/coding/refresh`,
-        { platform: profile.platform, username: profile.username },
-        { withCredentials: true }
-      );
+      const res = await api.post("/v1/coding/refresh", {
+        platform: profile.platform,
+        username: profile.username,
+      });
       dispatch(updateCoding(res.data));
       toast.info(`Live data for ${profile.platform} fetched!`);
     } catch (err) {
@@ -84,11 +78,10 @@ const CodingProfilesSection = () => {
     }
   };
 
+  // ---------- Delete ----------
   const handleDeleteCodingProfile = async (id) => {
     try {
-      await axios.delete(`${BASE_URL}/v1/coding/${id}`, {
-        withCredentials: true,
-      });
+      await api.delete(`/v1/coding/${id}`);
       dispatch(deleteCoding(id));
       toast.success("Coding profile deleted.");
       setShowDeleteModal(false);
@@ -110,7 +103,7 @@ const CodingProfilesSection = () => {
             <div className="flex items-center gap-4">
               {profiles?.length > 0 && !isEditablePage && (
                 <button
-                  onClick={() => navigate("/profile/coding-profiles-section")}
+                  onClick={() => navigate("/profile/coding")}
                   className="text-amber-400 hover:text-amber-200 hover:scale-110 transition-transform"
                   title="Go to Edit Page"
                 >
