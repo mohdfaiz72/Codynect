@@ -23,7 +23,12 @@ const ThoughtCard = ({ thought }) => {
         />
       )}
       <hr className="text-amber-700 mb-3" />
-      <PostAction />
+      <PostAction
+        postId={thought._id}
+        postType={thought.type}
+        likesCount={thought.likesCount}
+        isLiked={thought.isLiked}
+      />
     </div>
   );
 };

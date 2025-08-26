@@ -83,7 +83,12 @@ const PollCard = ({ poll }) => {
       </div>
 
       <hr className="text-amber-700 mb-3" />
-      <PostAction />
+      <PostAction
+        postId={poll._id}
+        postType={poll.type}
+        likesCount={poll.likesCount}
+        isLiked={poll.isLiked}
+      />
     </div>
   );
 };

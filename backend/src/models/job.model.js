@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import basePostSchema from "./basePostSchema.js";
 
 const jobSchema = new mongoose.Schema(
   {
@@ -41,21 +42,7 @@ const jobSchema = new mongoose.Schema(
       default: "",
       trim: true,
     },
-    tags: {
-      type: [String],
-      default: [],
-    },
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    likes: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
+    ...basePostSchema.obj,
   },
   { timestamps: true }
 );

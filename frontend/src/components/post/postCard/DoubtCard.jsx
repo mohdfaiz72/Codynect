@@ -34,7 +34,12 @@ const DoubtCard = ({ doubt }) => {
       )}
 
       <hr className="border-amber-700 mb-3" />
-      <PostAction />
+      <PostAction
+        postId={doubt._id}
+        postType={doubt.type}
+        likesCount={doubt.likesCount}
+        isLiked={doubt.isLiked}
+      />
     </div>
   );
 };

@@ -1,10 +1,11 @@
+import { dummyUser } from "../../../utils/dummyUser";
 import { timeAgoFormat } from "../../../utils/timeAgoFormat";
 
 const PostHeader = ({ createdAt, user }) => {
   return (
     <div className="flex items-center gap-3">
       <img
-        src={user.profileImage}
+        src={user.profileImage || dummyUser.profileImage}
         alt={`${user.name} profile`}
         className="w-12 h-12 rounded-full object-cover border border-amber-700"
       />

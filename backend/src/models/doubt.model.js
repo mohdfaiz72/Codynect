@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import basePostSchema from "./basePostSchema.js";
 
 const doubtSchema = new mongoose.Schema(
   {
@@ -23,21 +24,7 @@ const doubtSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    tags: {
-      type: [String],
-      default: [],
-    },
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    likes: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
+    ...basePostSchema.obj,
   },
   { timestamps: true }
 );

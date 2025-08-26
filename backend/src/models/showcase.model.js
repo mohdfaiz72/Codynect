@@ -1,15 +1,11 @@
 import mongoose from "mongoose";
+import basePostSchema from "./basePostSchema.js";
 
 const showcaseSchema = new mongoose.Schema(
   {
     type: {
       type: String,
       default: "Showcase",
-    },
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
     },
     projectName: {
       type: String,
@@ -32,16 +28,7 @@ const showcaseSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    tags: {
-      type: [String],
-      default: [],
-    },
-    likes: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
+    ...basePostSchema.obj,
   },
   { timestamps: true }
 );

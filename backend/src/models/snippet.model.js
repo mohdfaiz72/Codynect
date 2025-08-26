@@ -1,15 +1,11 @@
 import mongoose from "mongoose";
+import basePostSchema from "./basePostSchema.js";
 
 const snippetSchema = new mongoose.Schema(
   {
     type: {
       type: String,
       default: "Snippet",
-    },
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
     },
     title: {
       type: String,
@@ -41,20 +37,11 @@ const snippetSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    tags: {
-      type: [String],
-      default: [],
-    },
     code: {
       type: String,
       required: true,
     },
-    likes: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
+    ...basePostSchema.obj,
   },
   { timestamps: true }
 );

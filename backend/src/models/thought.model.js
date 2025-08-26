@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import basePostSchema from "./basePostSchema.js";
 
 const thoughtSchema = new mongoose.Schema(
   {
@@ -11,25 +12,11 @@ const thoughtSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    tags: {
-      type: [String],
-      default: [],
-    },
     image: {
       type: String,
       default: "",
     },
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    likes: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
+    ...basePostSchema.obj,
   },
   {
     timestamps: true,

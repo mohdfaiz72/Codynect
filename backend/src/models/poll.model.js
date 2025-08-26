@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import basePostSchema from "./basePostSchema.js";
 
 const optionSchema = new mongoose.Schema(
   {
@@ -22,21 +23,7 @@ const pollSchema = new mongoose.Schema(
     options: {
       type: [optionSchema],
     },
-    tags: {
-      type: [String],
-      default: [],
-    },
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    likes: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
+    ...basePostSchema.obj,
   },
   { timestamps: true }
 );

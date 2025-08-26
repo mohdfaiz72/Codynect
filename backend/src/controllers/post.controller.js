@@ -6,6 +6,7 @@ import Poll from "../models/poll.model.js";
 import Job from "../models/job.model.js";
 import Doubt from "../models/doubt.model.js";
 import Article from "../models/article.model.js";
+import Like from "../models/like.model.js";
 
 export const getFeed = async (req, res) => {
   try {
@@ -58,12 +59,26 @@ export const getFeed = async (req, res) => {
       ...doubts,
       ...polls,
       ...jobs,
-    ].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    ];
+    const { _id: userId } = req.user;
+    const likeDocs = await Like.find({
+      user: userId,
+      postId: { $in: feed.map((item) => item._id) },
+    }).lean();
+
+    const likedPostIds = new Set(likeDocs.map((like) => String(like.postId)));
+
+    const feeds = feed
+      .map((item) => ({
+        ...item,
+        isLiked: likedPostIds.has(String(item._id)),
+      }))
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     return res.status(200).json({
       success: true,
       message: "Feed fetched successfully",
-      data: feed,
+      data: feeds,
     });
   } catch (error) {
     console.error("Error fetching feed:", error);

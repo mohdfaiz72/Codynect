@@ -28,7 +28,12 @@ const AchievementPost = ({ achievement }) => {
         />
       )}
       <hr className="border-amber-700 mb-3" />
-      <PostAction />
+      <PostAction
+        postId={achievement._id}
+        postType={achievement.type}
+        likesCount={achievement.likesCount}
+        isLiked={achievement.isLiked}
+      />
     </div>
   );
 };

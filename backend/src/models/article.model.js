@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import basePostSchema from "./basePostSchema.js";
 
 const articleSchema = new mongoose.Schema(
   {
@@ -19,25 +20,11 @@ const articleSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    tags: {
-      type: [String],
-      default: [],
-    },
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
     externalLink: {
       type: String,
       default: "",
     },
-    likes: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
+    ...basePostSchema.obj,
   },
   { timestamps: true }
 );

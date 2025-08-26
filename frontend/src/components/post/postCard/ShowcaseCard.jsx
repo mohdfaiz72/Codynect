@@ -59,7 +59,12 @@ const ShowcaseCard = ({ showcase }) => {
         <PostTags tags={showcase.tags} />
       </div>
       <hr className="text-amber-700 mb-3" />
-      <PostAction />
+      <PostAction
+        postId={showcase._id}
+        postType={showcase.type}
+        likesCount={showcase.likesCount}
+        isLiked={showcase.isLiked}
+      />
     </div>
   );
 };

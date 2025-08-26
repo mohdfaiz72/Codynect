@@ -65,7 +65,12 @@ const JobCard = ({ job }) => {
         <PostTags tags={job.tags} />
       </div>
       <hr className="border-amber-700 mb-3" />
-      <PostAction />
+      <PostAction
+        postId={job._id}
+        postType={job.type}
+        likesCount={job.likesCount}
+        isLiked={job.isLiked}
+      />
     </div>
   );
 };

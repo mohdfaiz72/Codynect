@@ -51,7 +51,12 @@ const ArticleCard = ({ article }) => {
       <hr className="border-amber-700 mb-3" />
 
       {/* Actions like Like, Comment, Share */}
-      <PostAction post={article} />
+      <PostAction
+        postId={article._id}
+        postType={article.type}
+        likesCount={article.likesCount}
+        isLiked={article.isLiked}
+      />
     </div>
   );
 };

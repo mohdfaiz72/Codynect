@@ -71,7 +71,12 @@ const SnippetCard = ({ snippet }) => {
         <CodeBlock code={snippet.code} language={snippet.language} />
       )}
       <hr className="border-amber-700 mb-3" />
-      <PostAction />
+      <PostAction
+        postId={snippet._id}
+        postType={snippet.type}
+        likesCount={snippet.likesCount}
+        isLiked={snippet.isLiked}
+      />
     </div>
   );
 };
