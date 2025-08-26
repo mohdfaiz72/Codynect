@@ -1,7 +1,5 @@
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import ProtectedRoutes from "./ProtectedRoutes";
-import { BASE_URL } from "../utils/constants";
-
 import Login from "../components/login/Login";
 import Home from "../components/home/Home";
 import CreatePost from "../components/post/CreatePost";
@@ -19,41 +17,11 @@ import AboutSection from "../components/profile/aboutSection/AboutSection";
 import ViewProfile from "../components/network/ViewProfile";
 import Dashboard from "../components/home/Dashboard";
 import Loader from "../components/common/Loader";
-
-import fetchData from "../utils/fetchData";
-import { connectSocket } from "../utils/socket";
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { setAccessToken } from "../store/authSlice";
-import { setUser } from "../store/userSlice";
+import useAutoLogin from "../utils/useAutoLoigin";
 
 function AppRoutes() {
-  const [loading, setLoading] = useState(true);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    const autoLogin = async () => {
-      try {
-        const res = await axios.post(`${BASE_URL}/v1/auth/renew`, null, {
-          withCredentials: true,
-        });
-        dispatch(setAccessToken(res.data.accessToken));
-        dispatch(setUser(res.data.user));
-        await fetchData(dispatch);
-        connectSocket();
-      } catch (err) {
-        console.log("Not logged in:", err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    autoLogin();
-  }, [dispatch]);
-
-  if (loading) {
-    return <Loader message="Initializing Codynect..." />;
-  }
+  const loading = useAutoLogin();
+  if (loading) return <Loader message="Initializing Codynect..." />;
 
   return (
     <div className="min-h-screen bg-gray-900 pt-14">

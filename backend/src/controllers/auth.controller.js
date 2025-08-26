@@ -7,6 +7,7 @@ const cookieOptions = {
   httpOnly: true,
   secure: false, // set true in production
   sameSite: "strict",
+  maxAge: 10 * 24 * 60 * 60 * 1000,
 };
 
 // ---------------- REGISTER ----------------
