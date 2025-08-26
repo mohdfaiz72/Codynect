@@ -28,6 +28,7 @@ const ThoughtCard = ({ thought }) => {
         postType={thought.type}
         likesCount={thought.likesCount}
         isLiked={thought.isLiked}
+        commentsCount={thought.commentsCount}
       />
     </div>
   );

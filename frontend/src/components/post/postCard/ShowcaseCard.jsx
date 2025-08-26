@@ -64,6 +64,7 @@ const ShowcaseCard = ({ showcase }) => {
         postType={showcase.type}
         likesCount={showcase.likesCount}
         isLiked={showcase.isLiked}
+        commentsCount={showcase.commentsCount}
       />
     </div>
   );

@@ -39,6 +39,7 @@ const DoubtCard = ({ doubt }) => {
         postType={doubt.type}
         likesCount={doubt.likesCount}
         isLiked={doubt.isLiked}
+        commentsCount={doubt.commentsCount}
       />
     </div>
   );

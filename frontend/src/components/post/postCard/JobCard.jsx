@@ -70,6 +70,7 @@ const JobCard = ({ job }) => {
         postType={job.type}
         likesCount={job.likesCount}
         isLiked={job.isLiked}
+        commentsCount={job.commentsCount}
       />
     </div>
   );

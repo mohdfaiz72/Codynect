@@ -88,6 +88,7 @@ const PollCard = ({ poll }) => {
         postType={poll.type}
         likesCount={poll.likesCount}
         isLiked={poll.isLiked}
+        commentsCount={poll.commentsCount}
       />
     </div>
   );

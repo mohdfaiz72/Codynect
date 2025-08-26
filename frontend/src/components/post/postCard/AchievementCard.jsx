@@ -33,6 +33,7 @@ const AchievementPost = ({ achievement }) => {
         postType={achievement.type}
         likesCount={achievement.likesCount}
         isLiked={achievement.isLiked}
+        commentsCount={achievement.commentsCount}
       />
     </div>
   );

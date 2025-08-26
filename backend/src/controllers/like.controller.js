@@ -1,5 +1,12 @@
 import Like from "../models/like.model.js";
 import Thought from "../models/thought.model.js";
+import Showcase from "../models/showcase.model.js";
+import Snippet from "../models/snippet.model.js";
+import Achievement from "../models/achievement.model.js";
+import Job from "../models/job.model.js";
+import Doubt from "../models/doubt.model.js";
+import Poll from "../models/poll.model.js";
+import Article from "../models/article.model.js";
 
 export const toggleLike = async (req, res) => {
   const { postId, postType } = req.body;
@@ -35,14 +42,25 @@ export const toggleLike = async (req, res) => {
   }
 };
 
-function getPostModel(postType) {
+const getPostModel = (postType) => {
   switch (postType) {
     case "Thought":
       return Thought;
-    // case "Showcase": return Showcase;
-    // case "Achievement": return Achievement;
-    // Add other post types here
+    case "Showcase":
+      return Showcase;
+    case "Achievement":
+      return Achievement;
+    case "Snippet":
+      return Snippet;
+    case "Jobs":
+      return Job;
+    case "Article":
+      return Article;
+    case "Doubt":
+      return Doubt;
+    case "Poll":
+      return Poll;
     default:
       throw new Error("Invalid post type");
   }
-}
+};

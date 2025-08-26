@@ -76,6 +76,7 @@ const SnippetCard = ({ snippet }) => {
         postType={snippet.type}
         likesCount={snippet.likesCount}
         isLiked={snippet.isLiked}
+        commentsCount={snippet.commentsCount}
       />
     </div>
   );

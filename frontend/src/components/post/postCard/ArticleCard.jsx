@@ -56,6 +56,7 @@ const ArticleCard = ({ article }) => {
         postType={article.type}
         likesCount={article.likesCount}
         isLiked={article.isLiked}
+        commentsCount={article.commentsCount}
       />
     </div>
   );

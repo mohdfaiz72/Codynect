@@ -1,9 +1,15 @@
 import express from "express";
-import { addComment } from "../controllers/comment.controller.js";
-import authMiddleware from "../middlewares/auth.middleware.js";
+import { verifyJWT } from "../middlewares/auth.middleware.js";
+import {
+  addComment,
+  getAllComments,
+} from "../controllers/comment.controller.js";
 
 const router = express.Router();
 
-router.post("/", authMiddleware, addComment);
+router.use(verifyJWT);
+
+router.get("/", getAllComments);
+router.post("/add", addComment);
 
 export default router;

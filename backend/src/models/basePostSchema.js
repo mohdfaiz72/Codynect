@@ -14,6 +14,10 @@ const basePostSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  commentsCount: {
+    type: Number,
+    default: 0,
+  },
 });
 
 export default basePostSchema;
