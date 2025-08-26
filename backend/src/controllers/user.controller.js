@@ -1,4 +1,5 @@
 import User from "../models/user.model.js";
+import ProfileView from "../models/profileview.model.js";
 
 export const updateProfileImage = async (req, res) => {
   try {
@@ -140,11 +141,36 @@ export const updateUserAbout = async (req, res) => {
 
 export const getUserDetailsById = async (req, res) => {
   try {
-    const { id } = req.params;
-    const user = await User.findById(id).select("-password");
-    if (!user) return res.status(404).json({ message: "User not found" });
-    res.json(user);
+    const { id: viewedId } = req.params;
+    const { _id: viewerId } = req.user;
+
+    const user = await User.findById(viewedId).select("-password");
+    if (!user)
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+
+    const existingView = await ProfileView.findOne({
+      viewer: viewerId,
+      viewed: viewedId,
+    });
+
+    if (existingView) {
+      existingView.updatedAt = new Date();
+      await existingView.save();
+    } else {
+      await ProfileView.create({ viewer: viewerId, viewed: viewedId });
+      user.profileViews = (user.profileViews || 0) + 1;
+      await user.save();
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "User details fetched successfully",
+      data: user,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    console.error("Error fetching user or updating profile view:", error);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };

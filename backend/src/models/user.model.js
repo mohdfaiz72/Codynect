@@ -50,6 +50,10 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    profileViews: {
+      type: Number,
+      default: 0,
+    },
     about: {
       type: String,
       default: "",

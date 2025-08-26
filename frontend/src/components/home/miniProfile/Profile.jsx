@@ -50,7 +50,7 @@ const Profile = () => {
           <span>Connections</span>
         </div>
         <div className="flex flex-col items-center">
-          <span className="font-bold text-slate-200">123</span>
+          <span className="font-bold text-slate-200">{user.profileViews}</span>
           <span>Profile Views</span>
         </div>
       </div>
