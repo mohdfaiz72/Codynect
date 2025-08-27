@@ -18,7 +18,7 @@ const PostAction = ({
 
   const handleLike = async () => {
     setLiked(!liked);
-    setCountLike(liked ? count - 1 : count + 1);
+    setCountLike(liked ? countLike - 1 : countLike + 1);
     try {
       const res = await api.post("/v1/like/toggle", { postId, postType });
       console.log("Like toggled:", res.data);

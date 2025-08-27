@@ -24,7 +24,7 @@ function AppRoutes() {
   if (loading) return <Loader message="Initializing Codynect..." />;
 
   return (
-    <div className="min-h-screen bg-gray-900 pt-14">
+    <div className="min-h-screen overflow-y-auto">
       <BrowserRouter>
         <Routes>
           {/* Public Route */}

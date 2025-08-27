@@ -107,7 +107,7 @@ const Network = () => {
   }
 
   return (
-    <div className="w-full p-4">
+    <div className="w-full p-4 pt-18">
       <ConnectionTabs
         selectedTab={selectedTab}
         setSelectedTab={setSelectedTab}

@@ -79,7 +79,7 @@ const ChatPage = () => {
   }, [selectedChatId, conversation]);
 
   return (
-    <div className="flex h-[85vh] border border-amber-700 rounded-lg mx-4 mt-4 overflow-hidden">
+    <div className="flex h-[85vh] border border-amber-700 rounded-lg mx-4 mt-18 overflow-hidden">
       {loading ? (
         <div className="flex items-center justify-center w-full">
           <Loader />

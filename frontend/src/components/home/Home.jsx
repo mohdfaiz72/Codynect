@@ -17,7 +17,7 @@ const Home = () => {
   return (
     <>
       {/* Desktop (>=1024px) */}
-      <div className="hidden lg:flex h-screen p-4 gap-4">
+      <div className="hidden lg:flex h-screen p-4 gap-4 pt-18">
         {/* Left Sidebar */}
         <div className="w-1/4 h-full overflow-y-auto scrollbar-hide">
           <Profile />
@@ -39,7 +39,7 @@ const Home = () => {
       </div>
 
       {/* Tablet (768px - 1023px) */}
-      <div className="hidden md:flex lg:hidden h-screen p-4 gap-4">
+      <div className="hidden md:flex lg:hidden h-screen p-4 gap-4 pt-18">
         {/* Left Sidebar */}
         <Dashboard />
         {/* Right Feed */}
@@ -49,7 +49,7 @@ const Home = () => {
       </div>
 
       {/* Mobile (<768px) */}
-      <div className="flex md:hidden h-screen p-4 gap-4">
+      <div className="flex md:hidden h-screen p-4 gap-4 pt-18">
         {/* Center Feed */}
         <div className="h-full max-w-md mx-auto overflow-y-auto scrollbar-hide">
           {showNotifications ? <Notifications /> : <PostFeed />}

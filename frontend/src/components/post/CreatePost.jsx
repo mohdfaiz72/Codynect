@@ -45,7 +45,7 @@ const CreatePost = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-4 text-slate-200">
+    <div className="max-w-2xl mx-auto p-4 text-slate-200 pt-18">
       {/* Tab Slider */}
 
       <div className="bg-gradient-to-br from-purple-950 via-slate-900 to-gray-900 border-amber-700 border mb-3 p-3 rounded-lg shadow-sm">
