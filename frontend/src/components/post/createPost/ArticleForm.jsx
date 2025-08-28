@@ -82,7 +82,7 @@ const ArticleForm = () => {
         {/* Title */}
         <div>
           <label className="block mb-1 text-sm font-medium text-amber-300">
-            📝 Title
+            📌 Title
           </label>
           <input
             type="text"
@@ -98,7 +98,7 @@ const ArticleForm = () => {
         {/* Content */}
         <div>
           <label className="block mb-1 text-sm font-medium text-amber-300">
-            ✏️ Content
+            📝 Content
           </label>
           <textarea
             name="content"

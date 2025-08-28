@@ -22,7 +22,7 @@ const Dashboard = () => {
   }, [navigate]);
 
   return (
-    <div className="w-full max-w-md mx-auto md:w-1/3 md:p-0 p-4 h-full overflow-y-auto scrollbar-hide">
+    <div className="w-full max-w-md mx-auto md:w-1/3 md:p-0 p-4 pt-18 h-full overflow-y-auto scrollbar-hide">
       <Profile />
       <TodoList />
       <RandomFact />

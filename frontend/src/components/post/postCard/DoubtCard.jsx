@@ -16,7 +16,7 @@ const DoubtCard = ({ doubt }) => {
         </p>
 
         <p className="text-sm text-slate-300 whitespace-pre-line">
-          <span className="font-medium text-amber-300">✏️ Details:</span>{" "}
+          <span className="font-medium text-amber-300">📝 Details:</span>{" "}
           {doubt.content}
         </p>
         {doubt.code && doubt.code.trim() !== "" && (

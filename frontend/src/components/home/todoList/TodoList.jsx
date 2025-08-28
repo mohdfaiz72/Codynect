@@ -154,7 +154,7 @@ const TodoList = () => {
   }
 
   return (
-    <div className="bg-gradient-to-br from-purple-950 via-slate-900 to-gray-900 p-4 rounded-lg border border-amber-700">
+    <div className="bg-gradient-to-br from-purple-950 via-slate-900 to-gray-900 p-4 rounded-lg border border-amber-700 mb-3">
       <h3 className="text-amber-400 font-semibold text-lg mb-3">
         ✅ My To-Do List
       </h3>

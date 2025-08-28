@@ -30,7 +30,7 @@ const TrendingNews = () => {
   }, []);
 
   return (
-    <div className="bg-gradient-to-br from-purple-950 via-slate-900 to-gray-900 p-4 rounded-lg border border-amber-700 shadow-xl mb-4">
+    <div className="bg-gradient-to-br from-purple-950 via-slate-900 to-gray-900 p-4 rounded-lg border border-amber-700 shadow-xl">
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-lg font-semibold text-amber-400">
           🔥 Trending Tech News

@@ -1,5 +1,10 @@
 const MessageBubble = ({ message }) => {
   const isMe = message.receiver === "them";
+  const formattedTime = new Date(message.createdAt).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
 
   return (
     <div className={`flex ${isMe ? "justify-end" : "justify-start"} my-1`}>
@@ -11,6 +16,9 @@ const MessageBubble = ({ message }) => {
         }`}
       >
         {message.text}
+        <span className="block text-xs text-slate-400 text-right">
+          {formattedTime}
+        </span>
       </div>
     </div>
   );

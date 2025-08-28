@@ -9,6 +9,7 @@ import { clearLanguage } from "../store/languageSlice";
 import { clearEducation } from "../store/educationSlice";
 import { clearExperience } from "../store/experienceSlice";
 import { clearCertification } from "../store/certificationSlice";
+import { clearConversation } from "../store/conversationSlice";
 
 export const resetStore = (dispatch) => {
   dispatch(clearUser());
@@ -22,4 +23,5 @@ export const resetStore = (dispatch) => {
   dispatch(clearEducation());
   dispatch(clearExperience());
   dispatch(clearCertification());
+  dispatch(clearConversation());
 };

@@ -11,13 +11,13 @@ const ArticleCard = ({ article }) => {
       <div className="m-3 space-y-1">
         {/* Title */}
         <p className="text-sm text-slate-300">
-          <span className="font-medium text-amber-300">📝 Title:</span>{" "}
+          <span className="font-medium text-amber-300">📌 Title:</span>{" "}
           {article.title}
         </p>
 
         {/* Content */}
         <p className="text-sm text-slate-300">
-          <span className="font-medium text-amber-300">✏️ Content:</span>{" "}
+          <span className="font-medium text-amber-300">📝 Content:</span>{" "}
           {article.content}
         </p>
 

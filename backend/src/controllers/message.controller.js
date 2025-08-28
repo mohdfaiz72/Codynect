@@ -5,46 +5,46 @@ export const getConversations = async (req, res) => {
   try {
     const { _id: userId } = req.user;
 
-    // 1. Find all messages where user is sender or receiver
-    const messages = await Message.find({
-      $or: [{ sender: userId }, { receiver: userId }],
-    }).sort({ createdAt: -1 });
-
-    const uniqueUserIds = new Set();
-
-    // 2. Extract unique partner user IDs
-    messages.forEach((msg) => {
-      const otherUserId =
-        msg.sender.toString() === userId
-          ? msg.receiver.toString()
-          : msg.sender.toString();
-      uniqueUserIds.add(otherUserId);
-    });
-
-    const conversations = [];
-
-    for (const partnerId of uniqueUserIds) {
-      // 3. Fetch user info
-      const user = await User.findById(partnerId).select("name profileImage");
-
-      // 4. Fetch last message between the two
-      const lastMessage = await Message.findOne({
-        $or: [
-          { sender: userId, receiver: partnerId },
-          { sender: partnerId, receiver: userId },
-        ],
-      })
-        .sort({ createdAt: -1 })
-        .lean();
-
-      conversations.push({
-        id: user._id,
-        name: user.name,
-        profileImage: user.profileImage,
-        lastMessage: lastMessage?.content || "",
-        lastMessageTime: lastMessage?.createdAt,
-      });
-    }
+    const conversations = await Message.aggregate([
+      {
+        $match: {
+          $or: [{ sender: userId }, { receiver: userId }],
+        },
+      },
+      {
+        $sort: { createdAt: -1 },
+      },
+      {
+        $group: {
+          _id: {
+            $cond: [{ $eq: ["$sender", userId] }, "$receiver", "$sender"],
+          },
+          lastMessage: { $first: "$content" },
+          lastMessageTime: { $first: "$createdAt" },
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      { $unwind: "$user" },
+      {
+        $project: {
+          id: "$user._id",
+          name: "$user.name",
+          profileImage: "$user.profileImage",
+          lastMessage: 1,
+          lastMessageTime: 1,
+        },
+      },
+      {
+        $sort: { lastMessageTime: -1 },
+      },
+    ]);
 
     return res.status(200).json(conversations);
   } catch (error) {

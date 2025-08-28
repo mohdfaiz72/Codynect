@@ -13,12 +13,23 @@ import {
 const ChatPage = () => {
   const [loading, setLoading] = useState(false);
   const [chat, setChat] = useState(null);
-
   const { conversation, selectedChatId } = useSelector(
     (store) => store.conversation
   );
   const { user } = useSelector((store) => store.user);
   const dispatch = useDispatch();
+
+  const [showChat, setShowChat] = useState(false || selectedChatId != null);
+  const [mobileView, setMobileView] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setMobileView(window.innerWidth < 768);
+    };
+    window.addEventListener("resize", handleResize);
+    handleResize();
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // This effect fetches a single user if they are selected but not in our list
   useEffect(() => {
@@ -86,12 +97,28 @@ const ChatPage = () => {
         </div>
       ) : (
         <>
-          <ConversationList
-            selectedChatId={selectedChatId}
-            conversation={conversation}
-            onChat={setChat}
-          />
-          <ChatWindow chat={selectedChat} />
+          {mobileView ? (
+            showChat ? (
+              <ChatWindow chat={selectedChat} setShowChat={setShowChat} />
+            ) : (
+              <ConversationList
+                selectedChatId={selectedChatId}
+                conversation={conversation}
+                onChat={setChat}
+                setShowChat={setShowChat}
+              />
+            )
+          ) : (
+            <>
+              <ConversationList
+                selectedChatId={selectedChatId}
+                conversation={conversation}
+                onChat={setChat}
+                setShowChat={setShowChat}
+              />
+              <ChatWindow chat={selectedChat} setShowChat={setShowChat} />
+            </>
+          )}
         </>
       )}
     </div>

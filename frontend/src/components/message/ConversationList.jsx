@@ -4,11 +4,22 @@ import { setSelectedChatId } from "../../store/conversationSlice";
 import { timeAgoFormat } from "../../utils/timeAgoFormat";
 import { dummyUser } from "../../utils/dummyUser";
 
-const ConversationList = ({ conversation, onChat, selectedChatId }) => {
+const ConversationList = ({
+  conversation,
+  onChat,
+  selectedChatId,
+  setShowChat,
+}) => {
   const dispatch = useDispatch();
 
+  const handleClick = (conv) => {
+    dispatch(setSelectedChatId(conv.id));
+    onChat(conv);
+    setShowChat(true);
+  };
+
   return (
-    <div className="bg-fixed w-1/3 border-r border-amber-700 overflow-y-auto scrollbar-hide">
+    <div className="bg-fixed md:w-1/3 w-full border-r border-amber-700 overflow-y-auto scrollbar-hide">
       {/* Sticky Header + Search */}
       <div className="sticky top-0 z-10 bg-gradient-to-br from-purple-950 via-slate-900 to-gray-900 backdrop-blur border-b border-amber-700">
         <h2 className="text-amber-400 text-xl font-bold p-4">Messaging</h2>
@@ -31,10 +42,7 @@ const ConversationList = ({ conversation, onChat, selectedChatId }) => {
             return (
               <div
                 key={conv.id}
-                onClick={() => {
-                  dispatch(setSelectedChatId(conv.id));
-                  onChat(conv);
-                }}
+                onClick={() => handleClick(conv)}
                 className={`p-2 mb-2 rounded-xl cursor-pointer transition-all duration-200 group flex gap-3 items-start ${
                   isSelected ? "bg-purple-900/40" : "hover:bg-purple-800/20"
                 }`}

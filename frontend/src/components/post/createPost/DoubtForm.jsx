@@ -89,7 +89,7 @@ const DoubtForm = () => {
 
         <div>
           <label className="block mb-1 text-sm font-medium text-amber-300">
-            ✏️ Details
+            📝 Details
           </label>
           <textarea
             name="content"
