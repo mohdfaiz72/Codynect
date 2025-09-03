@@ -10,7 +10,7 @@ import Article from "../models/article.model.js";
 
 export const getAllComments = async (req, res) => {
   try {
-    const { postId, postType } = req.query;
+    const { postId, postType, page = 1, limit = 5 } = req.query;
 
     if (!postId || !postType) {
       return res.status(400).json({
@@ -19,14 +19,27 @@ export const getAllComments = async (req, res) => {
       });
     }
 
+    const skip = (Number(page) - 1) * Number(limit);
+
     const comments = await Comment.find({ postId, postType })
       .populate("author", "name profileImage headline")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(Number(limit));
+
+    const totalCount = await Comment.countDocuments({ postId, postType });
 
     return res.status(200).json({
       success: true,
       message: "Comments fetched successfully",
       data: comments,
+      pagination: {
+        page: Number(page),
+        limit: Number(limit),
+        totalComments: totalCount,
+        totalPages: Math.ceil(totalCount / Number(limit)),
+        hasMore: skip + comments.length < totalCount,
+      },
     });
   } catch (error) {
     console.error("Error fetching comments:", error);

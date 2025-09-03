@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { dummyUser } from "../../utils/dummyUser";
 import { useNavigate } from "react-router-dom";
-import { logout } from "../../utils/Logout";
+import { logout } from "../../utils/logout";
 import { setShowNotifications } from "../../store/notificationSlice";
 
 const ProfileDropdown = () => {
